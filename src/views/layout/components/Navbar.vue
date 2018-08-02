@@ -11,18 +11,21 @@
         <screenfull class="screenfull right-menu-item"></screenfull>
       </el-tooltip>
 
-      <lang-select class="international right-menu-item"></lang-select>
+      <div class="username">用户名字</div>
+      <div class="logout" @click="logout">{{$t('navbar.logOut')}}</div>
+      
+      <!-- <lang-select class="international right-menu-item"></lang-select> -->
 
-      <el-tooltip effect="dark" :content="$t('navbar.theme')" placement="bottom">
+      <!-- <el-tooltip effect="dark" :content="$t('navbar.theme')" placement="bottom">
         <theme-picker class="theme-switch right-menu-item"></theme-picker>
-      </el-tooltip>
-
-      <el-dropdown class="avatar-container right-menu-item" trigger="click">
-        <div class="avatar-wrapper">
+      </el-tooltip> -->
+      
+      <!-- <el-dropdown class="avatar-container right-menu-item" trigger="click"> -->
+        <!-- <div class="avatar-wrapper">
           <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
           <i class="el-icon-caret-bottom"></i>
-        </div>
-        <el-dropdown-menu slot="dropdown">
+        </div> -->
+        <!-- <el-dropdown-menu slot="dropdown">
           <router-link to="/">
             <el-dropdown-item>
               {{$t('navbar.dashboard')}}
@@ -36,8 +39,8 @@
           <el-dropdown-item divided>
             <span @click="logout" style="display:block;">{{$t('navbar.logOut')}}</span>
           </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+        </el-dropdown-menu> -->
+      <!-- </el-dropdown> -->
     </div>
   </el-menu>
 </template>
@@ -48,17 +51,17 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
-import LangSelect from '@/components/LangSelect'
-import ThemePicker from '@/components/ThemePicker'
+// import LangSelect from '@/components/LangSelect'
+// import ThemePicker from '@/components/ThemePicker'
 
 export default {
   components: {
     Breadcrumb,
     Hamburger,
     ErrorLog,
-    Screenfull,
-    LangSelect,
-    ThemePicker
+    Screenfull
+    // LangSelect,
+    // ThemePicker
   },
   computed: {
     ...mapGetters([
@@ -85,6 +88,7 @@ export default {
   height: 50px;
   line-height: 50px;
   border-radius: 0px !important;
+  border: none;
   .hamburger-container {
     line-height: 58px;
     height: 50px;
@@ -101,8 +105,25 @@ export default {
   .right-menu {
     float: right;
     height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
     &:focus{
      outline: none;
+    }
+    .username, .logout {
+      padding: 0 10px;
+      height: 20px;
+      line-height: 20px;
+    }
+    .username {
+      border-right: 1px solid #8a8a8a;
+    }
+    .logout {
+      cursor: pointer;
+      &:hover {
+        color: #36a3f7;
+      }
     }
     .right-menu-item {
       display: inline-block;
