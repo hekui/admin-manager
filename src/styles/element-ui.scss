@@ -80,3 +80,22 @@
     display: block
   }
 }
+
+
+.el-submenu .el-menu-item{
+  min-width: 180px;
+  &:hover{
+    background-color: #000;
+  }
+}
+
+.el-date-editor .el-range-separator{
+  width: 24px;
+}
+
+.el-pager li, .el-pagination button, .el-pagination span:not([class*=suffix]), .el-pager li.btn-quicknext, .el-pager li.btn-quickprev{
+  height: 34px; line-height: 34px; min-width: 34px;
+}
+.el-pagination.is-background .btn-next, .el-pagination.is-background .btn-prev, .el-pagination.is-background .el-pager li{
+  min-width: 34px;
+}

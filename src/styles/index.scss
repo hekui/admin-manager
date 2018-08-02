@@ -7,15 +7,16 @@
 
 body {
   height: 100%;
+  font-size: 14px;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+  font-family: Microsoft YaHei, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Arial, sans-serif;
 }
 
-label {
-  font-weight: 700;
-}
+// label {
+//   font-weight: 700;
+// }
 
 html {
   height: 100%;
@@ -29,6 +30,9 @@ html {
   position: absolute;
   right: 0;
   top: 0;
+  background-color: #ebf1f6;
+  // background-image: url(https://fairyever.gitee.io/d2-admin-preview/image/theme/star/bg.jpg);
+  // background: linear-gradient(120deg,#bc00e3,#4efffb);
 }
 
 *,
@@ -195,4 +199,23 @@ code {
 
 .multiselect--active {
   z-index: 1000 !important;
+}
+
+.form-filter{
+  border-bottom: 1px solid #eee; margin-bottom: 22px;
+}
+.table-top{
+  margin-bottom: 12px; vertical-align: bottom;
+}
+.table-main{
+  margin-bottom: 12px;
+}
+.number{
+  font-weight: bold; font-size: 20px; color: $blue;
+}
+.tips{
+  color: #777;
+}
+.pages{
+  text-align: right;
 }

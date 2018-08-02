@@ -33,6 +33,7 @@ export default {
   bottom: 0;
   overflow-x: hidden;
   overflow-y: auto;
+  background-color: #fff;
 }
 </style>
 
