@@ -194,14 +194,14 @@ export default {
       this.page.pageNo = 1
       this.fetchData()
     },
-    addHandle() {
-      this.$router.push({
-        path: '/paccount/list'
-      })
-    },
     changePage(curPage) {
       this.page.pageNo = curPage
       this.fetchData()
+    },
+    addHandle() {
+      this.$router.push({
+        path: '/paccount/add'
+      })
     },
     showDetail(id) {
       console.log('id', id)

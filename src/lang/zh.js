@@ -17,7 +17,8 @@ export default {
     tag: '标签管理'
   },
   navbar: {
-    logOut: '退出登录'
+    logOut: '退出登录',
+    screenfull: '全屏'
   },
   login: {
     title: '系统登录',
