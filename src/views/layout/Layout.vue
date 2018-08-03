@@ -102,6 +102,7 @@ export default {
       flex-grow: 1;
       overflow: hidden;
       position: relative;
+      border-radius: 5px;
     }
     &.mobile.openSidebar{
       position: fixed;

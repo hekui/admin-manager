@@ -140,7 +140,7 @@ export default {
   width: 20px;
   color: #409eff;
   text-align: center;
-  background: #fff;
+  background: #ebf1f6;
   border: 1px solid #d8dce5;
   z-index: 2;
   &:hover {
@@ -169,8 +169,13 @@ export default {
   }
   .showScroll {
     padding: 0 20px;
+    .tags-view-item:first-child {
+      border-left: none;
+      border-top-left-radius: initial;
+    }
     .tags-view-item:last-child {
       border-right: none;
+      border-top-right-radius: initial;
     }
   }
 }

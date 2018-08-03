@@ -34,6 +34,7 @@ export default {
   overflow-x: hidden;
   overflow-y: auto;
   background-color: #fff;
+  border: 1px solid #cfd7e5;
 }
 </style>
 
