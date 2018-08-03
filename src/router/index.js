@@ -42,11 +42,17 @@ export const constantRouterMap = [
   }
 ]
 
-export default new Router({
+const router = new Router({
   mode: 'history', // require service support
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
+
+router.beforeEach((to, from, next) => {
+  next()
+})
+
+export default router
 
 export const asyncRouterMap = [
   // 公众号

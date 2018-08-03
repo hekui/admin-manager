@@ -1,10 +1,11 @@
 <template>
   <div class="tags-view-container">
     <scroll-pane class='tags-view-wrapper' ref='scrollPane'>
+
       <router-link ref='tag' class="tags-view-item" :class="isActive(tag)?'active':''" v-for="tag in Array.from(visitedViews)"
         :to="tag" :key="tag.path" @contextmenu.prevent.native="openMenu(tag,$event)">
         {{generateTitle(tag.title)}}
-        <span class='el-icon-close' @click.prevent.stop='closeSelectedTag(tag)'></span>
+        <span :class="[ visitedViews.length > 1 ? 'el-icon-close' : 'el-icon-none']" @click.prevent.stop='closeSelectedTag(tag)'></span>
       </router-link>
 
       <!-- <el-tabs v-model="visitedViews" type="card" closable>
@@ -131,22 +132,27 @@ export default {
 .tags-view-container {
   .tags-view-wrapper {
     height: 34px;
-    border-bottom: 1px solid #d8dce5;
-    // box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
     .tags-view-item {
       display: flex;
       align-items: center;
       border: 1px solid #d8dce5;
-      border-left: none;
+      border-right: none;
       position: relative;
       height: 100%;
       color: #495060;
-      background: #fff;
       padding: 0 8px 0 15px;
       font-size: 14px;
       &.active {
         color: #409eff;
+        background: #fff;
         border-bottom: none;
+      }
+      &:first-child {
+        border-top-left-radius: 5px;
+      }
+      &:last-child {
+        border-top-right-radius: 5px;
+        border-right: 1px solid #d8dce5;
       }
     }
   }
@@ -178,6 +184,9 @@ export default {
 //reset element css of el-icon-close
 .tags-view-wrapper {
   .tags-view-item {
+    .el-icon-none{
+      margin-left: 5px;
+    }
     .el-icon-close {
       margin-left: 5px;
       width: 16px;
