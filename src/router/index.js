@@ -68,11 +68,11 @@ export const asyncRouterMap = [
         // roles: ['admin'] // or you can only set roles in sub nav
       }
     }, {
-      path: 'add',
-      component: () => import('@/views/svg-icons/index'),
-      name: 'paccountAdd',
+      path: 'edit',
+      component: () => import('@/views/paccount/edit'),
+      name: 'paccountEdit',
       meta: {
-        title: 'paccountAdd'
+        title: 'paccountEdit'
         // if do not set roles, means: this page does not require permission
       }
     }]

@@ -5,7 +5,7 @@
 
       <div class="title-container">
         <h3 class="title">{{$t('login.title')}}</h3>
-        <lang-select class="set-language"></lang-select>
+        <!-- <lang-select class="set-language"></lang-select> -->
       </div>
 
       <el-form-item prop="username">
@@ -29,16 +29,16 @@
 
       <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">{{$t('login.logIn')}}</el-button>
 
-      <div class="tips">
+      <!-- <div class="tips">
         <span>{{$t('login.username')}} : admin</span>
         <span>{{$t('login.password')}} : {{$t('login.any')}}</span>
       </div>
       <div class="tips">
         <span style="margin-right:18px;">{{$t('login.username')}} : editor</span>
         <span>{{$t('login.password')}} : {{$t('login.any')}}</span>
-      </div>
+      </div> -->
 
-      <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{$t('login.thirdparty')}}</el-button>
+      <!-- <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{$t('login.thirdparty')}}</el-button> -->
     </el-form>
 
     <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
@@ -101,7 +101,8 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
+          this.$store.dispatch('login', this.loginForm).then((res) => {
+            console.log('res', res)
             this.loading = false
             this.$router.push({ path: '/' })
           }).catch(() => {
@@ -188,8 +189,8 @@ export default {
   }
 </style>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
-$bg:#2d3a4b;
+<style rel="stylesheet/scss" lang="scss">
+$bg: #2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
 
@@ -197,14 +198,21 @@ $light_gray:#eee;
   position: fixed;
   height: 100%;
   width: 100%;
-  background-color: $bg;
+  background-color: #fff;
   .login-form {
+    background-color: $bg;
+    border-radius: 5px;
+    box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, .1);
     position: absolute;
-    left: 0;
+    left: 50%;
     right: 0;
+    top: 40%;
+    bottom: 0;
     width: 520px;
+    height: 340px;
     padding: 35px 35px 15px 35px;
-    margin: 120px auto;
+    transform: translate(-50%, -50%);
+    // margin: 120px auto;
   }
   .tips {
     font-size: 14px;

@@ -4,7 +4,7 @@ import app from './modules/app'
 import errorLog from './modules/errorLog'
 import permission from './modules/permission'
 import tagsView from './modules/tagsView'
-import user from './modules/user'
+import account from './modules/account'
 import paccount from './modules/paccount'
 import getters from './getters'
 
@@ -41,10 +41,10 @@ const store = new Vuex.Store({
   },
   modules: {
     app,
+    account,
     errorLog,
     permission,
     tagsView,
-    user,
     paccount
   },
   getters

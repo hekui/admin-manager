@@ -100,6 +100,7 @@ export default {
             this.$router.push('/')
           }
         }
+        this.$refs.scrollPane.resetScroll()
       })
     },
     closeOthersTags() {
@@ -117,7 +118,7 @@ export default {
       this.selectedTag = tag
       const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
       this.left = e.clientX - offsetLeft + 15 // 15: margin right
-      this.top = e.clientY
+      this.top = e.clientY - 50
     },
     closeMenu() {
       this.visible = false
@@ -129,39 +130,23 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 .tags-view-container {
   .tags-view-wrapper {
-    background: #fff;
     height: 34px;
     border-bottom: 1px solid #d8dce5;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
+    // box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
     .tags-view-item {
-      display: inline-block;
-      position: relative;
-      height: 26px;
-      line-height: 26px;
+      display: flex;
+      align-items: center;
       border: 1px solid #d8dce5;
+      border-left: none;
+      position: relative;
+      height: 100%;
       color: #495060;
       background: #fff;
-      padding: 0 8px;
-      font-size: 12px;
-      margin-left: 5px;
-      margin-top: 4px;
-      &:first-of-type {
-        margin-left: 15px;
-      }
+      padding: 0 8px 0 15px;
+      font-size: 14px;
       &.active {
-        background-color: #42b983;
-        color: #fff;
-        border-color: #42b983;
-        &::before {
-          content: '';
-          background: #fff;
-          display: inline-block;
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          position: relative;
-          margin-right: 2px;
-        }
+        color: #409eff;
+        border-bottom: none;
       }
     }
   }
@@ -194,9 +179,10 @@ export default {
 .tags-view-wrapper {
   .tags-view-item {
     .el-icon-close {
+      margin-left: 5px;
       width: 16px;
       height: 16px;
-      vertical-align: 2px;
+      vertical-align: 0px;
       border-radius: 50%;
       text-align: center;
       transition: all .3s cubic-bezier(.645, .045, .355, 1);
@@ -204,7 +190,7 @@ export default {
       &:before {
         transform: scale(.6);
         display: inline-block;
-        vertical-align: -3px;
+        vertical-align: -1px;
       }
       &:hover {
         background-color: #b4bccc;
