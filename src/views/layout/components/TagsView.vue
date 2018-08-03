@@ -1,10 +1,11 @@
 <template>
   <div class="tags-view-container">
     <scroll-pane class='tags-view-wrapper' ref='scrollPane'>
+
       <router-link ref='tag' class="tags-view-item" :class="isActive(tag)?'active':''" v-for="tag in Array.from(visitedViews)"
         :to="tag" :key="tag.path" @contextmenu.prevent.native="openMenu(tag,$event)">
         {{generateTitle(tag.title)}}
-        <span class='el-icon-close' @click.prevent.stop='closeSelectedTag(tag)'></span>
+        <span :class="[ visitedViews.length > 1 ? 'el-icon-close' : 'el-icon-none']" @click.prevent.stop='closeSelectedTag(tag)'></span>
       </router-link>
 
       <!-- <el-tabs v-model="visitedViews" type="card" closable>
@@ -183,6 +184,9 @@ export default {
 //reset element css of el-icon-close
 .tags-view-wrapper {
   .tags-view-item {
+    .el-icon-none{
+      margin-left: 5px;
+    }
     .el-icon-close {
       margin-left: 5px;
       width: 16px;
