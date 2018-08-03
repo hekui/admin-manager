@@ -269,3 +269,11 @@ export function deepClone(source) {
 export function uniqueArr(arr) {
   return Array.from(new Set(arr))
 }
+
+export function showLoading(store) {
+  store.commit('SHOW_LOADING')
+}
+
+export function hideLoading(store) {
+  store.commit('HIDE_LOADING')
+}

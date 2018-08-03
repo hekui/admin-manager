@@ -1,5 +1,6 @@
 <template>
   <section class="app-main">
+    <router-loading v-if="routerLoading"></router-loading>
     <transition name="fade-transform" mode="out-in">
       <keep-alive :include="cachedViews">
         <router-view :key="key"></router-view>
@@ -9,9 +10,15 @@
 </template>
 
 <script>
+import RouterLoading from './RouterLoading'
+
 export default {
   name: 'AppMain',
+  components: { RouterLoading },
   computed: {
+    routerLoading() {
+      return this.$store.state.routerLoading
+    },
     cachedViews() {
       return this.$store.state.tagsView.cachedViews
     },

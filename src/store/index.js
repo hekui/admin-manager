@@ -12,6 +12,7 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
+    routerLoading: false, // 路由切换loading效果
     pstatus: {
       0: '正常',
       1: '锁定',
@@ -38,6 +39,14 @@ const store = new Vuex.Store({
         label: '二级分类2'
       }]
     }]
+  },
+  mutations: {
+    'SHOW_LOADING': (state) => {
+      state.routerLoading = true
+    },
+    'HIDE_LOADING': (state) => {
+      state.routerLoading = false
+    }
   },
   modules: {
     app,
