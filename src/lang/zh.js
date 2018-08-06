@@ -4,7 +4,8 @@ export default {
     paccount: '微信公众号',
     paccountList: '公众号管理',
     paccountAdd: '新增公众号',
-    paccountEdit: '公众号编辑',
+    paccountEdit: '编辑公众号',
+    paccountDetail: '公众号详情',
     content: '内容管理',
     contentlist: '内容列表',
     contentdetail: '内容详情',
@@ -20,7 +21,8 @@ export default {
     tag: '标签管理'
   },
   navbar: {
-    logOut: '退出登录'
+    logOut: '退出登录',
+    screenfull: '全屏'
   },
   login: {
     title: '系统登录',
