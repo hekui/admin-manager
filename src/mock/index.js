@@ -1,6 +1,8 @@
 import Mock from 'mockjs'
 import account from './account'
 import paccount from './paccount'
+import topic from './topic'
+import articlesearch from './articlesearch'
 import user from './user'
 import feedback from './feedback'
 
@@ -15,6 +17,10 @@ Mock.mock(/\/account\/userinfo/, account.getUserInfo)
 
 // 公众号相关
 Mock.mock(/\/paccount\/list/, paccount)
+
+// 专题相关
+Mock.mock(/\/topic\/list/, topic)
+Mock.mock(/\/topic\/articlesearch/, articlesearch)
 
 // 用户管理
 Mock.mock(/\/user\/list/, user)

@@ -7,23 +7,23 @@ Vue.use(Router)
 import Layout from '@/views/layout/Layout'
 
 /** note: submenu only apppear when children.length>=1
-*   detail see  https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
-**/
+ *   detail see  https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
+ **/
 
 /**
-* hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
-* alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
-*                                if not set alwaysShow, only more than one route under the children
-*                                it will becomes nested mode, otherwise not show the root menu
-* redirect: noredirect           if `redirect:noredirect` will no redirct in the breadcrumb
-* name:'router-name'             the name is used by <keep-alive> (must set!!!)
-* meta : {
+ * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
+ * alwaysShow: true               if set true, will always show the root menu, whatever its child routes length
+ *                                if not set alwaysShow, only more than one route under the children
+ *                                it will becomes nested mode, otherwise not show the root menu
+ * redirect: noredirect           if `redirect:noredirect` will no redirct in the breadcrumb
+ * name:'router-name'             the name is used by <keep-alive> (must set!!!)
+ * meta : {
     roles: ['admin','editor']     will control the page roles (you can set multiple roles)
     title: 'title'               the name show in submenu and breadcrumb (recommend set)
     icon: 'svg-name'             the icon show in the sidebar,
     noCache: true                if true ,the page will no be cached(default is false)
   }
-**/
+ **/
 export const constantRouterMap = [
   { path: '/login', component: () => import('@/views/login/index'), hidden: true },
   { path: '/authredirect', component: () => import('@/views/login/authredirect'), hidden: true },
@@ -128,18 +128,27 @@ export const asyncRouterMap = [
     },
     children: [{
       path: 'list',
-      component: () => import('@/views/paccount/list'),
+      component: () => import('@/views/topic/list'),
       name: 'topicList',
       meta: {
         title: 'topicList'
         // roles: ['admin'] // or you can only set roles in sub nav
       }
     }, {
-      path: 'edit',
-      component: () => import('@/views/svg-icons/index'),
-      name: 'editTopic',
+      path: 'add',
+      component: () => import('@/views/topic/edit'),
+      name: 'topicAdd',
       meta: {
-        title: 'editTopic'
+        title: 'topicAdd'
+        // if do not set roles, means: this page does not require permission
+      }
+    }, {
+      path: 'edit',
+      component: () => import('@/views/topic/edit'),
+      name: 'topicEdit',
+      hidden: true,
+      meta: {
+        title: 'topicEdit'
         // if do not set roles, means: this page does not require permission
       }
     }]

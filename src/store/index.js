@@ -5,6 +5,7 @@ import errorLog from './modules/errorLog'
 import permission from './modules/permission'
 import tagsView from './modules/tagsView'
 import account from './modules/account'
+import topic from './modules/topic'
 import paccount from './modules/paccount'
 import getters from './getters'
 import user from './modules/user'
@@ -56,6 +57,7 @@ const store = new Vuex.Store({
     errorLog,
     permission,
     tagsView,
+    topic,
     paccount,
     user,
     feedback,
