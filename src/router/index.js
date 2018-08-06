@@ -137,7 +137,7 @@ export const asyncRouterMap = [
   {
     path: '/user',
     component: Layout,
-    redirect: '/paccount/list',
+    redirect: '/user/list',
     meta: {
       title: 'userMange',
       icon: 'user'
@@ -145,7 +145,7 @@ export const asyncRouterMap = [
     },
     children: [{
       path: 'list',
-      component: () => import('@/views/paccount/list'),
+      component: () => import('@/views/user/list'),
       name: 'userMange',
       meta: {
         title: 'userMange'
@@ -153,7 +153,7 @@ export const asyncRouterMap = [
       }
     }, {
       path: 'feedback',
-      component: () => import('@/views/svg-icons/index'),
+      component: () => import('@/views/user/feedback'),
       name: 'userFeedback',
       meta: {
         title: 'userFeedback'
