@@ -89,20 +89,22 @@ export const asyncRouterMap = [
     component: Layout,
     meta: { title: 'content', icon: 'article', noCache: true },
     children: [{
-      path: 'index',
-      component: () => import('@/views/content/index'),
+      path: 'list',
+      component: () => import('@/views/content/list'),
       name: 'contentlist',
-      meta: { title: 'contentlist', noCache: true }
+      meta: { title: 'content', icon: 'article', noCache: true }
     }, {
       path: 'detail',
       component: () => import('@/views/content/detail'),
       name: 'contentdetail',
-      meta: { title: 'contentdetail', noCache: true }
+      meta: { title: 'contentdetail', noCache: true },
+      hidden: true
     }, {
-      path: 'edite',
-      component: () => import('@/views/content/edit'),
+      path: 'edit',
+      component: () => import('@/views/content/detail'),
       name: 'contentedit',
-      meta: { title: 'contentedit', noCache: true }
+      meta: { title: 'contentedit', noCache: true },
+      hidden: true
     }]
   },
   // 专题管理
