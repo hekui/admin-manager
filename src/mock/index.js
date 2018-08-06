@@ -2,6 +2,10 @@ import Mock from 'mockjs'
 import account from './account'
 import paccount from './paccount'
 import content from './content'
+import topic from './topic'
+import articlesearch from './articlesearch'
+import user from './user'
+import feedback from './feedback'
 
 Mock.setup({
   timeout: '350-600'
@@ -19,5 +23,14 @@ Mock.mock(/\/paccount\/list/, paccount)
 Mock.mock(/\/content\/list/, content.list)
 Mock.mock(/\/content\/detail/, content.detail)
 Mock.mock(/\/content\/save/, content.save)
+
+// 专题相关
+Mock.mock(/\/topic\/list/, topic)
+Mock.mock(/\/topic\/articlesearch/, articlesearch)
+
+// 用户管理
+Mock.mock(/\/user\/list/, user)
+// 用户反馈
+Mock.mock(/\/feedback\/list/, feedback)
 
 export default Mock

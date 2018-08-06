@@ -11,7 +11,7 @@
         <screenfull class="screenfull right-menu-item"></screenfull>
       </el-tooltip>
 
-      <div class="username">{{account.name}}</div>
+      <div class="username">您好 {{account.name}}</div>
       <div class="logout" @click="logout">{{$t('navbar.logOut')}}</div>
       
       <!-- <lang-select class="international right-menu-item"></lang-select> -->
