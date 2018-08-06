@@ -53,12 +53,12 @@
         </el-table-column>
         <el-table-column
           prop="publicName"
-          label="公众号名称"
-          width="100">
+          label="公众号名称">
         </el-table-column>
         <el-table-column
           prop="city"
-          label="城市">
+          label="城市"
+          width="80">
         </el-table-column>
         <el-table-column
           prop="articleTitle"

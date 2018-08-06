@@ -139,6 +139,7 @@ export default {
     },
     // 显示绑定弹窗
     handleBinding(type) {
+      if (this.flag !== 'edit') return
       this.dialogType = type
       this.showDialog = true
       this.binding.lonlat = this.detailData.lonlat
