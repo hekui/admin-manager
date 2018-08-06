@@ -58,6 +58,7 @@ export const asyncRouterMap = [
   // 公众号
   {
     path: '/paccount',
+    name: 'paccount',
     component: Layout,
     redirect: '/paccount/list',
     meta: {
@@ -85,9 +86,9 @@ export const asyncRouterMap = [
       path: 'edit',
       hidden: true,
       component: () => import('@/views/paccount/edit'),
-      name: 'paccountEdit',
+      name: 'paccountDetail',
       meta: {
-        title: 'paccountEdit'
+        title: 'paccountDetail'
         // if do not set roles, means: this page does not require permission
       }
     }]
@@ -106,8 +107,9 @@ export const asyncRouterMap = [
   // 专题管理
   {
     path: '/topic',
+    name: 'topic',
     component: Layout,
-    redirect: '/paccount/list',
+    redirect: '/topic/list',
     meta: {
       title: 'topic',
       icon: 'topic'
@@ -134,6 +136,7 @@ export const asyncRouterMap = [
   // 用户管理
   {
     path: '/user',
+    name: 'user',
     component: Layout,
     redirect: '/paccount/list',
     meta: {
@@ -162,7 +165,9 @@ export const asyncRouterMap = [
   // 配置
   {
     path: '/setting',
+    name: 'setting',
     component: Layout,
+    redirect: '/setting/advert',
     meta: {
       title: 'setting',
       icon: 'setting'

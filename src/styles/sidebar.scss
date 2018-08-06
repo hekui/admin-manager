@@ -43,6 +43,10 @@
       border: none;
       height: 100%;
       width: 100% !important;
+      background: transparent;
+      .el-submenu.is-active .el-submenu__title, .el-submenu__title:hover, .el-menu-item:focus, .el-menu-item:hover{
+        background: hsla(0,0%,100%,.5)
+      }
     }
   }
   .hideSidebar {
