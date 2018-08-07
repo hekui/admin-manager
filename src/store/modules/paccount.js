@@ -12,6 +12,18 @@ export default {
       totalPage: 0,
       totalRecords: 0,
       list: []
+    },
+    articleData: { // 预计后端返回数据格式 - 未定
+      curPage: 1,
+      hasNext: true,
+      hasPrevious: false,
+      nextPage: 2,
+      pageSize: 10,
+      qualification: '',
+      sortType: '',
+      totalPage: 0,
+      totalRecords: 0,
+      list: []
     }
   },
   mutations: {
@@ -41,6 +53,18 @@ export default {
       console.log('params', params)
       return api.get('/label/citylabel', params).then(res => {
         console.log(res)
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
+    getArticleList({ commit }, params) {
+      // 获取公众号文章列表代码
+      return api.post('/paccount/article', params).then(res => {
+        commit('paccountSet', {
+          target: 'articleData',
+          data: res.data
+        })
         return res
       }, res => {
         return Promise.resolve(res)
