@@ -37,9 +37,9 @@ Mock.mock(/\/user\/list/, user)
 Mock.mock(/\/feedback\/list/, feedback)
 
 // 配置管理相关
-// 广告位管理相关
+// 广告管理相关
 Mock.mock(/\/advert\/list/, advert.list)
-Mock.mock(/\/content\/detail/, content.detail)
-Mock.mock(/\/content\/save/, content.save)
+Mock.mock(/\/advert\/save/, advert.save)
+Mock.mock(/\/advert\/offline/, advert.offline)
 
 export default Mock

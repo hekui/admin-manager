@@ -56,7 +56,8 @@
         <el-table-column
           type="index"
           label="序号"
-          width="50">
+          width="50"
+          :index="getIndex">
         </el-table-column>
         <el-table-column
           prop="publicName"
@@ -200,6 +201,10 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    // 获取序号
+    getIndex(index) {
+      return (this.page.pageNo - 1) * this.page.pageSize + index + 1
     },
     // 改变每页条数
     handleSizeChange(val) {

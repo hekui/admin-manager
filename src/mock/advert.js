@@ -22,5 +22,9 @@ export default {
   save: {
     code: 0,
     msg: 'success'
+  },
+  offline: {
+    code: 0,
+    msg: 'success'
   }
 }
