@@ -25,10 +25,14 @@
           default-time="12:00:00">
         </el-date-picker>
       </el-form-item>
+      <el-form-item label="首页推荐">
+        <el-radio v-model="form.recommend" label="1">是</el-radio>
+        <el-radio v-model="form.recommend" label="0">否</el-radio>
+      </el-form-item>
       <el-form-item label="专题标签">
-        <el-radio v-model="form.tag" label="1">首页推荐</el-radio>
-        <el-radio v-model="form.tag" label="2">标签1</el-radio>
-        <el-radio v-model="form.tag" label="3">标签2</el-radio>
+        <el-checkbox v-model="form.tag" label="1">标签1</el-checkbox>
+        <el-checkbox v-model="form.tag" label="2">标签2</el-checkbox>
+        <el-checkbox v-model="form.tag" label="3">标签3</el-checkbox>
       </el-form-item>
       <el-form-item label="专题头图">
         <el-upload
@@ -55,11 +59,18 @@
         </el-button>
       </el-form-item>
     </el-form>
-    <transition name="el-fade-in-linear">
-      <div class="choosefile-wrapper" v-show="showselectarticle">
-        <filechoose @closearticle="showselectarticle = false"></filechoose>
+    <el-dialog
+      title="选择文章"
+      width="80%"
+      :visible.sync="showselectarticle">
+      <div class="dialog-content">
+        <filechoose></filechoose>
       </div>
-    </transition>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showselectarticle = false">取 消</el-button>
+        <el-button type="primary" @click="showselectarticle = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -76,7 +87,8 @@
           subname: '',
           type: '选项1',
           enabletime: '',
-          tag: '1',
+          recommend: '0',
+          tag: [],
           focusaddress: '1',
           articleurl: ''
         },
@@ -119,14 +131,8 @@
         flex: 0 0
     .savebtn
       width: 200px
-    .choosefile-wrapper
-      position: fixed
-      z-index: 1002
-      top: 0
-      left: 0
-      width: 100%
-      height: 100%
-      padding: 5% 10%
-      overflow: scroll
-      background: rgba(0,0,0,0.5)
+    .dialog-content
+      height: 500px
+    .dialog-footer
+
 </style>
