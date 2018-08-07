@@ -111,7 +111,7 @@
               width="150">
               <template slot-scope="scope">
                 <el-button type="text" @click="showDetail(scope.row.id)">详情</el-button>
-                <el-button type="text" @click="showEdite(scope.row.id)">二次编辑</el-button>
+                <el-button type="text" @click="showEdit(scope.row.id)">二次编辑</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -289,10 +289,10 @@ export default{
         }
       })
     },
-    showEdite(id) {
+    showEdit(id) {
       console.log('id', id)
       this.$router.push({
-        path: '/content/edite',
+        path: '/content/edit',
         query: {
           id
         }
