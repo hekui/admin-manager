@@ -818,3 +818,101 @@
 [2018-08-07T16:00:58.329] [TRACE] java - http://rap2s.maifangma.com/app/mock/14/GET/label/citylabel?ticketId=ticketId&cityId=cityId - request data - {} - response data - {"code":0,"msg":"","data":[{"id":"id","name":"标签名","labelStatus":0,"sequenceNum":1,"hasGuide":0,"cityId":""},{"id":"id","name":"标签名","labelStatus":0,"sequenceNum":1,"hasGuide":0,"cityId":""}]}
 [2018-08-07T16:00:58.337] [INFO] http - ::1 - - "GET /api/label/citylabel?ticketId=ticketId&cityId=cityId HTTP/1.1" 200 204 "http://localhost:9527/paccount/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
 [2018-08-07T16:00:58.592] [INFO] http - ::1 - - "GET /public/images/flogo.jpg HTTP/1.1" 200 47977 "http://localhost:9527/paccount/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:16:35.500] [ERROR] java - http://rap2s.maifangma.com/app/mock/14/GET/label/citylabel?ticketId=ticketId&cityId=cityId - Request failed with status code 500 - Error: Request failed with status code 500
+    at createError (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\core\createError.js:16:15)
+    at settle (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\core\settle.js:18:12)
+    at IncomingMessage.handleStreamEnd (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\adapters\http.js:192:11)
+    at emitNone (events.js:110:20)
+    at IncomingMessage.emit (events.js:207:7)
+    at endReadableNT (_stream_readable.js:1059:12)
+    at _combinedTickCallback (internal/process/next_tick.js:138:11)
+    at process._tickCallback (internal/process/next_tick.js:180:9)
+[2018-08-07T17:16:35.502] [INFO] api - /label/citylabel?ticketId=ticketId&cityId=cityId - response - {"err":"Request failed with status code 500"}
+[2018-08-07T17:16:35.511] [INFO] http - ::1 - - "GET /api/label/citylabel?ticketId=ticketId&cityId=cityId HTTP/1.1" 200 45 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:16:40.550] [ERROR] java - http://rap2s.maifangma.com/app/mock/14/GET/label/citylabel?ticketId=ticketId&cityId=cityId - Request failed with status code 500 - Error: Request failed with status code 500
+    at createError (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\core\createError.js:16:15)
+    at settle (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\core\settle.js:18:12)
+    at IncomingMessage.handleStreamEnd (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\adapters\http.js:192:11)
+    at emitNone (events.js:110:20)
+    at IncomingMessage.emit (events.js:207:7)
+    at endReadableNT (_stream_readable.js:1059:12)
+    at _combinedTickCallback (internal/process/next_tick.js:138:11)
+    at process._tickCallback (internal/process/next_tick.js:180:9)
+[2018-08-07T17:16:40.551] [INFO] api - /label/citylabel?ticketId=ticketId&cityId=cityId - response - {"err":"Request failed with status code 500"}
+[2018-08-07T17:16:40.552] [INFO] http - ::1 - - "GET /api/label/citylabel?ticketId=ticketId&cityId=cityId HTTP/1.1" 200 45 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:16:45.646] [ERROR] java - http://rap2s.maifangma.com/app/mock/14/GET/label/citylabel?ticketId=ticketId&cityId=cityId - Request failed with status code 500 - Error: Request failed with status code 500
+    at createError (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\core\createError.js:16:15)
+    at settle (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\core\settle.js:18:12)
+    at IncomingMessage.handleStreamEnd (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\adapters\http.js:192:11)
+    at emitNone (events.js:110:20)
+    at IncomingMessage.emit (events.js:207:7)
+    at endReadableNT (_stream_readable.js:1059:12)
+    at _combinedTickCallback (internal/process/next_tick.js:138:11)
+    at process._tickCallback (internal/process/next_tick.js:180:9)
+[2018-08-07T17:16:45.647] [INFO] api - /label/citylabel?ticketId=ticketId&cityId=cityId - response - {"err":"Request failed with status code 500"}
+[2018-08-07T17:16:45.648] [INFO] http - ::1 - - "GET /api/label/citylabel?ticketId=ticketId&cityId=cityId HTTP/1.1" 200 45 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:16:45.963] [ERROR] http - ::1 - - "GET /5f9a37cad0a00df894b0.hot-update.json HTTP/1.1" 404 175 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:16:45.971] [INFO] http - ::1 - - "GET /user/list HTTP/1.1" 200 549 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:16:46.017] [INFO] http - ::1 - - "GET /app.js HTTP/1.1" 200 5656187 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:16:46.034] [INFO] http - ::1 - - "GET /public/tinymce4.7.5/tinymce.min.js HTTP/1.1" 200 834084 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:16:46.644] [INFO] http - ::1 - - "GET /app.js.map HTTP/1.1" 200 6619582 "" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:16:47.271] [INFO] http - ::1 - - "GET /static/img/logo.69c2347.jpg HTTP/1.1" 200 13213 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:18:35.714] [INFO] http - ::1 - - "GET /c22cf271a969875c726b.hot-update.json HTTP/1.1" 200 43 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:18:35.719] [INFO] http - ::1 - - "GET /0.c22cf271a969875c726b.hot-update.js HTTP/1.1" 200 6110 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:18:35.733] [INFO] http - ::1 - - "GET /0.c22cf271a969875c726b.hot-update.js.map HTTP/1.1" 200 7753 "" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:19:32.897] [INFO] http - ::1 - - "GET /376c11b52adc9e93093a.hot-update.json HTTP/1.1" 200 43 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:19:32.915] [INFO] http - ::1 - - "GET /0.376c11b52adc9e93093a.hot-update.js HTTP/1.1" 200 8829 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:19:32.927] [INFO] http - ::1 - - "GET /0.376c11b52adc9e93093a.hot-update.js.map HTTP/1.1" 200 11562 "" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:19:34.230] [INFO] http - ::1 - - "GET /2fb55d63988e410e353b.hot-update.json HTTP/1.1" 200 43 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:19:34.234] [INFO] http - ::1 - - "GET /0.2fb55d63988e410e353b.hot-update.js HTTP/1.1" 200 3376 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:19:34.251] [INFO] http - ::1 - - "GET /0.2fb55d63988e410e353b.hot-update.js.map HTTP/1.1" 200 4619 "" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:26:40.871] [INFO] http - ::1 - - "GET /bcc3dfb9f64319b7d83c.hot-update.json HTTP/1.1" 200 43 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:26:40.890] [INFO] http - ::1 - - "GET /0.bcc3dfb9f64319b7d83c.hot-update.js HTTP/1.1" 200 11608 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:26:40.907] [INFO] http - ::1 - - "GET /0.bcc3dfb9f64319b7d83c.hot-update.js.map HTTP/1.1" 200 12410 "" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:27:05.239] [ERROR] java - http://rap2s.maifangma.com/app/mock/14/GET/label/citylabel?ticketId=ticketId&cityId=cityId - Request failed with status code 500 - Error: Request failed with status code 500
+    at createError (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\core\createError.js:16:15)
+    at settle (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\core\settle.js:18:12)
+    at IncomingMessage.handleStreamEnd (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\adapters\http.js:192:11)
+    at emitNone (events.js:110:20)
+    at IncomingMessage.emit (events.js:207:7)
+    at endReadableNT (_stream_readable.js:1059:12)
+    at _combinedTickCallback (internal/process/next_tick.js:138:11)
+    at process._tickCallback (internal/process/next_tick.js:180:9)
+[2018-08-07T17:27:05.240] [INFO] api - /label/citylabel?ticketId=ticketId&cityId=cityId - response - {"err":"Request failed with status code 500"}
+[2018-08-07T17:27:05.241] [INFO] http - ::1 - - "GET /api/label/citylabel?ticketId=ticketId&cityId=cityId HTTP/1.1" 200 45 "http://localhost:9527/paccount/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:27:05.441] [INFO] http - ::1 - - "GET /public/images/flogo.jpg HTTP/1.1" 200 47977 "http://localhost:9527/paccount/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:33:58.102] [INFO] http - ::1 - - "GET /9384fb5c6ff7490d9aa8.hot-update.json HTTP/1.1" 200 43 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:33:58.119] [INFO] http - ::1 - - "GET /0.9384fb5c6ff7490d9aa8.hot-update.js HTTP/1.1" 200 5524 "http://localhost:9527/user/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:33:58.129] [INFO] http - ::1 - - "GET /0.9384fb5c6ff7490d9aa8.hot-update.js.map HTTP/1.1" 200 7045 "" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:34:31.241] [INFO] http - ::1 - - "GET /dd049e088a201be83ac4.hot-update.json HTTP/1.1" 200 43 "http://localhost:9527/user/feedback" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:34:31.258] [INFO] http - ::1 - - "GET /0.dd049e088a201be83ac4.hot-update.js HTTP/1.1" 200 4607 "http://localhost:9527/user/feedback" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:34:31.272] [INFO] http - ::1 - - "GET /0.dd049e088a201be83ac4.hot-update.js.map HTTP/1.1" 200 5954 "" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:34:39.959] [INFO] http - ::1 - - "GET /d6dbf475c9773e429768.hot-update.json HTTP/1.1" 200 43 "http://localhost:9527/user/feedback" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:34:39.983] [INFO] http - ::1 - - "GET /0.d6dbf475c9773e429768.hot-update.js HTTP/1.1" 200 4611 "http://localhost:9527/user/feedback" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:34:40.030] [INFO] http - ::1 - - "GET /0.d6dbf475c9773e429768.hot-update.js.map HTTP/1.1" 200 5958 "" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:34:46.857] [INFO] http - ::1 - - "GET /70a70a28430263796f9b.hot-update.json HTTP/1.1" 200 35 "http://localhost:9527/user/feedback" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:42:31.754] [INFO] http - ::1 - - "GET /content/list HTTP/1.1" 200 549 "http://localhost:9527/topic/add" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:42:31.897] [INFO] http - ::1 - - "GET /app.js HTTP/1.1" 200 5655601 "http://localhost:9527/content/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:42:31.931] [INFO] http - ::1 - - "GET /public/tinymce4.7.5/tinymce.min.js HTTP/1.1" 200 834084 "http://localhost:9527/content/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:42:32.576] [INFO] http - ::1 - - "GET /app.js.map HTTP/1.1" 200 6618856 "" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:42:33.417] [INFO] http - ::1 - - "GET /static/img/logo.69c2347.jpg HTTP/1.1" 200 13213 "http://localhost:9527/content/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:42:51.393] [WARN] http - ::1 - - "GET /content/list HTTP/1.1" 304 - "http://localhost:9527/topic/add" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:42:51.507] [WARN] http - ::1 - - "GET /app.js HTTP/1.1" 304 - "http://localhost:9527/content/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:42:52.809] [WARN] http - ::1 - - "GET /static/img/logo.69c2347.jpg HTTP/1.1" 304 - "http://localhost:9527/content/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:43:13.940] [ERROR] java - http://rap2s.maifangma.com/app/mock/14/GET/label/citylabel?ticketId=ticketId&cityId=cityId - Request failed with status code 500 - Error: Request failed with status code 500
+    at createError (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\core\createError.js:16:15)
+    at settle (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\core\settle.js:18:12)
+    at IncomingMessage.handleStreamEnd (D:\workspace\fgc-manager\node_modules\_axios@0.17.1@axios\lib\adapters\http.js:192:11)
+    at emitNone (events.js:110:20)
+    at IncomingMessage.emit (events.js:207:7)
+    at endReadableNT (_stream_readable.js:1059:12)
+    at _combinedTickCallback (internal/process/next_tick.js:138:11)
+    at process._tickCallback (internal/process/next_tick.js:180:9)
+[2018-08-07T17:43:13.941] [INFO] api - /label/citylabel?ticketId=ticketId&cityId=cityId - response - {"err":"Request failed with status code 500"}
+[2018-08-07T17:43:13.942] [WARN] http - ::1 - - "GET /api/label/citylabel?ticketId=ticketId&cityId=cityId HTTP/1.1" 304 - "http://localhost:9527/paccount/list" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:47:44.214] [INFO] http - ::1 - - "GET /app.js.map HTTP/1.1" 200 6618856 "" "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"
+[2018-08-07T17:48:21.854] [INFO] http - ::1 - - "GET /paccount/add HTTP/1.1" 200 549 "http://localhost:9527/topic/add" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:48:21.885] [INFO] http - ::1 - - "GET /app.js HTTP/1.1" 200 5655601 "http://localhost:9527/paccount/add" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:48:21.908] [INFO] http - ::1 - - "GET /public/tinymce4.7.5/tinymce.min.js HTTP/1.1" 200 834084 "http://localhost:9527/paccount/add" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:48:22.519] [INFO] http - ::1 - - "GET /app.js.map HTTP/1.1" 200 6618856 "" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
+[2018-08-07T17:48:23.271] [INFO] http - ::1 - - "GET /static/img/logo.69c2347.jpg HTTP/1.1" 200 13213 "http://localhost:9527/paccount/add" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36"
