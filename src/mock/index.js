@@ -12,6 +12,7 @@ Mock.mock(/\/account\/logout/, account.logout)
 Mock.mock(/\/account\/userinfo/, account.getUserInfo)
 
 // 公众号相关
-Mock.mock(/\/paccount\/list/, paccount)
+Mock.mock(/\/paccount\/list/, paccount.index)
+Mock.mock(/\/paccount\/article/, paccount.article)
 
 export default Mock
