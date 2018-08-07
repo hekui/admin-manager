@@ -23,7 +23,8 @@ export default {
   },
   navbar: {
     logOut: '退出登录',
-    screenfull: '全屏'
+    screenfull: '全屏',
+    position: '切换城市'
   },
   login: {
     title: '系统登录',

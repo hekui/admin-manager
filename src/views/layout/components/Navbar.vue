@@ -12,7 +12,13 @@
       </el-tooltip>
 
       <div class="username">您好 {{account.name}}</div>
-      <div class="logout" @click="logout">{{$t('navbar.logOut')}}</div>
+
+      <div class="position" :title="$t('navbar.position')" @click="changeCity">
+        <SvgIcon :iconClass="'position'" :className="'icon-position'"></SvgIcon>
+        <span>成都</span>
+      </div>
+
+      <div class="logout" :title="$t('navbar.logOut')" @click="logout">{{$t('navbar.logOut')}}</div>
       
       <!-- <lang-select class="international right-menu-item"></lang-select> -->
 
@@ -51,6 +57,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
+import SvgIcon from '@/components/SvgIcon'
 // import LangSelect from '@/components/LangSelect'
 // import ThemePicker from '@/components/ThemePicker'
 
@@ -59,7 +66,8 @@ export default {
     Breadcrumb,
     Hamburger,
     ErrorLog,
-    Screenfull
+    Screenfull,
+    SvgIcon
     // LangSelect,
     // ThemePicker
   },
@@ -75,6 +83,11 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
     },
+    // 切换城市
+    changeCity() {
+
+    },
+    // 退出登录
     logout() {
       this.$store.dispatch('LogOut').then(() => {
         location.reload()// In order to re-instantiate the vue-router object to avoid bugs
@@ -113,19 +126,28 @@ export default {
     &:focus{
      outline: none;
     }
-    .username, .logout {
+    .username, .position, .logout {
       padding: 0 10px;
       height: 20px;
       line-height: 20px;
-    }
-    .username {
       border-right: 1px solid #8a8a8a;
+      .icon-position {
+        width: 20px;
+        height: 20px;
+      }
+    }
+    .position {
+      cursor: pointer;
+      display: flex;
+      span {
+        margin-left: 5px;
+        color: #409EFF;
+      }
     }
     .logout {
+      border: none;
       cursor: pointer;
-      &:hover {
-        color: #36a3f7;
-      }
+      color: #36a3f7;
     }
     .right-menu-item {
       display: inline-block;
