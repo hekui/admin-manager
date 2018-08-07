@@ -3,7 +3,7 @@
     <div class="form-filter">
       <el-form ref="form" :inline="true" :model="filter">
         <el-form-item label="专题名称">
-          <el-input v-model="filter.name" :clearable="true"></el-input>
+          <el-input v-model="filter.name" clearable></el-input>
         </el-form-item>
         <el-form-item label="类型">
           <el-cascader
@@ -50,7 +50,7 @@
           <el-table-column
             prop="name"
             label="专题名称"
-            width="140">
+            min-width="140">
           </el-table-column>
           <el-table-column
             prop="status"
@@ -70,12 +70,12 @@
           <el-table-column
             prop="publish-date"
             label="发布时间"
-            width="120">
+            width="140">
           </el-table-column>
           <el-table-column
             prop="enable-date"
             label="启用时间"
-            width="120">
+            width="160">
           </el-table-column>
           <el-table-column
             fixed="right"
