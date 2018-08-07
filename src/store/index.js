@@ -11,6 +11,7 @@ import content from './modules/content'
 import getters from './getters'
 import user from './modules/user'
 import feedback from './modules/feedback'
+import advert from './modules/advert'
 
 Vue.use(Vuex)
 
@@ -70,6 +71,7 @@ const store = new Vuex.Store({
     content,
     user,
     feedback,
+    advert
   },
   getters
 })
