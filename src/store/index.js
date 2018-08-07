@@ -11,6 +11,7 @@ import content from './modules/content'
 import getters from './getters'
 import user from './modules/user'
 import feedback from './modules/feedback'
+import advert from './modules/advert'
 
 Vue.use(Vuex)
 
@@ -42,6 +43,13 @@ const store = new Vuex.Store({
         value: 6,
         label: '二级分类2'
       }]
+    }],
+    ptype: [{
+      id: 1,
+      name: '房企'
+    }, {
+      id: 2,
+      name: 'KOL自媒体'
     }]
   },
   mutations: {
@@ -63,6 +71,7 @@ const store = new Vuex.Store({
     content,
     user,
     feedback,
+    advert
   },
   getters
 })

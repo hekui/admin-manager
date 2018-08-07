@@ -8,6 +8,7 @@ const contentlist = {
     publicName: '房观察',
     city: '成都',
     articleTitle: '文章标题',
+    'articleStatus|1': [0, 1], // 0： 禁用， 1：启用
     deliveryTime: '2018-08-06',
     articleType: '文章类型',
     readingQuantity: 1000,
@@ -44,6 +45,10 @@ export default {
     data: contentdetail
   },
   save: {
+    code: 0,
+    msg: 'success'
+  },
+  status: {
     code: 0,
     msg: 'success'
   }

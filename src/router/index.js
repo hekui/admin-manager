@@ -93,7 +93,7 @@ export const asyncRouterMap = [
       }
     }]
   },
-
+  // 内容管理
   {
     path: '/content',
     component: Layout,
@@ -197,7 +197,7 @@ export const asyncRouterMap = [
     },
     children: [{
       path: 'advert',
-      component: () => import('@/views/svg-icons/index'),
+      component: () => import('@/views/setting/advert'),
       name: 'advert',
       meta: {
         title: 'advert'
@@ -205,7 +205,7 @@ export const asyncRouterMap = [
       }
     }, {
       path: 'category',
-      component: () => import('@/views/svg-icons/index'),
+      component: () => import('@/views/setting/category'),
       name: 'category',
       meta: {
         title: 'category'
@@ -213,7 +213,7 @@ export const asyncRouterMap = [
       }
     }, {
       path: 'tag',
-      component: () => import('@/views/svg-icons/index'),
+      component: () => import('@/views/setting/tag'),
       name: 'tag',
       meta: {
         title: 'tag'
