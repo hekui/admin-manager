@@ -86,7 +86,7 @@
         <el-table-column
           label="类型">
           <template slot-scope="scope">
-            <span>{{scope.row.articleType || '房地产-土拍'}}</span>
+            <span>{{scope.row.articleType || '-'}}</span>
           </template>
         </el-table-column>
         <el-table-column
