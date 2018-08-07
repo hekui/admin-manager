@@ -51,6 +51,7 @@
     <section class="table">
       <el-table
         :data="listData.list"
+        border
         v-loading="loading"
         style="width: 100%">
         <el-table-column
@@ -274,8 +275,7 @@ export default {
   }
 }
 .el-form {
-  padding: 20px 0;
-  border-bottom: 1px dashed #ccc;
+  padding-top: 20px;
 }
 .el-input {
   width: 220px;

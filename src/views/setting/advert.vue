@@ -36,6 +36,7 @@
       <section class="table">
         <el-table
           :data="listData.list"
+          border
           v-loading="loading"
           style="width: 100%">
           <el-table-column
@@ -348,7 +349,6 @@ export default {
     .form {
       position: relative;
       padding: 20px 0 30px;
-      border-bottom: 1px dashed #ccc;
       .add {
         position: absolute;
         left: 0;
