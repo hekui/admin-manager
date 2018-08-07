@@ -6,6 +6,7 @@ import topic from './topic'
 import articlesearch from './articlesearch'
 import user from './user'
 import feedback from './feedback'
+import advert from './advert'
 
 Mock.setup({
   timeout: '350-600'
@@ -23,6 +24,7 @@ Mock.mock(/\/paccount\/list/, paccount)
 Mock.mock(/\/content\/list/, content.list)
 Mock.mock(/\/content\/detail/, content.detail)
 Mock.mock(/\/content\/save/, content.save)
+Mock.mock(/\/content\/status/, content.status)
 
 // 专题相关
 Mock.mock(/\/topic\/list/, topic)
@@ -32,5 +34,11 @@ Mock.mock(/\/topic\/articlesearch/, articlesearch)
 Mock.mock(/\/user\/list/, user)
 // 用户反馈
 Mock.mock(/\/feedback\/list/, feedback)
+
+// 配置管理相关
+// 广告位管理相关
+Mock.mock(/\/advert\/list/, advert.list)
+Mock.mock(/\/content\/detail/, content.detail)
+Mock.mock(/\/content\/save/, content.save)
 
 export default Mock
