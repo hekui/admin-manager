@@ -42,6 +42,13 @@ const store = new Vuex.Store({
         value: 6,
         label: '二级分类2'
       }]
+    }],
+    ptype: [{
+      id: 1,
+      name: '房企'
+    }, {
+      id: 2,
+      name: 'KOL自媒体'
     }]
   },
   mutations: {
