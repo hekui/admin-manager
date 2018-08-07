@@ -69,12 +69,12 @@
               label="类型"
               prop="type">
             </el-table-column>
-            <!-- <el-table-column
-              label="操作">
-              <template slot-scope="scope">
-                <el-button @click="edtClick">操作</el-button>
-              </template>
-            </el-table-column> -->
+            <el-table-column
+              label="操作"
+              prop="opera"
+              width="120"
+              align="center">
+            </el-table-column>
           </el-table>
         </div>
         <el-pagination
