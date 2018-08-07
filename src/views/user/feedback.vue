@@ -49,13 +49,12 @@
               label="意见反馈"
               prop="content">
             </el-table-column>
-            <!-- <el-table-column
+            <el-table-column
               label="操作"
-              width="150">
-              <template slot-scope="scope">
-                <el-button @click="edtClick">操作</el-button>
-              </template>
-            </el-table-column> -->
+              width="150"
+              prop="opera"
+              align="center">
+            </el-table-column>
           </el-table>
         </div>
         <el-pagination

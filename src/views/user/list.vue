@@ -18,14 +18,14 @@
             </el-form-item>
             <el-form-item label="昵称">
               <el-input
-                placeholder="请输入名称or微信号"
+                placeholder="请输入名称"
                 v-model="form.nickName"
                 clearable>
               </el-input>
             </el-form-item>
-            <el-form-item label="OpenId">
+            <!-- <el-form-item label="OpenId">
               <el-input v-model="form.openId" clearable></el-input>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item>
               <el-button icon="el-icon-search" @click="onSubmit">搜索</el-button>
             </el-form-item>
@@ -69,12 +69,12 @@
               label="类型"
               prop="type">
             </el-table-column>
-            <!-- <el-table-column
-              label="操作">
-              <template slot-scope="scope">
-                <el-button @click="edtClick">操作</el-button>
-              </template>
-            </el-table-column> -->
+            <el-table-column
+              label="操作"
+              prop="opera"
+              width="120"
+              align="center">
+            </el-table-column>
           </el-table>
         </div>
         <el-pagination
@@ -132,7 +132,7 @@ export default {
       form: {
         dateTime: '',
         nickName: '',
-        openId: '',
+        // openId: '',
       },
     }
   },
