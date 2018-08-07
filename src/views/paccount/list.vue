@@ -56,7 +56,7 @@
             min-width="180">
             <template slot-scope="scope">
               <div class="pavatar">
-                <img src="/static/images/flogo.jpg" width="50" alt="">
+                <img src="/public/images/flogo.jpg" width="50" alt="">
                 <p class="name">{{scope.row.pname}}</p>
                 <p class="en-name">{{scope.row.penName}}</p>
               </div>
@@ -178,6 +178,10 @@ export default {
   },
   created() {
     this.fetchData()
+    this.$store.dispatch('testMock', {
+      ticketId: 'ticketId',
+      cityId: 'cityId'
+    })
     console.log('this', this)
   },
   methods: {

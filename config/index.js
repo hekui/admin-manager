@@ -27,6 +27,7 @@ module.exports = {
     // If true, your code will be linted during bundling and
     // linting errors and warnings will be shown in the console.
     useEslint: true,
+
     // If true, eslint errors and warnings will also be shown in the error overlay
     // in the browser.
     showEslintErrorsInOverlay: false,
@@ -52,6 +53,8 @@ module.exports = {
   },
 
   build: {
+    port: 3000,
+    assetsMaxage: 1000 * 60 *60 * 24 * 30, // ms,30天
     // Template for index.html
     index: path.resolve(__dirname, '../dist/index.html'),
 
@@ -66,7 +69,7 @@ module.exports = {
      * then assetsPublicPath should be set to "/bar/".
      * In most cases please use '/' !!!
      */
-    assetsPublicPath: '/vue-element-admin/', // If you are deployed on the root path, please use '/'
+    assetsPublicPath: '/', // If you are deployed on the root path, please use '/'
 
     /**
      * Source Maps
@@ -86,6 +89,6 @@ module.exports = {
     // View the bundle analyzer report after build finishes:
     // `npm run build --report`
     // Set to `true` or `false` to always turn it on or off
-    bundleAnalyzerReport: process.env.npm_config_report
+    bundleAnalyzerReport: true
   }
 }

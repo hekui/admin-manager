@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
 import { getToken } from '@/utils/auth'
-const apiContext = ''
+const apiContext = '/api'
 const methods = ['get', 'post']
 
 class Api {
@@ -27,7 +27,7 @@ class Api {
         }
         method === 'get' ? options.params = data : options.data = data
         axios(options).then(res => {
-          console.log(`[${method}]${url}`, res)
+          console.log(`[${method}] - ${url} - ${JSON.stringify(options)}`, res)
           if (res.status === 200) {
             if (res.data.code === 0) {
               resolve(res.data)

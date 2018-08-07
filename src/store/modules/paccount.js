@@ -35,6 +35,16 @@ export default {
       }, res => {
         return Promise.resolve(res)
       })
+    },
+    testMock({ commit }, params) {
+      // 获取公众号列表代码
+      console.log('params', params)
+      return api.get('/label/citylabel', params).then(res => {
+        console.log(res)
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
     }
   }
 }
