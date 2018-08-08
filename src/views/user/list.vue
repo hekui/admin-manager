@@ -43,11 +43,11 @@
             </el-table-column>
             <el-table-column
               label="昵称"
-              prop="nickName">
+              prop="userName">
             </el-table-column>
             <el-table-column
               label="注册时间"
-              prop="registerTime"
+              prop="createTime"
               type="date">
             </el-table-column>
             <el-table-column
@@ -56,7 +56,7 @@
             </el-table-column>
             <el-table-column
               label="OpenId"
-              prop="openId">
+              prop="openid">
             </el-table-column>
             <el-table-column
               label="状态"
@@ -68,9 +68,9 @@
             </el-table-column>
             <el-table-column
               label="操作"
-              prop="opera"
               width="120"
-              align="center">
+              align="center"
+              :formatter="formatter">
             </el-table-column>
           </el-table>
         </div>
@@ -141,8 +141,10 @@ export default {
       this.loading = true
       this.$store.dispatch('getUserList', Object.assign([], this.form, this.page)).then(() => {
         this.loading = false
+        this.$message('back success')
       }).catch(() => {
         this.loading = false
+        this.$message('back error')
       })
     },
     // 点击搜索
@@ -161,6 +163,9 @@ export default {
     pageChange(curPage) {
       this.page.pageNo = curPage
       this.loadData()
+    },
+    formatter(row, column) {
+      return '-'
     }
   },
   computed: {
