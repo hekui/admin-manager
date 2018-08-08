@@ -41,7 +41,6 @@
     </div>
     <div class="form-wrapper">
       <div class="table-top">
-        <div class="tips gray">合计统计公众号 <span class="number">{{listData.totalRecords || '-'}}</span> 个。</div>
         <el-button type="primary" icon="el-icon-plus" @click="addHandle">新增公众号监控</el-button>
       </div>
       <div class="table-main">
@@ -110,7 +109,8 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="pages">
+      <div class="pages clearfix">
+        <span class="demonstration">合计统计公众号<b class="number">{{listData.totalRecords || '-'}}</b> 个。</span>
         <el-pagination
           background
           layout="prev, pager, next"
@@ -133,7 +133,7 @@ export default {
       loading: false,
       page: {
         pageNo: 1,
-        pageSize: 10
+        pageSize: 20
       },
       filter: {
         name: '',

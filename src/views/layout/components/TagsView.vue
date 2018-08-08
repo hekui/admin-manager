@@ -5,7 +5,7 @@
       <router-link ref='tag' class="tags-view-item" :class="isActive(tag)?'active':''" v-for="tag in Array.from(visitedViews)"
         :to="tag" :key="tag.path" @contextmenu.prevent.native="openMenu(tag,$event)">
         {{generateTitle(tag.title)}}
-        <span :class="[ visitedViews.length > 1 ? 'el-icon-close' : 'el-icon-none']" @click.prevent.stop='closeSelectedTag(tag)'></span>
+        <span class="el-icon-close" @click.prevent.stop='closeSelectedTag(tag)'></span>
       </router-link>
 
       <!-- <el-tabs v-model="visitedViews" type="card" closable>
@@ -137,23 +137,65 @@ export default {
       align-items: center;
       border: 1px solid #d8dce5;
       border-right: none;
-      position: relative;
-      height: 100%;
+      box-sizing: border-box;
       color: #495060;
-      padding: 0 8px 0 15px;
       font-size: 14px;
+      font-weight: 500;
+      height: 34px;
+      line-height: 34px;
+      list-style: none;
+      padding:  0 18px 0 20px;
+      position: relative;
+      transition: padding .3s cubic-bezier(.645,.045,.355,1);
+      &:hover {
+        padding-left: 10px;
+        padding-right: 12px;
+        .el-icon-close {
+          width: 16px;
+        }
+      }
       &.active {
+        // padding: 0 20px;
         color: #409eff;
         background: #fff;
         border-bottom: none;
       }
       &:first-child {
         border-top-left-radius: 5px;
+        padding: 0 20px;
+      }
+      &:first-child .el-icon-close {
+        display: none;
       }
       &:last-child {
         border-top-right-radius: 5px;
         border-right: 1px solid #d8dce5;
       }
+      .el-icon-close {
+        font-size: 12px;
+        height: 16px;
+        line-height: 16px;
+        overflow: hidden;
+        position: relative;
+        right: 0;
+        top: -1px;
+        transform-origin: 100% 50%;
+        vertical-align: middle;
+        width: 0;
+        border-radius: 50%;
+        margin-left: 4px;
+        text-align: center;
+        transition: all .3s cubic-bezier(.645,.045,.355,1);
+        &:before {
+            display: inline-block;
+            transform: scale(.9);
+            // vertical-align: -1px;
+          }
+          &:hover {
+            background-color: #b4bccc;
+            color: #fff;
+          }
+        }
     }
   }
   .contextmenu {
@@ -174,36 +216,6 @@ export default {
       cursor: pointer;
       &:hover {
         background: #eee;
-      }
-    }
-  }
-}
-</style>
-
-<style rel="stylesheet/scss" lang="scss">
-//reset element css of el-icon-close
-.tags-view-wrapper {
-  .tags-view-item {
-    .el-icon-none{
-      margin-left: 5px;
-    }
-    .el-icon-close {
-      margin-left: 5px;
-      width: 16px;
-      height: 16px;
-      vertical-align: 0px;
-      border-radius: 50%;
-      text-align: center;
-      transition: all .3s cubic-bezier(.645, .045, .355, 1);
-      transform-origin: 100% 50%;
-      &:before {
-        transform: scale(.6);
-        display: inline-block;
-        vertical-align: -1px;
-      }
-      &:hover {
-        background-color: #b4bccc;
-        color: #fff;
       }
     }
   }

@@ -202,7 +202,7 @@ code {
 }
 
 .form-filter{
-  border-bottom: 1px solid #eee; margin-bottom: 22px;
+  border-bottom: 1px solid #eee; margin-bottom: 12px;
 }
 .table-top{
   margin-bottom: 12px; vertical-align: bottom;
@@ -217,5 +217,13 @@ code {
   color: #777;
 }
 .pages{
-  text-align: right;
+  padding: 10px 14px;
+  .demonstration{
+    font-size: 14px;
+    color: #8492a6;
+    line-height: 34px;
+  }
+  .el-pagination{
+    float: right;
+  }
 }
