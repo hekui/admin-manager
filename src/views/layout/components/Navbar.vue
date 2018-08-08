@@ -15,7 +15,7 @@
 
       <div class="position" :title="$t('navbar.position')" @click="changeCity">
         <SvgIcon :iconClass="'position'" :className="'icon-position'"></SvgIcon>
-        <span>成都</span>
+        <span>{{cityName}}</span>
       </div>
 
       <div class="logout" :title="$t('navbar.logOut')" @click="logout">{{$t('navbar.logOut')}}</div>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState, mapGetters, mapMutations } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
@@ -72,6 +72,7 @@ export default {
     // ThemePicker
   },
   computed: {
+    ...mapState(['cityName']),
     ...mapGetters([
       'sidebar',
       'name',
@@ -80,12 +81,13 @@ export default {
     ])
   },
   methods: {
+    ...mapMutations({ showCityDialog: 'SHOW_CITY_DIALOG' }),
     toggleSideBar() {
       this.$store.dispatch('toggleSideBar')
     },
     // 切换城市
     changeCity() {
-
+      this.showCityDialog()
     },
     // 退出登录
     logout() {

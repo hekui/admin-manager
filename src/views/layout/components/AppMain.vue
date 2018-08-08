@@ -1,6 +1,7 @@
 <template>
   <section class="app-main">
     <router-loading v-if="routerLoading"></router-loading>
+    <city-dialog></city-dialog>
     <transition name="fade-transform" mode="out-in">
       <keep-alive :include="cachedViews">
         <router-view :key="key"></router-view>
@@ -11,10 +12,11 @@
 
 <script>
 import RouterLoading from './RouterLoading'
+import CityDialog from './CityDialog'
 
 export default {
   name: 'AppMain',
-  components: { RouterLoading },
+  components: { RouterLoading, CityDialog },
   computed: {
     routerLoading() {
       return this.$store.state.routerLoading
