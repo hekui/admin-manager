@@ -15,17 +15,29 @@ export default {
     }
   },
   actions: {
-    /**
-     * @param {Object} params 入参对象，例如：{pageNo:1, pageSize: 20}
-     * @returns {Object} Promise 约定所有actions方法均返回Promise对象
-     */
+    // 获取广告列表
     getAdvertList({ commit }, params) {
-      // 获取内容列表
       return api.post('/advert/list', params).then(res => {
         commit('advertSet', {
           target: 'listData',
           data: res.data
         })
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
+    // 新增/修改一条广告
+    saveAdvert({ commit }, params) {
+      return api.post('/advert/update', params).then(res => {
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
+    // 广告下线
+    offlineAdvert({ commit }, params) {
+      return api.post('/advert/offline', params).then(res => {
         return res
       }, res => {
         return Promise.resolve(res)

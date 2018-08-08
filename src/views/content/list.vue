@@ -51,12 +51,14 @@
     <section class="table">
       <el-table
         :data="listData.list"
+        border
         v-loading="loading"
         style="width: 100%">
         <el-table-column
           type="index"
           label="序号"
-          width="50">
+          width="50"
+          :index="getIndex">
         </el-table-column>
         <el-table-column
           prop="publicName"
@@ -201,6 +203,10 @@ export default {
         this.loading = false
       })
     },
+    // 获取序号
+    getIndex(index) {
+      return (this.page.pageNo - 1) * this.page.pageSize + index + 1
+    },
     // 改变每页条数
     handleSizeChange(val) {
       this.page.pageSize = val
@@ -269,8 +275,7 @@ export default {
   }
 }
 .el-form {
-  padding: 20px 0;
-  border-bottom: 1px dashed #ccc;
+  padding-top: 20px;
 }
 .el-input {
   width: 220px;
