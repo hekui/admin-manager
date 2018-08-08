@@ -36,12 +36,14 @@
       <section class="table">
         <el-table
           :data="listData.list"
+          border
           v-loading="loading"
           style="width: 100%">
           <el-table-column
             type="index"
             label="序号"
-            width="50">
+            width="50"
+            :index="getIndex">
           </el-table-column>
           <el-table-column
             prop="adName"
@@ -82,7 +84,7 @@
                 <el-button v-if="scope.row.adStatus === 1" @click="handleOffline(scope.row)" type="text" size="small">下线</el-button>
               </div>
               <div>
-                <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+                <el-button v-if="scope.row.adStatus !== -1" @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
               </div>
             </template>
           </el-table-column>
@@ -210,7 +212,11 @@ export default {
         this.loading = false
       })
     },
-    // 格式化shi
+    // 获取序号
+    getIndex(index) {
+      return (this.page.pageNo - 1) * this.page.pageSize + index + 1
+    },
+    // 格式化时间
     onlineTimeFilter(onlineTime) {
       function format(str) {
         const date = new Date(str)
@@ -245,7 +251,33 @@ export default {
     },
     // 下线
     handleOffline(data) {
-
+      this.$confirm('是否要下线?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        this.$store.dispatch('offlineAdvert', data).then(() => {
+          this.loading = false
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.showDialog = false
+          this.fetchData()
+        }).catch(() => {
+          this.loading = false
+          this.$message({
+            message: '操作失败！',
+            type: 'error'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
+      })
     },
     // 新增广告
     handleAdd() {
@@ -256,12 +288,14 @@ export default {
         onlineTime: [],
         url: ''
       }
+      this.dialogType = 'add'
       this.showDialog = true
     },
     // 编辑广告
     handleEdit(data) {
       data.onlineTime = [new Date(data.onlineTime[0]), new Date(data.onlineTime[1])]
       this.form = Object.assign({}, data)
+      this.dialogType = 'edit'
       this.showDialog = true
     },
     // 取消
@@ -270,7 +304,33 @@ export default {
     },
     // 提交新增/编辑
     handleConfirm() {
-      this.showDialog = false
+      this.$confirm('是否要提交?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        this.$store.dispatch('saveAdvert', this.form).then(() => {
+          this.loading = false
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.showDialog = false
+          this.fetchData()
+        }).catch(() => {
+          this.loading = false
+          this.$message({
+            message: '操作失败！',
+            type: 'error'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
+      })
     },
   }
 }
@@ -289,7 +349,6 @@ export default {
     .form {
       position: relative;
       padding: 20px 0 30px;
-      border-bottom: 1px dashed #ccc;
       .add {
         position: absolute;
         left: 0;
