@@ -7,6 +7,7 @@ import articlesearch from './articlesearch'
 // import user from './user'
 import feedback from './feedback'
 import advert from './advert'
+import tag from './tag'
 
 Mock.setup({
   timeout: '350-600'
@@ -41,5 +42,9 @@ Mock.mock(/\/feedback\/list/, feedback)
 Mock.mock(/\/advert\/list/, advert.list)
 Mock.mock(/\/advert\/save/, advert.save)
 Mock.mock(/\/advert\/offline/, advert.offline)
+// 标签管理相关
+Mock.mock(/\/tag\/list/, tag.list)
+Mock.mock(/\/tag\/save/, tag.save)
+Mock.mock(/\/tag\/status/, tag.status)
 
 export default Mock

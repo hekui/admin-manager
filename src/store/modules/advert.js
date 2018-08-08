@@ -29,7 +29,7 @@ export default {
     },
     // 新增/修改一条广告
     saveAdvert({ commit }, params) {
-      return api.post('/advert/update', params).then(res => {
+      return api.post('/advert/save', params).then(res => {
         return res
       }, res => {
         return Promise.resolve(res)
