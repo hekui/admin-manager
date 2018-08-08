@@ -76,7 +76,7 @@
         </el-table-column>
         <el-table-column
           label="状态"
-          width="80">
+          width="50">
           <template slot-scope="scope">
             <span>{{scope.row.articleStatus === 0 ? '禁用' : '启用'}}</span>
           </template>
@@ -88,20 +88,23 @@
         <el-table-column
           label="类型">
           <template slot-scope="scope">
-            <span>{{scope.row.articleType || '-'}}</span>
+            <span>{{articleTypeFilter(scope.row)}}</span>
           </template>
         </el-table-column>
         <el-table-column
           prop="readingQuantity"
-          label="阅读量">
+          label="阅读量"
+          width="90">
         </el-table-column>
         <el-table-column
           prop="praisingQuantity"
-          label="点赞量">
+          label="点赞量"
+          width="80">
         </el-table-column>
         <el-table-column
           prop="wordCount"
-          label="字数">
+          label="字数"
+          width="90">
         </el-table-column>
         <el-table-column
           fixed="right"
@@ -202,6 +205,29 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    articleTypeFilter(data) {
+      const articleType = []
+      let targetOptions = this.articleOptions
+      for (let i = 0; i < data.articleType.length; i++) {
+        const value = data.articleType[i]
+        targetOptions = getLabel(value, targetOptions)
+      }
+
+      function getLabel(value, data) {
+        if (data.length === 0) return
+        let children = []
+        for (let i = 0; i < data.length; i++) {
+          const option = data[i]
+          if (option.value === value) {
+            articleType.push(option.label)
+            children = option.children
+            break
+          }
+        }
+        return children
+      }
+      return articleType.join('-') || '-'
     },
     // 获取序号
     getIndex(index) {

@@ -4,8 +4,117 @@
  * @date: 2018-8-7
  */
 <template>
-  <div class="content-container">
-    标签管理
+  <div class="tag-container">
+    <div class="content-container">
+      <section class="form">
+        <el-form :inline="true" :model="filter">
+          <el-form-item label="标签名称：">
+            <el-input v-model="filter.name" placeholder="请输入名称" :clearable="true"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button icon="el-icon-search" @click="submitFilter">搜索</el-button>
+          </el-form-item>
+          <div class="add">
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增标签</el-button>
+          </div>
+        </el-form>
+      </section>
+      <section class="table">
+        <el-table
+          :data="listData.list"
+          border
+          v-loading="loading"
+          style="width: 100%">
+          <el-table-column
+            type="index"
+            label="序号"
+            width="50"
+            :index="getIndex">
+          </el-table-column>
+          <el-table-column
+            prop="name"
+            label="标签名称">
+          </el-table-column>
+          <el-table-column
+            prop="sequenceNum"
+            label="排序"
+            width="50">
+          </el-table-column>
+          <el-table-column
+            label="是否前端引导"
+            width="120">
+            <template slot-scope="scope">
+              <span>{{scope.row.hasGuide === 0 ? '是' : '否'}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="类型">
+            <template slot-scope="scope">
+              <span>{{scope.row.typeName || '-'}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            label="状态"
+            width="80">
+            <template slot-scope="scope">
+              <span>{{scope.row.labelStatus === 0 ?  '激活' : '锁定'}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed="right"
+            label="操作"
+            width="100">
+            <template slot-scope="scope">
+              <el-button @click="handleStatus(scope.row)" type="text" size="small">{{ scope.row.labelStatus === 0 ? '锁定' : '激活' }}</el-button>
+              <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </section>
+      <section class="pagination">
+        <el-pagination
+          background
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="page.curPage"
+          :page-sizes="[10, 20, 30, 50]"
+          :page-size="page.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="listData.totalPage">
+        </el-pagination>
+      </section>
+    </div>
+    <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
+      <el-form v-loading="dialogLoading" ref="form" :model="form" :rules="rules">
+        <el-form-item label="标签名称：" prop="name">
+          <el-input v-model="form.name" placeholder="请输入名称" :clearable="true"></el-input>
+        </el-form-item>
+        <el-form-item label="是否前端引导：" prop="hasGuide">
+          <el-radio-group v-model="form.hasGuide">
+            <el-radio :label="0">是</el-radio>
+            <el-radio :label="1">否</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="状态：" prop="labelStatus">
+          <el-radio-group v-model="form.labelStatus">
+            <el-radio :label="0">激活</el-radio>
+            <el-radio :label="1">锁定</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="类型：" prop="typeId">
+          <el-cascader
+            expand-trigger="hover"
+            :options="tagOptions"
+            v-model="form.typeId"
+            :clearable="true">
+          </el-cascader>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="handleCancel">取 消</el-button>
+          <el-button type="primary" size="mini" @click="handleConfirm('form')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -17,103 +126,234 @@ export default {
   data() {
     return {
       loading: false,
+      dialogLoading: false,
+      showDialog: false,
+      dialogType: '',
       filter: {
-        deliveryTime: '', // 发布时间
-        publicType: [], // 公众号类型
-        publicName: '', // 公众号名称
-        articleTitle: '', // 文章标题
-        articelType: [] // 文章类型
-      },
-      pickerOptions: { // 日期快捷选项
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
+        name: '' // 标签名称
       },
       page: {
-        pageNo: 1,
-        pageSize: 10
+        curPage: 1,
+        pageSize: 20
+      },
+      form: {
+        id: '',
+        name: '',
+        hasGuide: 1,
+        labelStatus: 0,
+        typeId: []
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入标签名称', trigger: 'blur' }
+        ],
+        hasGuide: [
+          { required: true, message: '请选择是否前端引导', trigger: 'change' }
+        ],
+        labelStatus: [
+          { required: true, message: '请选择标签状态', trigger: 'change' }
+        ],
+        typeId: []
       }
     }
   },
   computed: {
     ...mapState({
-      options: state => state.options,
-      articleOptions: state => state.content.options,
-      listData: state => state.content.listData
-    })
+      tagOptions: state => state.tag.tagOptions,
+      listData: state => state.tag.listData
+    }),
+    dialogTitle() {
+      return this.dialogType === 'add' ? '新增标签' : '编辑标签'
+    }
   },
   created() {
     this.fetchData()
   },
   methods: {
+    // 条件查询
+    submitFilter() {
+      this.page.curPage = 1
+      this.fetchData()
+    },
+    // 查询标签
     fetchData() {
       this.loading = true
-      this.$store.dispatch('getContentList', Object.assign({}, this.filter, this.page)).then(() => {
+      this.$store.dispatch('getTagList', Object.assign({ page: true }, this.filter, this.page)).then(() => {
         this.loading = false
       }).catch(() => {
         this.loading = false
       })
     },
+    // 获取序号
+    getIndex(index) {
+      return (this.page.curPage - 1) * this.page.pageSize + index + 1
+    },
     // 改变每页条数
     handleSizeChange(val) {
+      this.page.curPage = 1
       this.page.pageSize = val
       this.fetchData()
     },
     // 改变当前页
     handleCurrentChange(val) {
-      this.page.pageNo = val
+      this.page.curPage = val
       this.fetchData()
     },
-    submitFilter() {
-      this.page.pageNo = 1
-      this.fetchData()
+    // 新增标签
+    handleAdd() {
+      this.form = {
+        id: '',
+        name: '',
+        hasGuide: 1,
+        labelStatus: 0,
+        typeId: []
+      }
+      this.dialogType = 'add'
+      this.showDialog = true
     },
-    handleDetail(data) {
-      this.$router.push({ path: '/content/detail', query: { id: data.id }})
+    handleStatus(data) {
+      this.loading = true
+      this.$store.dispatch('changeTagStatus', data).then((res) => {
+        this.loading = false
+        this.$message({
+          type: 'success',
+          message: '操作成功!'
+        })
+        this.fetchData()
+      }).catch(() => {
+        this.loading = false
+        this.$message({
+          type: 'error',
+          message: '操作失败!'
+        })
+      })
     },
+    // 编辑标签
     handleEdit(data) {
-      this.$router.push({ path: '/content/edit', query: { id: data.id }})
-    }
+      this.dialogType = 'edit'
+      this.showDialog = true
+      this.dialogLoading = true
+      const param = { id: data.id }
+      this.$store.dispatch('queryTagById', param).then((res) => {
+        this.dialogLoading = false
+        res.data.typeId = []
+        getTypeId(res.data.typeDictList)
+        this.form = Object.assign({}, res.data)
+
+        function getTypeId(list) {
+          if (!list) return
+          for (let i = 0; i < list.length; i++) {
+            res.data.typeId.push(list[i].id)
+            getTypeId(list[i].child)
+            return
+          }
+        }
+      }).catch(() => {
+        this.dialogLoading = false
+      })
+    },
+    // 取消
+    handleCancel() {
+      this.showDialog = false
+    },
+    // 提交新增/编辑
+    handleConfirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$confirm('是否要提交?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.dialogLoading = true
+            const param = Object.assign({}, this.form)
+            param.typeId = param.typeId.pop() // 取最后一个元素作为typeId保存到数据库
+            this.$store.dispatch('saveAdvert', param).then(() => {
+              this.dialogLoading = false
+              this.$message({
+                type: 'success',
+                message: '操作成功!'
+              })
+              this.showDialog = false
+              this.fetchData()
+            }).catch(() => {
+              this.dialogLoading = false
+              this.$message({
+                message: '操作失败！',
+                type: 'error'
+              })
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消操作!'
+            })
+          })
+        } else {
+          return false
+        }
+      })
+    },
   }
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.content-container {
-  padding: 10px 20px;
-  min-height: 100%;
-  .pagination {
-    margin-top: 12px;
-    text-align: right;
+.tag-container {
+  position: relative;
+  height: 100%;
+  color: #606266;
+  .content-container {
+    padding: 10px 20px;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    .form {
+      position: relative;
+      padding: 20px 0 30px;
+      .add {
+        position: absolute;
+        left: 0;
+        bottom: 5px;
+      }
+    }
+    .pagination {
+      margin-top: 12px;
+      text-align: right;
+    }
+    .ad-pic {
+      width: 100%;
+      height: 100%;
+    }
   }
-}
-.el-form {
-  padding-bottom: 20px;
-  border-bottom: 1px dashed #ccc;
 }
 .el-input {
   width: 220px;
+}
+</style>
+<style rel="stylesheet/scss" lang="scss">
+.tag-container {
+  .el-dialog {
+    width: 540px;
+    border-radius: 5px;
+    .el-dialog__title {
+      font-size: 14px;
+    }
+    .el-dialog__body {
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+    }
+    .el-input {
+      width: 380px;
+      font-size: 12px;
+    }
+    .el-form-item__label {
+      width: 110px;
+      font-size: 12px;
+    }
+    .el-form-item__error {
+      margin-left: 110px;
+    }
+  }
 }
 </style>

@@ -4,8 +4,108 @@
  * @date: 2018-8-7
  */
 <template>
-  <div class="content-container">
-    类型管理
+  <div class="category-container">
+    <div class="content-container" v-loading="loading">
+      <el-tabs v-model="activeName" @tab-click="handleChangeTabs">
+        <div class="add">
+          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增类型</el-button>
+        </div>
+        <div class="head">
+          <span>类型</span>
+          <span class="custom-right-text">
+            <span class="status">状态</span>
+            <span class="handle">操作</span>
+          </span>
+        </div>
+        <el-tab-pane label="公众号" name="publicNo">
+          <el-tree
+            :data="treeData1"
+            show-checkbox
+            node-key="id"
+            default-expand-all
+            :expand-on-click-node="false">
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+              <span>{{ node.label }}</span>
+              <span class="custom-right-text">
+                <span class="status">{{ node.status === 1 ? '激活' : '锁定' }}</span>
+                <span class="handle">
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click="handleStatus(node)">
+                    {{ node.status === 1 ? '锁定' : '激活' }}
+                  </el-button>
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click="handleEdit(node)">
+                    编辑
+                  </el-button>
+                </span>
+              </span>
+            </span>
+          </el-tree>
+        </el-tab-pane>
+        <el-tab-pane label="标签" name="tag">
+          <el-tree
+            :data="treeData2"
+            show-checkbox
+            node-key="id"
+            default-expand-all
+            :expand-on-click-node="false">
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+              <span>{{ node.label }}</span>
+              <span class="custom-right-text">
+                <span class="status">{{ node.status === 1 ? '激活' : '锁定' }}</span>
+                <span class="handle">
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click="handleStatus(node)">
+                    {{ node.status === 1 ? '锁定' : '激活' }}
+                  </el-button>
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click="handleEdit(node)">
+                    编辑
+                  </el-button>
+                </span>
+              </span>
+            </span>
+          </el-tree>
+        </el-tab-pane>
+        <el-tab-pane label="文章" name="article">
+          <el-tree
+            :data="treeData3"
+            show-checkbox
+            node-key="id"
+            default-expand-all
+            :expand-on-click-node="false">
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+              <span>{{ node.label }}</span>
+              <span class="custom-right-text">
+                <span class="status">{{ node.status === 1 ? '激活' : '锁定' }}</span>
+                <span class="handle">
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click="handleStatus(node)">
+                    {{ node.status === 1 ? '锁定' : '激活' }}
+                  </el-button>
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click="handleEdit(node)">
+                    编辑
+                  </el-button>
+                </span>
+              </span>
+            </span>
+          </el-tree>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
   </div>
 </template>
 
@@ -16,104 +116,199 @@ export default {
   name: 'category',
   data() {
     return {
+      activeName: 'publicNo',
       loading: false,
-      filter: {
-        deliveryTime: '', // 发布时间
-        publicType: [], // 公众号类型
-        publicName: '', // 公众号名称
-        articleTitle: '', // 文章标题
-        articelType: [] // 文章类型
-      },
-      pickerOptions: { // 日期快捷选项
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
-      page: {
-        pageNo: 1,
-        pageSize: 10
+      showDialog: false,
+      dialogType: '',
+      form: {
+        id: '',
+        tagName: '',
+        guide: 0,
+        status: 1,
+        category: []
       }
     }
   },
   computed: {
     ...mapState({
-      options: state => state.options,
-      articleOptions: state => state.content.options,
-      listData: state => state.content.listData
-    })
+      treeData1: state => state.category.treeData1,
+      treeData2: state => state.category.treeData2,
+      treeData3: state => state.category.treeData3
+    }),
+    dialogTitle() {
+      return this.dialogType === 'add' ? '新增标签' : '编辑标签'
+    }
   },
   created() {
     this.fetchData()
   },
   methods: {
+    handleChangeTabs() {
+
+    },
+    // 查询标签
     fetchData() {
       this.loading = true
-      this.$store.dispatch('getContentList', Object.assign({}, this.filter, this.page)).then(() => {
+      this.$store.dispatch('getTreeList', Object.assign({}, this.filter, this.page)).then(() => {
         this.loading = false
       }).catch(() => {
         this.loading = false
       })
     },
-    // 改变每页条数
-    handleSizeChange(val) {
-      this.page.pageSize = val
-      this.fetchData()
+    // 新增标签
+    handleAdd() {
+      this.form = {
+        id: '',
+        tagName: '',
+        guide: 0,
+        status: 1,
+        category: []
+      }
+      this.dialogType = 'add'
+      this.showDialog = true
     },
-    // 改变当前页
-    handleCurrentChange(val) {
-      this.page.pageNo = val
-      this.fetchData()
+    // 锁定/激活
+    handleStatus(data) {
+      this.$confirm('是否要下线?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        this.$store.dispatch('offlineAdvert', data).then(() => {
+          this.loading = false
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.showDialog = false
+          this.fetchData()
+        }).catch(() => {
+          this.loading = false
+          this.$message({
+            message: '操作失败！',
+            type: 'error'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
+      })
     },
-    submitFilter() {
-      this.page.pageNo = 1
-      this.fetchData()
-    },
-    handleDetail(data) {
-      this.$router.push({ path: '/content/detail', query: { id: data.id }})
-    },
+    // 编辑标签
     handleEdit(data) {
-      this.$router.push({ path: '/content/edit', query: { id: data.id }})
-    }
+      this.form = Object.assign({}, data)
+      this.dialogType = 'edit'
+      this.showDialog = true
+    },
+    // 取消
+    handleCancel() {
+      this.showDialog = false
+    },
+    // 提交新增/编辑
+    handleConfirm() {
+      this.$confirm('是否要提交?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        this.$store.dispatch('saveAdvert', this.form).then(() => {
+          this.loading = false
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.showDialog = false
+          this.fetchData()
+        }).catch(() => {
+          this.loading = false
+          this.$message({
+            message: '操作失败！',
+            type: 'error'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
+      })
+    },
   }
 }
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.content-container {
-  padding: 10px 20px;
-  min-height: 100%;
-  .pagination {
-    margin-top: 12px;
-    text-align: right;
+.category-container {
+  position: relative;
+  height: 100%;
+  color: #606266;
+  .content-container {
+    padding: 10px 20px;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+    .add {
+      margin-bottom: 10px;
+    }
+    .head {
+      padding: 10px 8px 10px 45px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #909399;
+      user-select: none;
+      font-weight: bold;
+      border-bottom: 1px solid #eee;
+    }
+    .custom-tree-node {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      padding-right: 8px;
+    }
+    .head, .custom-tree-node {
+      .custom-right-text {
+        display: flex;
+        align-items: center;
+        .status {
+          margin-right: 300px;
+          width: 50px;
+        }
+        .handle {
+          width: 80px;
+          text-align: center;
+        }
+      }
+    }
   }
 }
-.el-form {
-  padding-bottom: 20px;
-  border-bottom: 1px dashed #ccc;
-}
-.el-input {
-  width: 220px;
+</style>
+<style rel="stylesheet/scss" lang="scss">
+.category-container {
+  .el-dialog {
+    width: 540px;
+    border-radius: 5px;
+    .el-dialog__title {
+      font-size: 14px;
+    }
+    .el-dialog__body {
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+    }
+    .el-input {
+      width: 380px;
+      font-size: 12px;
+    }
+    .el-form-item__label {
+      width: 110px;
+      font-size: 12px;
+    }
+  }
 }
 </style>

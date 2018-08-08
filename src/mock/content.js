@@ -10,7 +10,7 @@ const contentlist = {
     articleTitle: '文章标题',
     'articleStatus|1': [0, 1], // 0： 禁用， 1：启用
     deliveryTime: '2018-08-06',
-    articleType: '文章类型',
+    'articleType|1': [[], [1, 3], [1, 4], [2, 5], [2, 6]],
     readingQuantity: 1000,
     praisingQuantity: 500,
     wordCount: 3000
