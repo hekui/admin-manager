@@ -1,7 +1,34 @@
+/**
+ * @description: 内容列表管理
+ * @author: zhangchenle
+ * @date: 2018-8-6
+ */
 <template>
   <div class="content-container">
     <section class="form">
       <el-form ref="form" :inline="true" :model="filter">
+        <el-form-item label="文章标题：">
+          <el-input v-model="filter.articleTitle" placeholder="请输入名称orID" :clearable="true"></el-input>
+        </el-form-item>
+        <el-form-item label="公众号名称：">
+          <el-input v-model="filter.publicName" placeholder="请输入名称or微信号" :clearable="true"></el-input>
+        </el-form-item>
+        <el-form-item label="文章类型：" class="article-type-label">
+          <el-cascader
+            expand-trigger="hover"
+            :options="articleOptions"
+            v-model="filter.articleType"
+            :clearable="true">
+          </el-cascader>
+        </el-form-item>
+        <el-form-item label="公众号类型：">
+          <el-cascader
+            expand-trigger="hover"
+            :options="options"
+            v-model="filter.publicType"
+            :clearable="true">
+          </el-cascader>
+        </el-form-item>
         <el-form-item label="发布时间：">
           <el-date-picker
             v-model="filter.deliveryTime"
@@ -16,26 +43,6 @@
             :picker-options="pickerOptions">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="公众号类型：">
-          <el-cascader
-            expand-trigger="hover"
-            :options="options"
-            v-model="filter.publicType">
-          </el-cascader>
-        </el-form-item>
-        <el-form-item label="公众号名称：">
-          <el-input v-model="filter.publicName" placeholder="请输入名称or微信号"></el-input>
-        </el-form-item>
-        <el-form-item label="文章标题：">
-          <el-input v-model="filter.articleTitle" placeholder="请输入名称orID"></el-input>
-        </el-form-item>
-        <el-form-item label="文章类型：" class="article-type-label">
-          <el-cascader
-            expand-trigger="hover"
-            :options="articleOptions"
-            v-model="filter.articleType">
-          </el-cascader>
-        </el-form-item>
         <el-form-item>
           <el-button icon="el-icon-search" @click="submitFilter">搜索</el-button>
         </el-form-item>
@@ -44,12 +51,14 @@
     <section class="table">
       <el-table
         :data="listData.list"
+        border
         v-loading="loading"
         style="width: 100%">
         <el-table-column
           type="index"
           label="序号"
-          width="50">
+          width="50"
+          :index="getIndex">
         </el-table-column>
         <el-table-column
           prop="publicName"
@@ -66,12 +75,21 @@
           width="180">
         </el-table-column>
         <el-table-column
+          label="状态"
+          width="80">
+          <template slot-scope="scope">
+            <span>{{scope.row.articleStatus === 0 ? '禁用' : '启用'}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="deliveryTime"
           label="发布时间">
         </el-table-column>
         <el-table-column
-          prop="articleType"
           label="类型">
+          <template slot-scope="scope">
+            <span>{{scope.row.articleType || '-'}}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="readingQuantity"
@@ -95,6 +113,9 @@
             </div>
             <div>
               <el-button @click="handleEdit(scope.row)" type="text" size="small">二次编辑</el-button>
+            </div>
+            <div>
+              <el-button style="color: red;" @click="handleEnable(scope.row)" type="text" size="small">{{scope.row.articleStatus === 1 ? '禁用' : '启用'}}</el-button>
             </div>
           </template>
         </el-table-column>
@@ -182,6 +203,10 @@ export default {
         this.loading = false
       })
     },
+    // 获取序号
+    getIndex(index) {
+      return (this.page.pageNo - 1) * this.page.pageSize + index + 1
+    },
     // 改变每页条数
     handleSizeChange(val) {
       this.page.pageSize = val
@@ -192,15 +217,49 @@ export default {
       this.page.pageNo = val
       this.fetchData()
     },
+    // 条件查询
     submitFilter() {
       this.page.pageNo = 1
       this.fetchData()
     },
+    // 查看详情
     handleDetail(data) {
       this.$router.push({ path: '/content/detail', query: { id: data.id }})
     },
+    // 二次编辑
     handleEdit(data) {
       this.$router.push({ path: '/content/edit', query: { id: data.id }})
+    },
+    // 禁用/启用
+    handleEnable(data) {
+      let tips = '是否启用?'
+      if (data.status === 1) tips = '是否禁用?'
+      this.$confirm(tips, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        this.$store.dispatch('changeContentStatus', data).then(() => {
+          this.loading = false
+          this.fetchData()
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+        }).catch(() => {
+          this.loading = false
+          this.$message({
+            message: '操作失败！',
+            type: 'error'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
+      })
     }
   }
 }
@@ -216,8 +275,7 @@ export default {
   }
 }
 .el-form {
-  padding-bottom: 20px;
-  border-bottom: 1px dashed #ccc;
+  padding-top: 20px;
 }
 .el-input {
   width: 220px;

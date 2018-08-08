@@ -51,12 +51,8 @@ export default {
     }
   },
   actions: {
-    /**
-     * @param {Object} params 入参对象，例如：{pageNo:1, pageSize: 20}
-     * @returns {Object} Promise 约定所有actions方法均返回Promise对象
-     */
+    // 获取内容列表
     getContentList({ commit }, params) {
-      // 获取内容列表
       return api.post('/content/list', params).then(res => {
         commit('contentSet', {
           target: 'listData',
@@ -67,8 +63,16 @@ export default {
         return Promise.resolve(res)
       })
     },
+    // 改变内容启用/禁用状态
+    changeContentStatus({ commit }, params) {
+      return api.post('/content/status', params).then(res => {
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
+    // 获取内容详情
     getContentDetail({ commit }, params) {
-      // 获取内容列表
       return api.post('/content/detail', params).then(res => {
         commit('contentSet', {
           target: 'detailData',
@@ -79,6 +83,7 @@ export default {
         return Promise.resolve(res)
       })
     },
+    // 保存内容二次编辑
     saveContentEdit({ state }) {
       return api.post('/content/save', state.detailData).then(res => {
         return res

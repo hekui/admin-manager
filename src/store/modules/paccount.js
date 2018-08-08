@@ -48,6 +48,16 @@ export default {
         return Promise.resolve(res)
       })
     },
+    // 服务端转rap2接口 demo
+    testMock({ commit }, params) {
+      console.log('params', params)
+      return api.post('/typedict/list', params).then(res => {
+        console.log(res)
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
     getArticleList({ commit }, params) {
       // 获取公众号文章列表代码
       return api.post('/paccount/article', params).then(res => {
