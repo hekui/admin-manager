@@ -3,10 +3,10 @@ export default {
   state: {
     options: [{
       value: 1,
-      label: '一级分类1',
+      label: '房地产',
       children: [{
         value: 3,
-        label: '二级分类1'
+        label: '土拍'
       }, {
         value: 4,
         label: '二级分类2'
