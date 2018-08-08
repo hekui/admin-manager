@@ -119,6 +119,16 @@
           console.log('error')
         })
       },
+      fetchData() {
+        this.loading = true
+        api.post('/topic/articlesearch', Object.assign({}, this.filter, this.page)).then(res => {
+          this.listData = res.data
+          this.loading = false
+        }, res => {
+          console.log('error')
+          this.loading = false
+        })
+      },
       changePage(curPage) {
         this.page.pageNo = curPage
         this.fetchData()
@@ -139,4 +149,6 @@
       flex: 1 1
       border: solid #ebeef5
       overflow: scroll
+    .pages
+      margin-top: 15px
 </style>
