@@ -2,9 +2,9 @@
   <div class="app-container dashboard-container">
     <div class="content">
       <p>您好，{{account.name}}。</p>
-      <p>当前管理城市是：{{cityName}} <el-button type="primary" @click="changeCity">切换城市</el-button></p>
+      <p>当前管理城市是：{{cityName}} <el-button type="text" @click="changeCity">切换城市</el-button></p>
       <p>您的管理角色是：超级管理员</p>
-      <p>您可管理的城市是：成都、西安、重庆</p>
+      <p>您可管理的城市是：<span class="citys" v-for="item in cityOptions" :key="item.cityId">{{item.cityName}}</span></p>
     </div>
     <!-- <component :is="currentRole"></component> -->
   </div>
@@ -25,7 +25,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['cityName']),
+    ...mapState(['cityName', 'cityOptions']),
     ...mapGetters([
       'roles',
       'account'
@@ -49,6 +49,9 @@ export default {
 .dashboard-container{
   .content{
     margin: 200px auto; text-align: center;
+  }
+  .citys {
+    margin: 0 5px;
   }
 }
 </style>

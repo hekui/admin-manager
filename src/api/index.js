@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
-import { getToken } from '@/utils/auth'
+import cookie from 'js-cookie'
 const apiContext = '/api'
 const methods = ['get', 'post']
 
@@ -21,10 +21,11 @@ class Api {
             // 'X-Requested-With': 'XMLHttpRequest',
             // 'Content-Type': 'application/x-www-form-urlencoded',
             // 'Accept': '*/*',
-            'token': getToken(),
+            'cityid': cookie.get('cityID') || 51010000, // 默认成都
             'Content-Type': 'application/json'
           }
         }
+        data.ticketId = ''
         method === 'get' ? options.params = data : options.data = data
         axios(options).then(res => {
           console.log(`[${method}] - ${url} - ${JSON.stringify(options)}`, res)
