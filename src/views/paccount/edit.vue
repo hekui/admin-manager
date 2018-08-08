@@ -12,14 +12,13 @@
           <el-radio label="0" v-model="status" @change="open">启用</el-radio>
           <el-radio label="1" v-model="status" @change="open">锁定</el-radio>
           <el-radio label="2" v-model="status" @change="open">停用</el-radio>
-
-          <!-- <el-radio-group v-model="changStatus" @change="open">
-            
-          </el-radio-group> -->
         </div>
       </div>
       <div class="form-filter">
         <el-form ref="form" :inline="true" :model="filter">
+          <el-form-item label="文章标题">
+            <el-input v-model="filter.article" :clearable="true" placeholder="请输入名称"></el-input>
+          </el-form-item>
           <el-form-item label="发布时间">
             <el-date-picker
               v-model="filter.date"
@@ -27,9 +26,6 @@
               value-format="yyyy-MM-dd"
               placeholder="选择日期">
             </el-date-picker>
-          </el-form-item>
-          <el-form-item label="文章标题">
-            <el-input v-model="filter.article" :clearable="true" placeholder="请输入名称/ID"></el-input>
           </el-form-item>
           <el-form-item label="类型">
             <el-cascader
@@ -47,8 +43,8 @@
       </div>
       <div class="form-wrapper">
         <div class="table-top">
-          <div class="tips gray">最后收录时间：<span class="date">2018-12-17 23:12</span></div>
-          <el-button icon="el-icon-refresh" type="primary" @click="changeRefresh">手动更新</el-button>
+          <el-button icon="el-icon-refresh" type="primary" @click="changeRefresh" class="refresh-button">手动更新</el-button>
+          <p class="tips">最后收录时间：<span class="date">2018-12-17 23:12</span></p>
         </div>
         <div class="table-main">
           <el-table
@@ -116,7 +112,7 @@
             </el-table-column>
           </el-table>
         </div>
-        <div class="pages">
+        <div class="pages clearfix">
           <el-pagination
             background
             layout="prev, pager, next"
@@ -150,7 +146,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="所属类型" prop="category">
+        <el-form-item label="所属类型">
           <el-cascader placeholder="请选择所属类型"
             v-model="form.category"
             :options="options"
@@ -178,7 +174,7 @@ export default{
       loading: false,
       page: {
         pageNo: 1,
-        pageSize: 10
+        pageSize: 20
       },
       filter: {
         article: '',
@@ -236,17 +232,21 @@ export default{
       this.$refs[formName].validate((valid) => {
         if (valid) {
           console.log('ok', this.form)
-          // this.$alert('<strong>添加成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
-          //   type: 'success',
+          this.$alert('<strong>添加成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
+            type: 'success',
+            dangerouslyUseHTMLString: true,
+            showClose: false,
+            confirmButtonText: '知道了'
+          }).then(() => {
+            this.$router.push({ path: '/paccount/list' })
+          })
+
+          // this.$alert('<strong>添加失败</strong><p>请稍后重试，或者联系技术解决</p>', {
+          //   type: 'error',
           //   dangerouslyUseHTMLString: true,
+          //   showClose: false,
           //   confirmButtonText: '知道了'
           // })
-
-          this.$alert('<strong>添加失败</strong><p>请稍后重试，或者联系技术解决</p>', {
-            type: 'error',
-            dangerouslyUseHTMLString: true,
-            confirmButtonText: '知道了'
-          })
         } else {
           console.log('error submit!!')
           return false
@@ -341,10 +341,14 @@ export default{
       padding-top: 18px;
     }
     .table-top{
-      display: flex;
-      justify-content: space-between;
+      // display: flex;
+      // justify-content: space-between;
+      .refresh-button{
+        margin-right: 10px;
+      }
       .date{
         color: #333;
+        display: inline-block;
       }
     }
   }
