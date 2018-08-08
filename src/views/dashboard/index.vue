@@ -2,7 +2,7 @@
   <div class="app-container dashboard-container">
     <div class="content">
       <p>您好，{{account.name}}。</p>
-      <p>当前管理城市是：成都 <el-button type="primary">切换城市</el-button></p>
+      <p>当前管理城市是：成都 <el-button type="text">切换城市</el-button></p>
       <p>您的管理角色是：超级管理员</p>
       <p>您可管理的城市是：成都、西安、重庆</p>
     </div>

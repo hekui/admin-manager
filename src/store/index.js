@@ -17,6 +17,7 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
+    cityId: '111',
     routerLoading: false, // 路由切换loading效果
     pstatus: {
       0: '正常',
