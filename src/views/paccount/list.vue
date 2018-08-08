@@ -41,7 +41,6 @@
     </div>
     <div class="form-wrapper">
       <div class="table-top">
-        <div class="tips gray">合计统计公众号 <span class="number">{{listData.totalRecords || '-'}}</span> 个。</div>
         <el-button type="primary" icon="el-icon-plus" @click="addHandle">新增公众号监控</el-button>
       </div>
       <div class="table-main">
@@ -56,7 +55,7 @@
             min-width="180">
             <template slot-scope="scope">
               <div class="pavatar">
-                <img src="/static/images/flogo.jpg" width="50" alt="">
+                <img src="/public/images/flogo.jpg" width="50" alt="">
                 <p class="name">{{scope.row.pname}}</p>
                 <p class="en-name">{{scope.row.penName}}</p>
               </div>
@@ -110,7 +109,8 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="pages">
+      <div class="pages clearfix">
+        <span class="demonstration">合计统计公众号<b class="number">{{listData.totalRecords || '-'}}</b> 个。</span>
         <el-pagination
           background
           layout="prev, pager, next"
@@ -133,7 +133,7 @@ export default {
       loading: false,
       page: {
         pageNo: 1,
-        pageSize: 10
+        pageSize: 20
       },
       filter: {
         name: '',
@@ -178,6 +178,10 @@ export default {
   },
   created() {
     this.fetchData()
+    this.$store.dispatch('testMock', {
+      ticketId: 'ticketId',
+      cityId: 'cityId'
+    })
     console.log('this', this)
   },
   methods: {

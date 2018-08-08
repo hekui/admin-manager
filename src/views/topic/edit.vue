@@ -18,12 +18,22 @@
         </el-select>
       </el-form-item>
       <el-form-item label="专题生效时间">
-        <el-date-picker
-          v-model="form.enabletime"
-          type="datetime"
-          placeholder="选择日期时间"
-          default-time="12:00:00">
-        </el-date-picker>
+        <div class="enable-time-wrapper">
+          <el-date-picker
+            v-model="form.enabletimebegin"
+            type="datetime"
+            placeholder="开始时间"
+            default-time="12:00:00">
+          </el-date-picker>
+          至
+          <el-date-picker
+            v-model="form.enabletimeend"
+            type="datetime"
+            placeholder="结束时间"
+            default-time="12:00:00">
+          </el-date-picker>
+        </div>
+
       </el-form-item>
       <el-form-item label="首页推荐">
         <el-radio v-model="form.recommend" label="1">是</el-radio>
@@ -36,12 +46,13 @@
       </el-form-item>
       <el-form-item label="专题头图">
         <el-upload
-          class="upload-demo"
-          drag
+          class="avatar-uploader"
           action="https://jsonplaceholder.typicode.com/posts/"
-          multiple>
-          <i class="el-icon-upload"></i>
-          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload">
+          <img v-if="form.imageUrl" :src="form.imageUrl" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </el-form-item>
       <el-form-item label="指向地址">
@@ -86,7 +97,9 @@
           name: '',
           subname: '',
           type: '选项1',
-          enabletime: '',
+          enabletimebegin: '',
+          enabletimeend: '',
+          imageUrl: '',
           recommend: '0',
           tag: [],
           focusaddress: '1',
@@ -112,6 +125,22 @@
     methods: {
       choosearticle() {
         this.showselectarticle = true
+      },
+
+      handleAvatarSuccess(res, file) {
+        this.form.imageUrl = URL.createObjectURL(file.raw)
+      },
+      beforeAvatarUpload(file) {
+        const isJPG = file.type === 'image/jpeg'
+        const isLt2M = file.size / 1024 / 1024 < 2
+
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!')
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!')
+        }
+        return isJPG && isLt2M
       }
     },
     components: {
@@ -119,20 +148,58 @@
     }
   }
 </script>
-<style lang="sass">
-  .topic-edit
-    .el-input
-      max-width: 500px
-    .url-wrapper
-      display: flex
-      justify-content: flex-start
-      .btn
-        margin-left: 10px
-        flex: 0 0
-    .savebtn
-      width: 200px
-    .dialog-content
-      height: 500px
-    .dialog-footer
 
+<style lang="scss">
+  .topic-edit {
+    .el-form {
+      .el-input {
+        max-width: 500px;
+      }
+      .avatar-uploader  {
+        .el-upload {
+          border: 1px dashed #d9d9d9;
+          border-radius: 6px;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          &:hover {
+            border-color: #409EFF;
+          }
+        }
+        .avatar-uploader-icon {
+          font-size: 28px;
+          color: #8c939d;
+          width: 178px;
+          height: 178px;
+          line-height: 178px;
+          text-align: center;
+        }
+        .avatar {
+          width: 178px;
+          height: 178px;
+          display: block;
+        }
+      }
+      .enable-time-wrapper {
+        color: #606266;
+      }
+      .url-wrapper {
+        display: flex;
+        justify-content: flex-start;
+        .btn {
+          margin-left: 10px;
+          flex: 0 0;
+        }
+      }
+      .savebtn {
+        width: 200px;
+      }
+    }
+    .el-dialog {
+      .dialog-content {
+        height: 500px;
+      }
+      .dialog-footer {}
+    }
+  }
 </style>

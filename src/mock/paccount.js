@@ -11,7 +11,7 @@ const data = {
   sortType: 'ASC',
   totalPage: 70,
   totalRecords: 694,
-  'list|10': [{
+  'list|20': [{
     'id|+1': 1,
     pimg: '图标',
     pname: Random.cname(),
@@ -34,9 +34,9 @@ const article = {
   pageSize: 20,
   qualification: 'EQ',
   sortType: 'ASC',
-  totalPage: 70,
-  totalRecords: 25,
-  'list|10': [{
+  totalPage: 3,
+  totalRecords: 50,
+  'list|20': [{
     'id|+1': 1,
     aname: Random.csentence(5, 30),
     cityName: Random.city(),
