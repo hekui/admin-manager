@@ -1,17 +1,40 @@
 const taglist = {
-  totalPage: 70,
   curPage: 1,
-  pageSize: 20,
+  nextPage: 2,
+  pageNum: 20, // 记录开始位置
+  totalPage: 70,
   totalRecords: 694,
+  previousPage: 1,
+  hasPrevious: false,
+  hasNext: true,
+  sortName: '',
+  sortType: 1, // 升序(asc, 1),降序(desc, 2)
+  pageSize: 20,
   'list|10': [{
     'id|+1': 1,
-    tagName: '成都房帮帮',
-    'order|+1': 1,
-    'guide|1': [0, 1], // 0：否 1：是
-    'tagType|1': [[], [1, 3], [1, 4], [2, 5], [2, 6]],
-    'status|1': [0, 1], // 0：锁定 1：激活
-    deliveryTime: '2018-8-12 13:33:00',
-    onlineTime: [new Date('2018-7-13 13:33:00'), new Date('2018-8-12 13:33:00')]
+    'name': '成都房帮帮',
+    'sequenceNum|+1': 1,
+    'hasGuide|1': [0, 1], // 0 是；1：否
+    'typeName|1': ['', '1级-2级'],
+    'labelStatus|1': [0, 1] // 0 激活；1：锁定
+  }]
+}
+
+const querybyid = {
+  'id': 1,
+  'name': '成都房帮帮',
+  'labelStatus': 0,
+  'sequenceNum': 1,
+  'hasGuide': 1,
+  'cityId': '51010000',
+  'typeName': 'typeName',
+  'typeDictList': [{
+    'id': 1,
+    'child': [
+      {
+        'id': 3
+      }
+    ]
   }]
 }
 
@@ -21,11 +44,16 @@ export default {
     msg: 'success',
     data: taglist
   },
+  querybyid: {
+    code: 0,
+    msg: 'success',
+    data: querybyid
+  },
   save: {
     code: 0,
     msg: 'success'
   },
-  offline: {
+  status: {
     code: 0,
     msg: 'success'
   }

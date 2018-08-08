@@ -38,7 +38,8 @@ export default {
   actions: {
     // 获取标签列表
     getTagList({ commit }, params) {
-      return api.post('/tag/list', params).then(res => {
+      params.cityId = '51010000'
+      return api.post('/label/list', params).then(res => {
         commit('tagSet', {
           target: 'listData',
           data: res.data
@@ -48,9 +49,28 @@ export default {
         return Promise.resolve(res)
       })
     },
+    // 根据标签id查询
+    queryTagById({ commit }, params) {
+      params.cityId = '51010000'
+      return api.post('/label/querybyid', params).then(res => {
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
+    // 切换标签状态
+    changeTagStatus({ commit }, params) {
+      params.cityId = '51010000'
+      return api.post('/label/status', params).then(res => {
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
     // 新增/修改一条标签
     saveAdvert({ commit }, params) {
-      return api.post('/tag/save', params).then(res => {
+      params.cityId = '51010000'
+      return api.post('/label/saveoredit', params).then(res => {
         return res
       }, res => {
         return Promise.resolve(res)

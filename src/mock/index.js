@@ -43,8 +43,9 @@ Mock.mock(/\/advert\/list/, advert.list)
 Mock.mock(/\/advert\/save/, advert.save)
 Mock.mock(/\/advert\/offline/, advert.offline)
 // 标签管理相关
-Mock.mock(/\/tag\/list/, tag.list)
-Mock.mock(/\/tag\/save/, tag.save)
-Mock.mock(/\/tag\/status/, tag.status)
+Mock.mock(/\/label\/list/, tag.list)
+Mock.mock(/\/label\/querybyid/, tag.querybyid)
+Mock.mock(/\/label\/saveoredit/, tag.save)
+Mock.mock(/\/label\/status/, tag.status)
 
 export default Mock
