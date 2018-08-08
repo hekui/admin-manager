@@ -4,18 +4,18 @@ const log = require('./../log')('api')
 // RAP2 mock
 const mock = require('./../mock')
 router.all('*', function(req, res, next){
-  console.log('req.session.user')
-  if(req.session.user){
-    console.log(req.session.user)
-  }else{
-    console.log('not fond')
-  }
-  console.log(req.session)
+  // console.log('req.session.user')
+  // if(req.session.user){
+  //   console.log(req.session.user)
+  // }else{
+  //   console.log('not fond')
+  // }
+  // console.log(req.session)
   mock(req).then(result => {
-    req.session.user = {
-      name: 'hekui',
-      sex: 'male'
-    }
+    // req.session.user = {
+    //   name: 'hekui',
+    //   sex: 'male'
+    // }
     res.json(result)
   }).catch(error => {
     let response = {

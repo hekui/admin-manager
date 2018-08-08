@@ -48,10 +48,10 @@ export default {
         return Promise.resolve(res)
       })
     },
+    // 服务端转rap2接口 demo
     testMock({ commit }, params) {
-      // 获取公众号列表代码
       console.log('params', params)
-      return api.get('/label/citylabel', params).then(res => {
+      return api.post('/typedict/list', params).then(res => {
         console.log(res)
         return res
       }, res => {

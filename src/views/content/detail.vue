@@ -1,3 +1,8 @@
+/**
+ * @description: 内容详情及二次编辑管理
+ * @author: zhangchenle
+ * @date: 2018-8-6
+ */
 <template>
   <div class="detail-container">
     <div class="content-container">
@@ -29,40 +34,38 @@
           </div>
         </div>
       </section>
-      <section v-if="showDialog" class="dialog">
-        <div class="message-box">
-          <div class="title">{{dialogTitle}}</div>
-          <template v-if="dialogType==='lonlat'">
-            <div class="origin">数据来源：高德地图</div>
-            <div class="map">
-              <el-input v-model="binding.lonlat" placeholder="请输入经纬度"></el-input>
-            </div>
-          </template>
-          <template v-if="dialogType==='articleType'">
-            <div class="type">
-              <el-form :inline="true">
-                <el-form-item label="公众号类型：">
-                  <el-cascader
-                    expand-trigger="hover"
-                    :options="articleOptions"
-                    v-model="binding.articleType">
-                  </el-cascader>
-                </el-form-item>
-              </el-form>
-            </div>
-          </template>
-          <template v-if="dialogType==='tags'">
-            <div class="tags">
-              <el-button v-for="item in tagOptions" :key="item" :type="tagFilter(item)" @click="handleTags(item)">{{item}}</el-button>
-            </div>
-          </template>
-          <div class="btn-group">
-            <el-button size="mini" @click="handleCancel">取 消</el-button>
-            <el-button type="primary" size="mini" @click="handleConfirm">确 定</el-button>
-          </div>
-        </div>
-      </section>
     </div>
+    <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
+      <template v-if="dialogType==='lonlat'">
+        <div class="origin">数据来源：高德地图</div>
+        <div class="map">
+          <el-input v-model="binding.lonlat" placeholder="请输入经纬度" :clearable="true"></el-input>
+        </div>
+      </template>
+      <template v-if="dialogType==='articleType'">
+        <div class="type">
+          <el-form :inline="true">
+            <el-form-item label="公众号类型：">
+              <el-cascader
+                expand-trigger="hover"
+                :options="articleOptions"
+                v-model="binding.articleType"
+                :clearable="true">
+              </el-cascader>
+            </el-form-item>
+          </el-form>
+        </div>
+      </template>
+      <template v-if="dialogType==='tags'">
+        <div class="tags">
+          <el-button v-for="item in tagOptions" :key="item" :type="tagFilter(item)" @click="handleTags(item)">{{item}}</el-button>
+        </div>
+      </template>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="handleCancel">取 消</el-button>
+          <el-button type="primary" size="mini" @click="handleConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -176,18 +179,29 @@ export default {
     },
     // 保存
     handleSave() {
-      this.loading = true
-      this.$store.dispatch('saveContentEdit').then(() => {
-        this.loading = false
-        this.$message({
-          message: '保存成功！',
-          type: 'success'
+      this.$confirm('是否要保存?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        this.$store.dispatch('saveContentEdit').then(() => {
+          this.loading = false
+          this.$message({
+            message: '保存成功！',
+            type: 'success'
+          })
+        }).catch(() => {
+          this.loading = false
+          this.$message({
+            message: '保存失败！',
+            type: 'error'
+          })
         })
       }).catch(() => {
-        this.loading = false
         this.$message({
-          message: '保存失败！',
-          type: 'error'
+          type: 'info',
+          message: '已取消操作!'
         })
       })
     }
@@ -202,7 +216,9 @@ export default {
   color: #606266;
   .content-container {
     padding: 10px 20px;
-    min-height: 100%;
+    height: 100%;
+    overflow: hidden;
+    overflow-y: auto;
     .link {
       margin: 20px 0;
       display: flex;
@@ -279,41 +295,36 @@ export default {
       }
     }
   }
-  .dialog {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #666;
-    font-size: 14px;
-    z-index: 1000;
-    .message-box {
-      padding: 20px;
-      width: 400px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-shadow: 0 0 4px #ccc;
-      background: #fff;
-      .title {
-        margin-bottom: 20px;
-      }
+}
+</style>
+<style rel="stylesheet/scss" lang="scss">
+.detail-container {
+  .el-dialog {
+    width: 400px;
+    border-radius: 5px;
+    .el-dialog__title {
+      font-size: 14px;
+    }
+    .el-dialog__body {
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
       .origin {
-        color: #999;
-        font-size: 12px;
         margin-bottom: 20px;
       }
-      .map, .type, .tags {
-        margin-bottom: 20px;
+      .map {
+        .el-input {
+          width: 100%;
+        }
       }
-      .tags .el-button {
-        margin: 0 10px 10px 0;
-      }
+    }
+    .el-input {
+      width: 250px;
+      font-size: 12px;
+    }
+    .el-form-item__label {
+      width: 90px;
+      font-size: 12px;
     }
   }
 }
-  
 </style>

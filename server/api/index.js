@@ -18,16 +18,19 @@ class Api {
             'Content-Type': 'application/json'
           }
         }
-        method === 'get' ? options.params = data : options.data = data
+        // data 数据处理
+        let _data = this.getData(data)
+        options.data = _data
+        console.log('options', options)
         axios(options).then(res => {
-          log.trace(`${url} - request data - ${JSON.stringify(data)} - response data - ${JSON.stringify(res.data)}`)
+          log.trace(`${url} - request data - ${JSON.stringify(_data)} - response data - ${JSON.stringify(res.data)}`)
           if (res.status === 200) {
-            // 数据解密
-            let data = this.decryptData(res.data)
-            if (data.code === 0) {
-              resolve(data)
+            if (res.code === 0) {
+              // 数据解密
+              let result = Object.assign(res, res.data ? {data: this.decryptData(res.data)} : {})
+              resolve(result)
             } else {
-              reject(data)
+              reject(res)
             }
           }
         }).catch(error => {
@@ -38,6 +41,15 @@ class Api {
       })
     })
   }
+  getData(data){
+    return Object.assign({}, this.getCommonParams(), {
+      deviceNo: '6DN_2BJ0PRp7dafgmqXsgf3e9UQ0AyIV',
+      data: this.encryptData(data)
+    })
+  }
+  encryptData(data){
+    return encodeURIComponent(new Buffer(JSON.stringify(data)).toString("base64"))
+  }
   /**
    * 公共参数
    */
@@ -47,7 +59,7 @@ class Api {
       version: "1.0.0", //接口版本
       userver: 2,
       utype: 2,
-      cityId: '1',
+      cityId: '51010000',
       deviceType: 2, //设备类型
       // deviceNo: req.sessionID,
       ticketId: ''
@@ -62,7 +74,7 @@ class Api {
       let result = JSON.parse(new Buffer(data, 'base64').toString())
       return result
     } catch (error) {
-      log.fatal(`decryptData error - input data - ${data} - ${error}`)
+      log.fatal(`decryptData error - input data - ${JSON.stringify(data)} - ${error}`)
       return data
     }
   }

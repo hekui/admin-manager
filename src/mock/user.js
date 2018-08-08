@@ -16,6 +16,7 @@ const data = {
     openId: '2343254grgdfsggs',
     status: '第方',
     type: '暂无',
+    opera: '-',
   }]
 }
 

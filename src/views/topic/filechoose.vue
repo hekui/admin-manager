@@ -12,11 +12,21 @@
     </div>
     <div class="table">
       <el-table
-        :data="data"
+        ref="sigletable"
+        :data="listData.list"
+        highlight-current-row
+        @current-change="tableCurrentChange"
         v-loading="loading"
         fit="true"
         border
         style="width: 100%">
+        <el-table-column
+          label=""
+          width="45">
+          <template slot-scope="scope">
+            <el-radio v-model="currentRow" :label="scope.row.id">{{''}}</el-radio>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="id"
           label="序号"
@@ -25,7 +35,7 @@
         <el-table-column
           prop="name"
           label="公众号名称"
-          min-width="140">
+          width="140">
         </el-table-column>
         <el-table-column
           prop="city"
@@ -35,7 +45,7 @@
         <el-table-column
           prop="articletitle"
           label="文章标题"
-          width="120">
+          min-width="120">
         </el-table-column>
         <el-table-column
           prop="publish-date"
@@ -54,9 +64,15 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="result">
-      <el-button @click="$emit('closearticle')">取消</el-button>
-      <el-button type="primary">确定</el-button>
+    <div class="pages">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        @current-change="changePage"
+        :current-page="page.pageNo"
+        :page-size="listData.pageSize"
+        :total="listData.totalRecords">
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -68,25 +84,44 @@
     name: 'topicList',
     data() {
       return {
+        currentRow: '',
         filename: '',
         loading: false,
-        data: []
+        page: {
+          pageNo: 1,
+          pageSize: 10
+        },
+        listData: {
+          totalPage: 0,
+          curPage: 1,
+          pageSize: 10,
+          totalRecords: 0,
+          list: []
+        }
+      }
+    },
+    watch: {
+      currentRow() {
+        console.log(this.currentRow)
       }
     },
     created() {
       this.submitFilter()
     },
     methods: {
+      tableCurrentChange(row) {
+        this.currentRow = row.id
+      },
       submitFilter() {
         api.post('/topic/articlesearch', { 'filter': this.filename }).then(res => {
-          this.data = res.data
+          this.listData = res.data
         }, res => {
           console.log('error')
         })
       },
-      close() {
-        console.log('asdasdadasdas')
-        this.$emit('closearticle')
+      changePage(curPage) {
+        this.page.pageNo = curPage
+        this.fetchData()
       }
     }
   }
@@ -98,14 +133,10 @@
     height: 100%
     width: 100%
     background: white
-    padding: 20px
     .filter
       flex: 0 0
     .table
       flex: 1 1
-      border: solid #46a0fc
+      border: solid #ebeef5
       overflow: scroll
-      margin-bottom: 10px
-    .result
-      flex: 0 0
 </style>

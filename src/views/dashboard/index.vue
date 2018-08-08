@@ -1,6 +1,11 @@
 <template>
-  <div class="dashboard-container">
-    <div>后台首页</div>
+  <div class="app-container dashboard-container">
+    <div class="content">
+      <p>您好，{{account.name}}。</p>
+      <p>当前管理城市是：成都 <el-button type="primary">切换城市</el-button></p>
+      <p>您的管理角色是：超级管理员</p>
+      <p>您可管理的城市是：成都、西安、重庆</p>
+    </div>
     <!-- <component :is="currentRole"></component> -->
   </div>
 </template>
@@ -21,7 +26,8 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'roles'
+      'roles',
+      'account'
     ])
   },
   created() {
@@ -31,3 +37,10 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.dashboard-container{
+  .content{
+    margin: 200px auto; text-align: center;
+  }
+}
+</style>

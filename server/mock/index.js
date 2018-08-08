@@ -3,7 +3,7 @@ const axios = require('axios')
 const log = require('./../log')('java')
 
 function mock(req){
-  let baseUrl = 'http://rap2s.maifangma.com/app/mock/14/'
+  let baseUrl = 'http://rap2s.maifangma.com/app/mock/16/'
   let url = `${baseUrl}${req.method}${req.url}`
   // return api.get(url, req.body)
   return axios({
