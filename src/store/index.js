@@ -14,7 +14,7 @@ import feedback from './modules/feedback'
 import advert from './modules/advert'
 import tag from './modules/tag'
 import category from './modules/category'
-
+import api from './../api'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -42,37 +42,7 @@ const store = new Vuex.Store({
       1: '锁定',
       2: '停用'
     },
-    options: [
-      {
-        'id': '154',
-        'name': '类型一',
-        'code': '1001',
-        'parentId': '1',
-        'typeStatus': 0,
-        'remark': '备注',
-        'childList': [
-          {
-            'id': '18184',
-            'name': '类型一子一',
-            'code': '1001001',
-            'parentId': '154',
-            'typeStatus': 0,
-            'remark': '备注',
-            'childList': [
-              {
-                'id': '1818418541',
-                'name': '类型一子一子十六',
-                'code': '1001001016',
-                'parentId': '18184',
-                'typeStatus': 1,
-                'remark': '备注',
-                'childList': []
-              }
-            ]
-          }
-        ]
-      }
-    ],
+    typedict: [],
     ptype: [{
       id: 1,
       name: '房企'
@@ -101,7 +71,24 @@ const store = new Vuex.Store({
           state.cityName = option.cityName
         }
       })
+    },
+    stateSet(state, data) {
+      state[data['target']] = data['data']
     }
+  },
+  actions: {
+    // 获取指定城市下指定指定顶级类型下所有子项
+    getTypeDict({ commit }, params) {
+      return api.post('/typedict/list', params).then(res => {
+        commit('stateSet', {
+          target: 'typedict',
+          data: res.data.list
+        })
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
   },
   modules: {
     app,

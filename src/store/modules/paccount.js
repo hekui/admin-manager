@@ -37,8 +37,8 @@ export default {
      * @returns {Object} Promise 约定所有actions方法均返回Promise对象
      */
     getPaccountList({ commit }, params) {
-      // 获取公众号列表代码
-      return api.post('/subscription/find?page=true', params).then(res => {
+      // 公众号列表-分页
+      return api.post('/subscription/list?page=true', params).then(res => {
         commit('paccountSet', {
           target: 'listData',
           data: res.data
@@ -48,19 +48,9 @@ export default {
         return Promise.resolve(res)
       })
     },
-    // 服务端转rap2接口 demo
-    testMock({ commit }, params) {
-      console.log('params', params)
-      return api.post('/typedict/list', params).then(res => {
-        console.log(res)
-        return res
-      }, res => {
-        return Promise.resolve(res)
-      })
-    },
     getArticleList({ commit }, params) {
-      // 获取公众号文章列表代码
-      return api.post('/subscription/list', params).then(res => {
+      // 公众号详情-分页
+      return api.post('/subscription/detail?page=true', params).then(res => {
         commit('paccountSet', {
           target: 'articleData',
           data: res.data

@@ -6,7 +6,7 @@
           <el-input v-model="filter.name" :clearable="true"></el-input>
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="filter.status" :clearable="true" placeholder="活动状态">
+          <el-select v-model="filter.wechatStatus" :clearable="true" placeholder="活动状态">
             <el-option label="启用" value="0"></el-option>
             <el-option label="锁定" value="1"></el-option>
             <el-option label="停用" value="2"></el-option>
@@ -14,7 +14,7 @@
         </el-form-item>
         <el-form-item label="类型">
           <el-cascader
-            v-model="filter.category"
+            v-model="filter.typeId"
             :options="options"
             :clearable="true"
             change-on-select
@@ -43,6 +43,8 @@
       <div class="table-top">
         <el-button type="primary" icon="el-icon-plus" @click="addHandle">新增公众号监控</el-button>
       </div>
+
+      
       <div class="table-main">
         <el-table
           :data="listData.list"
@@ -55,9 +57,9 @@
             min-width="180">
             <template slot-scope="scope">
               <div class="pavatar">
-                <img src="/public/images/flogo.jpg" width="50" alt="">
-                <p class="name">{{scope.row.pname}}</p>
-                <p class="en-name">{{scope.row.penName}}</p>
+                <img :src="scope.row.headImg" width="50" alt="">
+                <p class="name">{{scope.row.name}}</p>
+                <p class="en-name">{{scope.row.wechatAccount}}</p>
               </div>
             </template>
           </el-table-column>
@@ -71,31 +73,37 @@
             label="状态"
             width="120">
             <template slot-scope="scope">
-              {{pstatus[scope.row.status]}}
+              {{pstatus[scope.row.wechatStatus]}}
             </template>
           </el-table-column>
           <el-table-column
-            prop="type"
+            prop="classify"
             label="分类"
             width="120">
+            <template slot-scope="scope">
+              {{ptype[scope.row.classify]}}
+            </template>
           </el-table-column>
           <el-table-column
-            prop="type"
+            prop="types"
             label="类型"
             width="180">
+            <template slot-scope="scope">
+              {{  listData.types[0] }}
+            </template>
           </el-table-column>
           <el-table-column
-            prop="add-date"
+            prop="createTime"
             label="添加时间"
             width="120">
           </el-table-column>
           <el-table-column
-            prop="last-date"
+            prop="lastRecordTime"
             label="最后收录时间"
             width="120">
           </el-table-column>
           <el-table-column
-            prop="count"
+            prop="articleNum"
             label="收录文章数量"
             width="120">
           </el-table-column>
@@ -110,12 +118,12 @@
         </el-table>
       </div>
       <div class="pages clearfix">
-        <span class="demonstration">合计统计公众号<b class="number">{{listData.totalRecords || '-'}}</b> 个。</span>
+        <span class="demonstration">合计统计公众号<b class="number"> {{listData.totalRecords || '-'}}</b> 个。</span>
         <el-pagination
           background
           layout="prev, pager, next"
           @current-change="changePage"
-          :current-page="page.pageNo"
+          :current-page="page.curPage"
           :page-size="listData.pageSize"
           :total="listData.totalRecords">
         </el-pagination>
@@ -132,13 +140,13 @@ export default {
     return {
       loading: false,
       page: {
-        pageNo: 1,
+        curPage: 1,
         pageSize: 20
       },
       filter: {
-        id: '1234567890',
         name: '',
-        category: [],
+        wechatStatus: 0,
+        typeId: '',
         date: ''
       },
       pickerOptions: { // 日期快捷选项
@@ -172,34 +180,43 @@ export default {
   },
   computed: {
     ...mapState({
-      options: state => state.options,
+      cityId: state => state.cityId,
+      options: state => state.typedict,
       pstatus: state => state.pstatus,
+      ptype: state => state.ptype,
       listData: state => state.paccount.listData
     })
   },
   created() {
     this.fetchData()
-    this.$store.dispatch('testMock', {
-      cityId: 51010000
-    })
-    console.log('this', this)
+    // console.log('this', this)
   },
   methods: {
     fetchData() {
       console.log('this.filter', this.filter)
+
+      this.$store.dispatch('getTypeDict', {
+        cityId: this.cityId
+      })
+      const params = {
+        startTime: this.filter.date[0],
+        endTime: this.filter.date[1]
+      }
+      const a = Object.assign({}, this.filter, params)
+
       this.loading = true
-      this.$store.dispatch('getPaccountList', Object.assign({}, this.filter, this.page)).then(() => {
+      this.$store.dispatch('getPaccountList', Object.assign({}, a, this.page)).then(() => {
         this.loading = false
       }).catch(() => {
         this.loading = false
       })
     },
     submitFilter() {
-      this.page.pageNo = 1
+      this.page.curPage = 1
       this.fetchData()
     },
     changePage(curPage) {
-      this.page.pageNo = curPage
+      this.page.curPage = curPage
       this.fetchData()
     },
     addHandle() {

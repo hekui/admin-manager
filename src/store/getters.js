@@ -17,7 +17,7 @@ const getters = {
   addRouters: state => state.permission.addRouters,
   errorLogs: state => state.errorLog.logs,
   types: state => {
-    const arr = state.options
+    const arr = state.typedict
     function filterType(arr) {
       if (Object.prototype.toString.call(arr) === '[object Array]') {
         arr.map((item) => filterType(item))
