@@ -104,14 +104,23 @@
       </section>
     </div>
     <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
-      <el-form :model="form">
-        <el-form-item label="广告名称*：">
+      <el-form ref="form" :model="form" :rules="rules">
+        <el-form-item label="广告名称：" prop="adName">
           <el-input v-model="form.adName" placeholder="请输入名称" :clearable="true"></el-input>
         </el-form-item>
-        <el-form-item label="广告头图*：">
-          <el-input v-model="form.adPicture" placeholder="选择图片" :clearable="true"></el-input>
+        <el-form-item label="广告头图：" prop="adPicture">
+          <el-upload
+            class="upload-demo"
+            ref="upload"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :file-list="fileList"
+            :auto-upload="false">
+            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+          </el-upload>
         </el-form-item>
-        <el-form-item label="启用时间*：">
+        <el-form-item label="启用时间：" prop="onlineTime">
           <el-date-picker
             v-model="form.onlineTime"
             type="datetimerange"
@@ -131,7 +140,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="handleCancel">取 消</el-button>
-          <el-button type="primary" size="mini" @click="handleConfirm">确 定</el-button>
+          <el-button type="primary" size="mini" @click="handleConfirm('form')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -185,9 +194,20 @@ export default {
       form: {
         id: '',
         adName: '',
-        adPicture: '',
+        adPicture: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }],
         onlineTime: [],
         url: ''
+      },
+      rules: {
+        adName: [
+          { required: true, message: '请输入广告名称', trigger: ['change', 'blur'] }
+        ],
+        adPicture: [
+          { required: true, message: '请选择广告头图', trigger: ['change', 'blur'] }
+        ],
+        onlineTime: [
+          { required: true, message: '请选择启用时间', trigger: ['change', 'blur'] }
+        ]
       }
     }
   },
@@ -284,7 +304,7 @@ export default {
       this.form = {
         id: '',
         adName: '',
-        adPicture: '',
+        adPicture: [],
         onlineTime: [],
         url: ''
       }
@@ -303,33 +323,37 @@ export default {
       this.showDialog = false
     },
     // 提交新增/编辑
-    handleConfirm() {
-      this.$confirm('是否要提交?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.loading = true
-        this.$store.dispatch('saveAdvert', this.form).then(() => {
-          this.loading = false
-          this.$message({
-            type: 'success',
-            message: '操作成功!'
+    handleConfirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$confirm('是否要提交?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.loading = true
+            this.$store.dispatch('saveAdvert', this.form).then(() => {
+              this.loading = false
+              this.$message({
+                type: 'success',
+                message: '操作成功!'
+              })
+              this.showDialog = false
+              this.fetchData()
+            }).catch(() => {
+              this.loading = false
+              this.$message({
+                message: '操作失败！',
+                type: 'error'
+              })
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消操作!'
+            })
           })
-          this.showDialog = false
-          this.fetchData()
-        }).catch(() => {
-          this.loading = false
-          this.$message({
-            message: '操作失败！',
-            type: 'error'
-          })
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消操作!'
-        })
+        }
       })
     },
   }
@@ -388,6 +412,9 @@ export default {
     .el-form-item__label {
       width: 90px;
       font-size: 12px;
+    }
+    .el-form-item__error {
+      margin-left: 90px;
     }
   }
 }

@@ -8,6 +8,7 @@ import user from './user'
 import feedback from './feedback'
 import advert from './advert'
 import tag from './tag'
+import category from './category'
 
 Mock.setup({
   timeout: '350-600'
@@ -47,5 +48,11 @@ Mock.mock(/\/label\/list/, tag.list)
 Mock.mock(/\/label\/querybyid/, tag.querybyid)
 Mock.mock(/\/label\/saveoredit/, tag.save)
 Mock.mock(/\/label\/status/, tag.status)
+// 类型管理相关
+Mock.mock(/\/typedict\/list/, category.list)
+Mock.mock(/\/typedict\/querybyid/, category.querybyid)
+Mock.mock(/\/typedict\/saveoredit/, category.save)
+Mock.mock(/\/typedict\/editstatus/, category.status)
+Mock.mock(/\/typedict\/delete/, category.delete)
 
 export default Mock

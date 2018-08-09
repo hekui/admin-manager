@@ -101,7 +101,7 @@
             <el-radio :label="1">锁定</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="类型：" prop="typeId">
+        <el-form-item label="类型：">
           <el-cascader
             expand-trigger="hover"
             :options="tagOptions"
@@ -145,15 +145,14 @@ export default {
       },
       rules: {
         name: [
-          { required: true, message: '请输入标签名称', trigger: 'blur' }
+          { required: true, message: '请输入标签名称', trigger: ['change', 'blur'] }
         ],
         hasGuide: [
           { required: true, message: '请选择是否前端引导', trigger: 'change' }
         ],
         labelStatus: [
           { required: true, message: '请选择标签状态', trigger: 'change' }
-        ],
-        typeId: []
+        ]
       }
     }
   },
@@ -267,7 +266,7 @@ export default {
           }).then(() => {
             this.dialogLoading = true
             const param = Object.assign({}, this.form)
-            param.typeId = param.typeId.pop() // 取最后一个元素作为typeId保存到数据库
+            param.typeId = param.typeId.pop() || '' // 取最后一个元素作为typeId保存到数据库
             this.$store.dispatch('saveAdvert', param).then(() => {
               this.dialogLoading = false
               this.$message({
