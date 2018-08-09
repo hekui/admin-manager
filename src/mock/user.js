@@ -10,13 +10,12 @@ const data = {
   totalRecords: 214,
   'list|20': [{
     'id|+1': 1,
-    nickName: 'haha',
-    registerTime: '2018-09-21',
+    userName: 'haha',
+    createTime: '2018-09-21',
     userId: 'afefefewfe34rfdsgfdg',
-    openId: '2343254grgdfsggs',
+    openid: '2343254grgdfsggs',
     status: '第方',
     type: '暂无',
-    opera: '-',
   }]
 }
 

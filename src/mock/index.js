@@ -4,7 +4,7 @@ import account from './account'
 import content from './content'
 import topic from './topic'
 import articlesearch from './articlesearch'
-import user from './user'
+// import user from './user'
 import feedback from './feedback'
 import advert from './advert'
 import tag from './tag'
@@ -33,7 +33,7 @@ Mock.mock(/\/topic\/list/, topic)
 Mock.mock(/\/topic\/articlesearch/, articlesearch)
 
 // 用户管理
-Mock.mock(/\/user\/list/, user)
+// Mock.mock(/\/user\/list/, user)
 // 用户反馈
 Mock.mock(/\/feedback\/list/, feedback)
 
