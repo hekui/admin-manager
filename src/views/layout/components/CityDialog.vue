@@ -32,8 +32,16 @@ export default {
     },
     // 确认切换城市
     handleConfirm() {
-      setCity(this.$store, this.cityId)
-      document.location.href = '/'
+      if (this.cityId === this.$store.state.cityId) {
+        this.hideCityDialog()
+        this.$message({
+          type: 'info',
+          message: '您已经选择了该城市！'
+        })
+      } else {
+        setCity(this.$store, this.cityId)
+        document.location.href = '/'
+      }
     },
     // 关闭
     close() {
