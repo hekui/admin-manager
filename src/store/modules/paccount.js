@@ -38,7 +38,7 @@ export default {
      */
     getPaccountList({ commit }, params) {
       // 获取公众号列表代码
-      return api.post('/paccount/list', params).then(res => {
+      return api.post('/subscription/find?page=true', params).then(res => {
         commit('paccountSet', {
           target: 'listData',
           data: res.data
@@ -60,7 +60,7 @@ export default {
     },
     getArticleList({ commit }, params) {
       // 获取公众号文章列表代码
-      return api.post('/paccount/article', params).then(res => {
+      return api.post('/subscription/list', params).then(res => {
         commit('paccountSet', {
           target: 'articleData',
           data: res.data

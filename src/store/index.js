@@ -23,27 +23,37 @@ const store = new Vuex.Store({
       1: '锁定',
       2: '停用'
     },
-    options: [{
-      value: 1,
-      label: '一级分类1',
-      children: [{
-        value: 3,
-        label: '二级分类1'
-      }, {
-        value: 4,
-        label: '二级分类2'
-      }]
-    }, {
-      value: 2,
-      label: '一级分类2',
-      children: [{
-        value: 5,
-        label: '二级分类1'
-      }, {
-        value: 6,
-        label: '二级分类2'
-      }]
-    }],
+    options: [
+      {
+        'id': '154',
+        'name': '类型一',
+        'code': '1001',
+        'parentId': '1',
+        'typeStatus': 0,
+        'remark': '备注',
+        'childList': [
+          {
+            'id': '18184',
+            'name': '类型一子一',
+            'code': '1001001',
+            'parentId': '154',
+            'typeStatus': 0,
+            'remark': '备注',
+            'childList': [
+              {
+                'id': '1818418541',
+                'name': '类型一子一子十六',
+                'code': '1001001016',
+                'parentId': '18184',
+                'typeStatus': 1,
+                'remark': '备注',
+                'childList': []
+              }
+            ]
+          }
+        ]
+      }
+    ],
     ptype: [{
       id: 1,
       name: '房企'

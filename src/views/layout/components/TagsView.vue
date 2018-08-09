@@ -5,7 +5,7 @@
       <router-link ref='tag' class="tags-view-item" :class="isActive(tag)?'active':''" v-for="tag in Array.from(visitedViews)"
         :to="tag" :key="tag.path" @contextmenu.prevent.native="openMenu(tag,$event)">
         {{generateTitle(tag.title)}}
-        <span class="el-icon-close" @click.prevent.stop='closeSelectedTag(tag)'></span>
+        <span :class="[ visitedViews.length > 1 ? 'el-icon-close' : 'el-icon-none']" @click.prevent.stop='closeSelectedTag(tag)'></span>
       </router-link>
 
       <!-- <el-tabs v-model="visitedViews" type="card" closable>
@@ -150,22 +150,29 @@ export default {
       &:hover {
         padding-left: 10px;
         padding-right: 12px;
+        &:first-child {
+          padding-left: 10px;
+          padding-right: 14px;
+        }
         .el-icon-close {
           width: 16px;
         }
       }
       &.active {
-        // padding: 0 20px;
+        padding: 0 10px 0 20px;
         color: #409eff;
         background: #fff;
         border-bottom: none;
+        &:first-child {
+          padding: 0 20px;
+        }
+        .el-icon-close {
+          width: 16px;
+        }
       }
       &:first-child {
         border-top-left-radius: 5px;
-        padding: 0 20px;
-      }
-      &:first-child .el-icon-close {
-        display: none;
+        padding:  0  20px;
       }
       &:last-child {
         border-top-right-radius: 5px;

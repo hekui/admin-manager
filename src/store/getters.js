@@ -15,6 +15,36 @@ const getters = {
   setting: state => state.account.setting,
   permission_routers: state => state.permission.routers,
   addRouters: state => state.permission.addRouters,
-  errorLogs: state => state.errorLog.logs
+  errorLogs: state => state.errorLog.logs,
+  types: state => {
+    const arr = state.options
+    function filterType(arr) {
+      if (Object.prototype.toString.call(arr) === '[object Array]') {
+        arr.map((item) => filterType(item))
+      } else {
+        if (Object.prototype.toString.call(arr) === '[object Object]') {
+          for (var key in arr) {
+            if (key === 'id') {
+              arr['value'] = arr[key]
+            }
+            if (key === 'name') {
+              arr['label'] = arr[key]
+            }
+            if (key === 'childList') {
+              arr['children'] = arr[key]
+            }
+            delete arr[key]
+          }
+          if (!arr['children'].length) {
+            delete arr['children']
+          }
+          if (arr['children'] instanceof Array && arr['children'].length) {
+            filterType(arr['children'])
+          }
+        }
+      }
+    }
+    filterType(arr)
+  }
 }
 export default getters
