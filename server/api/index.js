@@ -1,36 +1,40 @@
 const axios = require('axios')
+const querystring = require('querystring')
 const log = require('./../log')('java')
-const methods = ['get', 'post']
+const methods = ['post']
+const config = require('./config')
 
 class Api {
   constructor() {
     methods.forEach(method => {
-      this[method] = (url, data = {}) => new Promise((resolve, reject) => {
+      this[method] = (baseUrl = '', req, data = {}) => new Promise((resolve, reject) => {
+        let url = baseUrl + req.path
+        console.log('url', url)
         const options = {
           method: method,
           url: url,
           withCredentials: true,
-          timeout: 5000,
+          timeout: config.timeout,
           headers: {
-            // 'X-Requested-With': 'XMLHttpRequest',
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-            'token': '111',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/x-www-form-urlencoded',
+            // 'Content-Type': 'application/json'
           }
         }
         // data 数据处理
-        let _data = this.getData(data)
-        options.data = _data
-        console.log('options', options)
+        let rquestData = querystring.stringify(this.getData(req, data))
+        options.data = rquestData
+        // console.log('options', options)
         axios(options).then(res => {
-          log.trace(`${url} - request data - ${JSON.stringify(_data)} - response data - ${JSON.stringify(res.data)}`)
           if (res.status === 200) {
-            if (res.code === 0) {
+            let result = res.data
+            if (result.code === 0) {
               // 数据解密
-              let result = Object.assign(res, res.data ? {data: this.decryptData(res.data)} : {})
-              resolve(result)
+              let decryptResult = Object.assign(result, res.data.data ? {data: this.decryptData(result.data)} : {})
+              log.trace(`${url} - request data: - ${JSON.stringify(rquestData)} - data: ${JSON.stringify(data)} - response data: - ${JSON.stringify(decryptResult)}`)
+              resolve(decryptResult)
             } else {
-              reject(res)
+              log.error(`${url} - request data: - ${JSON.stringify(rquestData)} - data: ${JSON.stringify(data)} - response data: - ${JSON.stringify(result)}`)
+              reject(result)
             }
           }
         }).catch(error => {
@@ -41,32 +45,42 @@ class Api {
       })
     })
   }
-  getData(data){
-    return Object.assign({}, this.getCommonParams(), {
-      deviceNo: '6DN_2BJ0PRp7dafgmqXsgf3e9UQ0AyIV',
+  /**
+   * 处理参数，拼接公共参数及业务参数加密
+  */
+  getData(req, data){
+    return Object.assign({}, this.getCommonParams({
+      sessionID: req.sessionID,
+      ticketId: req.session.ticketId || '',
+      cityId: req.headers.cityid || 51010000,
+    }), {
       data: this.encryptData(data)
     })
-  }
-  encryptData(data){
-    return encodeURIComponent(new Buffer(JSON.stringify(data)).toString("base64"))
   }
   /**
    * 公共参数
    */
-  getCommonParams(){
+  getCommonParams({cityId, ticketId, deviceNo}){
     return {
+      repositoryId: 16, // rap2模拟时用
+      cityId,
+      deviceNo,
+      ticketId,
       encryMode: 2, // 加密方式
       version: "1.0.0", //接口版本
       userver: 2,
       utype: 2,
-      cityId: '51010000',
       deviceType: 2, //设备类型
-      // deviceNo: req.sessionID,
-      ticketId: ''
     }
   }
+  /** 
+   * 加密数据
+  */
+  encryptData(data){
+    return encodeURIComponent(new Buffer(JSON.stringify(data)).toString("base64"))
+  }
   /**
-   * 解密data数据
+   * 解密数据
    * @param {Object} data
    */
   decryptData(data){
@@ -77,6 +91,19 @@ class Api {
       log.fatal(`decryptData error - input data - ${JSON.stringify(data)} - ${error}`)
       return data
     }
+  }
+  // 输出多个服务端方法
+  fetch(host = 'webHost', req, data){
+    return this.post(config[host], req, data)
+  }
+  fetchWeb(req, data){
+    return this.post(config['webHost'], req, data)
+  }
+  fetchJava(req, data){
+    return this.post(config['javaHost'], req, data)
+  }
+  fetchPassport(req, data){
+    return this.post(config['passportHost'], req, data)
   }
 }
 
