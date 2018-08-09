@@ -351,12 +351,9 @@ export default {
       width: 110px;
       font-size: 12px;
     }
-<<<<<<< HEAD
-=======
     .el-form-item__error {
       margin-left: 110px;
     }
->>>>>>> 554f8369b3d5f9e83ef811adc29ecfa09e806f1a
   }
 }
 </style>
