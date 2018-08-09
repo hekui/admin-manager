@@ -9,16 +9,17 @@
 const querystring = require('querystring')
 import fetch from 'node-fetch'
 const axios = require('axios')
-let url = 'http://mock.maifangma.com/typedict/list'
+let url = 'http://mock.maifangma.com/subscription/list?page=true'
 
 function encryptData(data){
-  return encodeURIComponent(new Buffer(JSON.stringify(data)).toString("base64"))
+  return new Buffer(JSON.stringify(data)).toString("base64")
 }
 
-let data = {
-  "ticketId": '',
-  "cityId": 51010000
-}
+// let data = {
+//   "ticketId": '',
+//   "cityId": 51010000
+// }
+let data = { cityId: 51010000, article: "", category: [], date: "", pageNo: 1, pageSize: 20, ticketId: ""}
 
 let body = { 
   repositoryId: 16,
@@ -66,6 +67,7 @@ function decryptData(data){
     return data
   }
 }
+
 
 api(url, body).then(res => {
   console.log('---success---')

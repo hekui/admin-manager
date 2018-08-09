@@ -77,7 +77,7 @@ class Api {
    * 加密数据
   */
   encryptData(data){
-    return encodeURIComponent(new Buffer(JSON.stringify(data)).toString("base64"))
+    return new Buffer(JSON.stringify(data)).toString("base64")
   }
   /**
    * 解密数据
