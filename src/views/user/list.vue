@@ -5,7 +5,7 @@
             <el-form-item label="昵称">
               <el-input
                 placeholder="请输入昵称"
-                v-model="form.nickName"
+                v-model="form.userName"
                 clearable>
               </el-input>
             </el-form-item>
@@ -52,7 +52,7 @@
             </el-table-column>
             <el-table-column
               label="UserId"
-              prop="userId">
+              prop="id">
             </el-table-column>
             <el-table-column
               label="OpenId"
@@ -60,17 +60,25 @@
             </el-table-column>
             <el-table-column
               label="状态"
-              prop="status">
+              prop="userStatus">
+              <template slot-scope="scope">
+                <span>{{scope.row.userStatus ===0 ? '激活' : '-'}}</span>
+              </template>
             </el-table-column>
             <el-table-column
               label="类型"
-              prop="type">
+              prop="userType">
+              <template slot-scope="scope">
+                <span>{{scope.row.userType ===1 ? '暂无' : '-'}}</span>
+              </template>
             </el-table-column>
             <el-table-column
               label="操作"
               width="120"
-              align="center"
-              :formatter="formatter">
+              align="center">
+              <template slot-scope="scope">
+                <span>{{scope.row.opera || '-'}}</span>
+              </template>
             </el-table-column>
           </el-table>
         </div>
@@ -81,7 +89,7 @@
           style="right"
           :total="listData.totalRecords"
           :page-size="listData.pageSize"
-          :current-page="listData.pageNo"
+          :current-page="listData.curPage"
           @current-change="pageChange">
         </el-pagination>
     </div>
@@ -123,13 +131,13 @@ export default {
       },
       loading: false,
       page: {
-        pageNo: 1,
+        curPage: 1,
         pageSize: 20,
       },
       form: {
+        userName: '',
         dateTime: '',
-        nickName: '',
-        // openId: '',
+        // openid: '',
       },
     }
   },
@@ -139,7 +147,12 @@ export default {
   methods: {
     loadData() {
       this.loading = true
-      this.$store.dispatch('getUserList', Object.assign([], this.form, this.page)).then(() => {
+      const tempForm = {
+        userName: this.form.userName,
+        startTime: this.form.dateTime[0],
+        endTime: this.form.dateTime[1]
+      }
+      this.$store.dispatch('getUserList', Object.assign({}, tempForm, this.page)).then(() => {
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -147,24 +160,18 @@ export default {
     },
     // 点击搜索
     onSubmit() {
-      this.page.pageNo = 1
+      this.page.curPage = 1
       this.loadData()
     },
     // 左边索引生成
     indexMethod(index) {
-      return index + 1 + (this.page.pageNo - 1) * this.page.pageSize
-    },
-    edtClick() {
-      this.$message('Click edit')
+      return index + 1 + (this.page.curPage - 1) * this.page.pageSize
     },
     // 换页
     pageChange(curPage) {
-      this.page.pageNo = curPage
+      this.page.curPage = curPage
       this.loadData()
     },
-    formatter(row, column) {
-      return '-'
-    }
   },
   computed: {
     ...mapState({

@@ -5,7 +5,7 @@ import content from './content'
 import topic from './topic'
 import articlesearch from './articlesearch'
 // import user from './user'
-import feedback from './feedback'
+// import feedback from './feedback'
 import advert from './advert'
 import tag from './tag'
 
@@ -35,7 +35,7 @@ Mock.mock(/\/topic\/articlesearch/, articlesearch)
 // 用户管理
 // Mock.mock(/\/user\/list/, user)
 // 用户反馈
-Mock.mock(/\/feedback\/list/, feedback)
+// Mock.mock(/\/feedback\/list/, feedback)
 
 // 配置管理相关
 // 广告管理相关
