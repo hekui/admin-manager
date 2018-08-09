@@ -33,15 +33,20 @@ export default {
     // 确认切换城市
     handleConfirm() {
       if (this.cityId === this.$store.state.cityId) {
-        this.hideCityDialog()
         this.$message({
           type: 'info',
           message: '您已经选择了该城市！'
         })
       } else {
         setCity(this.$store, this.cityId)
-        document.location.href = '/'
+        this.$store.dispatch('delAllViews')
+        this.$router.push('/')
+        this.$message({
+          type: 'success',
+          message: '切换城市成功！'
+        })
       }
+      this.hideCityDialog()
     },
     // 关闭
     close() {
