@@ -37,8 +37,8 @@ export default {
   },
   actions: {
     // 获取标签列表
-    getTagList({ commit }, params) {
-      params.cityId = '51010000'
+    getTagList({ commit, rootState }, params) {
+      params.cityId = rootState.cityId
       return api.post('/label/list', params).then(res => {
         commit('tagSet', {
           target: 'listData',
@@ -50,8 +50,8 @@ export default {
       })
     },
     // 根据标签id查询
-    queryTagById({ commit }, params) {
-      params.cityId = '51010000'
+    queryTagById({ commit, rootState }, params) {
+      params.cityId = rootState.cityId
       return api.post('/label/querybyid', params).then(res => {
         return res
       }, res => {
@@ -59,8 +59,8 @@ export default {
       })
     },
     // 切换标签状态
-    changeTagStatus({ commit }, params) {
-      params.cityId = '51010000'
+    changeTagStatus({ commit, rootState }, params) {
+      params.cityId = rootState.cityId
       return api.post('/label/status', params).then(res => {
         return res
       }, res => {
@@ -68,21 +68,13 @@ export default {
       })
     },
     // 新增/修改一条标签
-    saveAdvert({ commit }, params) {
-      params.cityId = '51010000'
+    saveAdvert({ commit, rootState }, params) {
+      params.cityId = rootState.cityId
       return api.post('/label/saveoredit', params).then(res => {
         return res
       }, res => {
         return Promise.resolve(res)
       })
     },
-    // 切换标签状态
-    offlineAdvert({ commit }, params) {
-      return api.post('/tag/status', params).then(res => {
-        return res
-      }, res => {
-        return Promise.resolve(res)
-      })
-    }
   }
 }

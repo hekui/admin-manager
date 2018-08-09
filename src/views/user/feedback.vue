@@ -36,12 +36,12 @@
             </el-table-column>
             <el-table-column
               label="用户昵称"
-              prop="nickName"
+              prop="name"
               width="150">
             </el-table-column>
             <el-table-column
               label="反馈时间"
-              prop="feedbackTime"
+              prop="createTime"
               type="date"
               width="150">
             </el-table-column>
@@ -52,8 +52,8 @@
             <el-table-column
               label="操作"
               width="150"
-              prop="opera"
-              align="center">
+              align="center"
+              :formatter="formatter">
             </el-table-column>
           </el-table>
         </div>
@@ -142,6 +142,9 @@ export default {
     pageChange(curPage) {
       this.page.pageNo = curPage
       this.loadData()
+    },
+    formatter(row, column) {
+      return '-'
     }
   },
   computed: {

@@ -19,8 +19,24 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    cityId: '111',
     routerLoading: false, // 路由切换loading效果
+    cityDialog: false, // 城市弹窗
+    cityId: '51010000', // 城市Id
+    cityName: '成都',
+    cityOptions: [
+      {
+        cityId: '51010000',
+        cityName: '成都'
+      },
+      {
+        cityId: '50000000',
+        cityName: '重庆'
+      },
+      {
+        cityId: '61010000',
+        cityName: '西安'
+      }
+    ],
     pstatus: {
       0: '正常',
       1: '锁定',
@@ -61,6 +77,20 @@ const store = new Vuex.Store({
     },
     'HIDE_LOADING': (state) => {
       state.routerLoading = false
+    },
+    'SHOW_CITY_DIALOG': (state) => {
+      state.cityDialog = true
+    },
+    'HIDE_CITY_DIALOG': (state) => {
+      state.cityDialog = false
+    },
+    'SET_CITYID': (state, cityId) => {
+      state.cityId = cityId
+      state.cityOptions.forEach((option) => {
+        if (option.cityId === cityId) {
+          state.cityName = option.cityName
+        }
+      })
     }
   },
   modules: {
