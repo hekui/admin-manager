@@ -180,8 +180,7 @@ export default {
   created() {
     this.fetchData()
     this.$store.dispatch('testMock', {
-      ticketId: 'ticketId',
-      cityId: 'cityId'
+      cityId: 51010000
     })
     console.log('this', this)
   },

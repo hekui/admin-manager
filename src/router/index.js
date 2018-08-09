@@ -48,10 +48,6 @@ const router = new Router({
   routes: constantRouterMap
 })
 
-router.beforeEach((to, from, next) => {
-  next()
-})
-
 export default router
 
 export const asyncRouterMap = [

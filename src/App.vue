@@ -5,7 +5,12 @@
 </template>
 
 <script>
-  export default{
-    name: 'App'
+import { initCity } from '@/utils/auth'
+
+export default{
+  name: 'App',
+  created() {
+    initCity(this.$store)
   }
+}
 </script>
