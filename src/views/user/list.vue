@@ -141,10 +141,8 @@ export default {
       this.loading = true
       this.$store.dispatch('getUserList', Object.assign([], this.form, this.page)).then(() => {
         this.loading = false
-        this.$message('back success')
       }).catch(() => {
         this.loading = false
-        this.$message('back error')
       })
     },
     // 点击搜索
