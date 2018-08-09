@@ -52,8 +52,10 @@
             <el-table-column
               label="操作"
               width="150"
-              align="center"
-              :formatter="formatter">
+              align="center">
+              <template slot-scope="scope">
+                <span>{{scope.row.opera || '-'}}</span>
+              </template>
             </el-table-column>
           </el-table>
         </div>
@@ -64,7 +66,7 @@
           style="right"
           :total="listData.totalRecords"
           :page-size="listData.pageSize"
-          :current-page="listData.pageNo"
+          :current-page="listData.curPage"
           @current-change="pageChange">
         </el-pagination>
     </div>
@@ -106,7 +108,7 @@ export default {
       },
       loading: false,
       page: {
-        pageNo: 1,
+        curPage: 1,
         pageSize: 20,
       },
       form: {
@@ -120,7 +122,11 @@ export default {
   methods: {
     loadData() {
       this.loading = true
-      this.$store.dispatch('getFeedbackList', Object.assign([], this.form, this.page)).then(() => {
+      const tempForm = {
+        beginTime: this.form.dateTime[0],
+        endTime: this.form.dateTime[1]
+      }
+      this.$store.dispatch('getFeedbackList', Object.assign({}, tempForm, this.page)).then(() => {
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -128,19 +134,16 @@ export default {
     },
     // 点击搜索
     onSubmit() {
-      this.page.pageNo = 1
+      this.page.curPage = 1
       this.loadData()
     },
     // 左边索引生成
     indexMethod(index) {
-      return index + 1 + (this.page.pageNo - 1) * this.page.pageSize
-    },
-    edtClick() {
-      this.$message('Click edit')
+      return index + 1 + (this.page.curPage - 1) * this.page.pageSize
     },
     // 换页
     pageChange(curPage) {
-      this.page.pageNo = curPage
+      this.page.curPage = curPage
       this.loadData()
     },
     formatter(row, column) {

@@ -8,7 +8,8 @@ class Api {
   constructor() {
     methods.forEach(method => {
       this[method] = (baseUrl = '', req, data = {}) => new Promise((resolve, reject) => {
-        let url = baseUrl + req.path
+        let url = baseUrl + req.url
+        // console.log('req', req.url)
         console.log('url', url)
         const options = {
           method: method,
