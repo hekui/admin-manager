@@ -117,7 +117,7 @@
             background
             layout="prev, pager, next"
             @current-change="changePage"
-            :current-page="page.pageNo"
+            :current-page="page.curPage"
             :page-size="articleData.pageSize"
             :total="articleData.totalRecords">
           </el-pagination>
@@ -173,7 +173,7 @@ export default{
       changeStatus: '0',
       loading: false,
       page: {
-        pageNo: 1,
+        curPage: 1,
         pageSize: 20
       },
       filter: {
@@ -205,7 +205,8 @@ export default{
   },
   computed: {
     ...mapState({
-      options: state => state.options,
+      cityId: state => state.cityId,
+      options: state => state.typedict,
       pstatus: state => state.pstatus,
       ptype: state => state.ptype,
       articleData: state => state.paccount.articleData
@@ -217,6 +218,10 @@ export default{
   },
   methods: {
     fetchData() {
+      this.$store.dispatch('getTypeDict', {
+        cityId: this.cityId
+      })
+
       console.log('this.filter', this.filter)
       this.loading = true
       this.$store.dispatch('getArticleList', Object.assign({}, this.filter, this.page)).then(() => {
@@ -274,7 +279,7 @@ export default{
       })
     },
     changePage(curPage) {
-      this.page.pageNo = curPage
+      this.page.curPage = curPage
       this.fetchData()
     },
     changeRefresh() {
