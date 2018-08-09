@@ -51,7 +51,7 @@ export default {
     // 服务端转rap2接口 demo
     testMock({ commit }, params) {
       console.log('params', params)
-      return api.post('/typedict/list', params).then(res => {
+      return api.post('/typedict/list?page=true', params).then(res => {
         console.log(res)
         return res
       }, res => {
