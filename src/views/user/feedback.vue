@@ -45,7 +45,7 @@
               type="date"
               width="150">
               <template slot-scope="scope">
-                <span>{{scope.row.createTime | format2String}}</span>
+                <span>{{scope.row.createTime | formatDate('YYYY-MM-DD')}}</span>
               </template>
             </el-table-column>
             <el-table-column
