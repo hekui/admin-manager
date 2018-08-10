@@ -56,5 +56,9 @@ export default {
   status: {
     code: 0,
     msg: 'success'
+  },
+  updateSequenceNum: {
+    code: 0,
+    msg: 'success'
   }
 }

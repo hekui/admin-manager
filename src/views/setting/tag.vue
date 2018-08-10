@@ -36,9 +36,24 @@
             label="标签名称">
           </el-table-column>
           <el-table-column
-            prop="sequenceNum"
             label="排序"
-            width="50">
+            width="80">
+            <template slot-scope="scope">
+              <div class="sequenceNum">
+                <div :id="'editable_value_' + scope.row.id"
+                  class="editable_value visible"
+                  @click="sequenceNumFocus($event, scope.row)">
+                  {{scope.row.sequenceNum}}
+                </div>
+                <input type="number" :id="'editable_copy_' + scope.row.id"
+                  class="editable_copy"
+                  v-model="beforeEditableValue"
+                  value="number"
+                  @blur="sequenceNumBlur($event, scope.row)"
+                  @keyup.enter="sequenceNumConfirm($event, scope)"
+                  @keyup.esc="sequenceNumCancel($event, scope.row)" />
+              </div>
+            </template>
           </el-table-column>
           <el-table-column
             label="是否前端引导"
@@ -129,6 +144,7 @@ export default {
       dialogLoading: false,
       showDialog: false,
       dialogType: '',
+      beforeEditableValue: '',
       filter: {
         name: '' // 标签名称
       },
@@ -209,6 +225,39 @@ export default {
       }
       this.dialogType = 'add'
       this.showDialog = true
+    },
+    // 获取焦点
+    sequenceNumFocus(event, data) {
+      this.beforeEditableValue = data.sequenceNum
+      const nextElement = document.getElementById('editable_copy_' + data.id)
+      event.target.className = 'editable_value'
+      nextElement.className = 'editable_copy visible'
+      nextElement.focus()
+    },
+    // 失去焦点
+    sequenceNumBlur(event, data) {
+      const prevElement = document.getElementById('editable_value_' + data.id)
+      event.target.className = 'editable_copy'
+      prevElement.className = 'editable_value visible'
+    },
+    // 回车确认修改排序
+    sequenceNumConfirm(event, scope) {
+      this.$store.dispatch('updateSequenceNum', { id: scope.row.id, index: scope.$index, sequenceNum: this.beforeEditableValue }).then((res) => {
+        this.sequenceNumBlur(event, scope.row)
+        this.$message({
+          type: 'success',
+          message: '修改成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'error',
+          message: '修改失败!'
+        })
+      })
+    },
+    // ESC取消修改
+    sequenceNumCancel(event, data) {
+      this.sequenceNumBlur(event, data)
     },
     handleStatus(data) {
       this.loading = true
@@ -298,6 +347,13 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+input[type='number']{
+    -moz-appearance: textfield;
+}
 .tag-container {
   position: relative;
   height: 100%;
@@ -307,6 +363,22 @@ export default {
     height: 100%;
     overflow: hidden;
     overflow-y: auto;
+    .sequenceNum {
+      padding: 1px;
+      .editable_value {
+        display: none;
+      }
+      .editable_copy {
+        padding: 5px;
+        display: none;
+        width: 100%;
+        border: none;
+        outline: 1px solid aquamarine;
+      }
+      .visible {
+        display: block;
+      }
+    }
     .form {
       position: relative;
       padding: 20px 0 30px;
@@ -325,9 +397,6 @@ export default {
       height: 100%;
     }
   }
-}
-.el-input {
-  width: 220px;
 }
 </style>
 <style rel="stylesheet/scss" lang="scss">

@@ -33,6 +33,9 @@ export default {
   mutations: {
     tagSet(state, data) {
       state[data['target']] = data['data']
+    },
+    sequenceNum(state, data) {
+      state.listData.list[data.index].sequenceNum = data.sequenceNum
     }
   },
   actions: {
@@ -44,6 +47,19 @@ export default {
           target: 'listData',
           data: res.data
         })
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
+    // 修改排序
+    updateSequenceNum({ commit }, data) {
+      const params = {
+        id: data.id,
+        sequenceNum: data.sequenceNum
+      }
+      return api.post('/label/updateSequenceNum', params).then(res => {
+        commit('sequenceNum', { index: data.index, sequenceNum: data.sequenceNum })
         return res
       }, res => {
         return Promise.resolve(res)
