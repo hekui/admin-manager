@@ -19,7 +19,7 @@ const getters = {
   errorLogs: state => state.errorLog.logs,
   // 格式化类型数据
   paccountTypeDict: state => { // 公众号类型
-    // console.log('state.paccountTypeDict', state.paccountTypeDict)
+    console.log('state.paccountTypeDict', state.paccountTypeDict)
     return utils.formatType(state.paccountTypeDict)
   },
   tagTypeDict: state => { // 标签类型
@@ -28,5 +28,9 @@ const getters = {
   articleTypeDict: state => { // 文章类型
     return utils.formatType(state.articleTypeDict)
   },
+  pclassifyTypeDict: state => {
+    console.log('state.pclassifyTypeDict', state.pclassifyTypeDict)
+    return utils.formatClass(state.pclassify)
+  }
 }
 export default getters

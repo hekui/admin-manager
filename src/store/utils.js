@@ -12,7 +12,19 @@ function formatType(data) {
     return result
   })
 }
+// 格式化所属分类
+function formatClass(data) {
+  const result = []
+  for (var item in data) {
+    result.push({
+      value: item,
+      label: data[item]
+    })
+  }
+  return result
+}
 
 export default {
   formatType,
+  formatClass,
 }

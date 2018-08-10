@@ -45,18 +45,20 @@ const store = new Vuex.Store({
     paccountTypeDict: [],
     tagTypeDict: [],
     articleTypeDict: [],
+    pclassifyTypeDict: [],
     // 公众号相关
-    wechatStatus: {
+    status: {
       1: '启用',
-      2: '停用'
+      2: '禁用'
     },
-    pclassify: [{
-      id: 1,
-      name: '房企'
-    }, {
-      id: 2,
-      name: 'KOL自媒体'
-    }]
+    wechatStatus: {
+      1: '授权',
+      2: '未授权'
+    },
+    pclassify: {
+      1: '房企',
+      2: 'KOL自媒体'
+    }
   },
   mutations: {
     'SHOW_LOADING': (state) => {
