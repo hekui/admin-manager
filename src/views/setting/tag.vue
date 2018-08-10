@@ -239,6 +239,10 @@ export default {
       const prevElement = document.getElementById('editable_value_' + data.id)
       event.target.className = 'editable_copy'
       prevElement.className = 'editable_value visible'
+      this.$message({
+        type: 'info',
+        message: '已取消修改!'
+      })
     },
     // 回车确认修改排序
     sequenceNumConfirm(event, scope) {

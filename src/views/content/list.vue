@@ -8,39 +8,40 @@
     <section class="form">
       <el-form ref="form" :inline="true" :model="filter">
         <el-form-item label="文章标题：">
-          <el-input v-model="filter.articleTitle" placeholder="请输入名称orID" :clearable="true"></el-input>
+          <el-input v-model="filter.title" placeholder="请输入名称orID" :clearable="true"></el-input>
         </el-form-item>
         <el-form-item label="公众号名称：">
-          <el-input v-model="filter.publicName" placeholder="请输入名称or微信号" :clearable="true"></el-input>
+          <el-input v-model="filter.wechatName" placeholder="请输入名称or微信号" :clearable="true"></el-input>
         </el-form-item>
         <el-form-item label="文章类型：" class="article-type-label">
           <el-cascader
-            expand-trigger="hover"
-            :options="articleOptions"
-            v-model="filter.articleType"
+            :options="articleTypeDict"
+            :change-on-select="true"
+            @change="contentTypeChange"
             :clearable="true">
           </el-cascader>
         </el-form-item>
         <el-form-item label="公众号类型：">
           <el-cascader
-            expand-trigger="hover"
-            :options="options"
-            v-model="filter.publicType"
+            :options="paccountTypeDict"
+            :change-on-select="true"
+            @change="wechatTypeChange"
             :clearable="true">
           </el-cascader>
         </el-form-item>
         <el-form-item label="发布时间：">
           <el-date-picker
-            v-model="filter.deliveryTime"
-            type="daterange"
+            v-model="releaseTime"
+            type="datetimerange"
             align="right"
             unlink-panels
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             :clearable="true"
-            value-format="yyyy-MM-dd"
-            :picker-options="pickerOptions">
+            value-format="yyyy-MM-dd HH:mm:ss"
+            :picker-options="pickerOptions"
+            @change="releaseTimeChange" >
           </el-date-picker>
         </el-form-item>
         <el-form-item>
@@ -61,7 +62,7 @@
           :index="getIndex">
         </el-table-column>
         <el-table-column
-          prop="publicName"
+          prop="wechatName"
           label="公众号名称">
         </el-table-column>
         <el-table-column
@@ -70,7 +71,7 @@
           width="80">
         </el-table-column>
         <el-table-column
-          prop="articleTitle"
+          prop="title"
           label="文章标题"
           width="180">
         </el-table-column>
@@ -78,31 +79,33 @@
           label="状态"
           width="50">
           <template slot-scope="scope">
-            <span>{{scope.row.articleStatus === 0 ? '禁用' : '启用'}}</span>
+            <span>{{statusFilter(scope.row.status)}}</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="deliveryTime"
           label="发布时间">
+          <template slot-scope="scope">
+            <span>{{releaseTimeFilter(scope.row.releaseTime)}}</span>
+          </template>
         </el-table-column>
         <el-table-column
           label="类型">
           <template slot-scope="scope">
-            <span>{{articleTypeFilter(scope.row)}}</span>
+            <span>{{scope.row.typeName || "-"}}</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="readingQuantity"
+          prop="readNum"
           label="阅读量"
           width="90">
         </el-table-column>
         <el-table-column
-          prop="praisingQuantity"
+          prop="likeNum"
           label="点赞量"
           width="80">
         </el-table-column>
         <el-table-column
-          prop="wordCount"
+          prop="wordsNum"
           label="字数"
           width="90">
         </el-table-column>
@@ -118,7 +121,7 @@
               <el-button @click="handleEdit(scope.row)" type="text" size="small">二次编辑</el-button>
             </div>
             <div>
-              <el-button style="color: red;" @click="handleEnable(scope.row)" type="text" size="small">{{scope.row.articleStatus === 1 ? '禁用' : '启用'}}</el-button>
+              <el-button v-if="scope.row.status === 1 || scope.row.status === 2" style="color: red;" @click="handleEnable(scope.row)" type="text" size="small">{{scope.row.status === 1 ? '锁定' : scope.row.status === 2 ? '启用' : '' }}</el-button>
             </div>
           </template>
         </el-table-column>
@@ -140,7 +143,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
+import { parseTime, pickerOptions } from '@/utils'
 
 export default {
   name: 'contentlist',
@@ -148,53 +152,30 @@ export default {
     return {
       loading: false,
       filter: {
-        deliveryTime: '', // 发布时间
-        publicType: [], // 公众号类型
-        publicName: '', // 公众号名称
-        articleTitle: '', // 文章标题
-        articelType: [] // 文章类型
+        title: '', // 文章标题
+        wechatName: '', // 公众号名称
+        contentTypeId: '', // 文章类型
+        wechatTypeId: '', // 公众号类型
+        beginDate: '', // 时间段查询-起（精确到分）
+        endDate: '' // 时间段查询-止（精确到分）
       },
-      pickerOptions: { // 日期快捷选项
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
+      releaseTime: [],
+      pickerOptions,
       page: {
         pageNo: 1,
-        pageSize: 10
+        pageSize: 20
       }
     }
   },
   computed: {
     ...mapState({
-      options: state => state.options,
-      articleOptions: state => state.content.options,
       listData: state => state.content.listData
-    })
+    }),
+    ...mapGetters(['paccountTypeDict', 'articleTypeDict'])
   },
   created() {
+    this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: 1 }) // 查询公众号类型
+    this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: 3 }) // 查询文章类型
     this.fetchData()
   },
   methods: {
@@ -206,28 +187,27 @@ export default {
         this.loading = false
       })
     },
-    articleTypeFilter(data) {
-      const articleType = []
-      let targetOptions = this.articleOptions
-      for (let i = 0; i < data.articleType.length; i++) {
-        const value = data.articleType[i]
-        targetOptions = getLabel(value, targetOptions)
-      }
-
-      function getLabel(value, data) {
-        if (data.length === 0) return
-        let children = []
-        for (let i = 0; i < data.length; i++) {
-          const option = data[i]
-          if (option.value === value) {
-            articleType.push(option.label)
-            children = option.children
-            break
-          }
-        }
-        return children
-      }
-      return articleType.join('-') || '-'
+    statusFilter(status) {
+      return status === 0 ? '删除' : status === 1 ? '启用' : status === 1 ? '锁定' : ''
+    },
+    // 文章类型改变触发
+    contentTypeChange(value) {
+      const types = [...value]
+      this.filter.contentTypeId = types.pop()
+    },
+    // 公众号类型改变触发
+    wechatTypeChange(value) {
+      const types = [...value]
+      this.filter.wechatTypeId = types.pop()
+    },
+    // 发布时间改变触发
+    releaseTimeChange(value) {
+      value = value || ['', '']
+      this.filter.beginDate = value[0]
+      this.filter.endDate = value[1]
+    },
+    releaseTimeFilter(time) {
+      return parseTime(Number(time))
     },
     // 获取序号
     getIndex(index) {

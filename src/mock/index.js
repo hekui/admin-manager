@@ -24,7 +24,7 @@ Mock.mock(/\/account\/userinfo/, account.getUserInfo)
 // Mock.mock(/\/paccount\/article/, paccount.article)
 
 // 内容管理相关
-Mock.mock(/\/content\/list/, content.list)
+// Mock.mock(/\/content\/list/, content.list)
 Mock.mock(/\/content\/detail/, content.detail)
 Mock.mock(/\/content\/save/, content.save)
 Mock.mock(/\/content\/status/, content.status)

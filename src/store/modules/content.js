@@ -53,7 +53,7 @@ export default {
   actions: {
     // 获取内容列表
     getContentList({ commit }, params) {
-      return api.post('/content/list', params).then(res => {
+      return api.post('/content/list?page=true', params).then(res => {
         commit('contentSet', {
           target: 'listData',
           data: res.data
