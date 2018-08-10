@@ -1,3 +1,4 @@
+import utils from './utils'
 const getters = {
   sidebar: state => state.app.sidebar,
   language: state => state.app.language,
@@ -16,35 +17,16 @@ const getters = {
   permission_routers: state => state.permission.routers,
   addRouters: state => state.permission.addRouters,
   errorLogs: state => state.errorLog.logs,
-  types: state => {
-    const arr = state.typedict
-    function filterType(arr) {
-      if (Object.prototype.toString.call(arr) === '[object Array]') {
-        arr.map((item) => filterType(item))
-      } else {
-        if (Object.prototype.toString.call(arr) === '[object Object]') {
-          for (var key in arr) {
-            if (key === 'id') {
-              arr['value'] = arr[key]
-            }
-            if (key === 'name') {
-              arr['label'] = arr[key]
-            }
-            if (key === 'childList') {
-              arr['children'] = arr[key]
-            }
-            delete arr[key]
-          }
-          if (!arr['children'].length) {
-            delete arr['children']
-          }
-          if (arr['children'] instanceof Array && arr['children'].length) {
-            filterType(arr['children'])
-          }
-        }
-      }
-    }
-    filterType(arr)
-  }
+  // 格式化类型数据
+  paccountTypeDict: state => { // 公众号类型
+    // console.log('state.paccountTypeDict', state.paccountTypeDict)
+    return utils.formatType(state.paccountTypeDict)
+  },
+  tagTypeDict: state => { // 标签类型
+    return utils.formatType(state.tagTypeDict)
+  },
+  articleTypeDict: state => { // 文章类型
+    return utils.formatType(state.articleTypeDict)
+  },
 }
 export default getters

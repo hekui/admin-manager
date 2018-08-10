@@ -1,5 +1,5 @@
 // set function parseTime,formatTime to filter
-export { parseTime, formatTime } from '@/utils'
+export { format2String, date2TimeStamp, parseTime, formatTime } from '@/utils'
 
 function pluralize(time, label) {
   if (time === 1) {
