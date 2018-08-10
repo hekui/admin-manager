@@ -277,3 +277,23 @@ export function showLoading(store) {
 export function hideLoading(store) {
   store.commit('HIDE_LOADING')
 }
+
+/**
+ *
+ * @param {*} string 2018-08-08
+ * return 1398250549490
+ */
+export function date2String(string) {
+  var date = new Date(string)
+  return date.getTime()
+}
+
+/**
+ *
+ * @param {*} string  1398250549490
+ * return 2018-08-08
+ */
+export function format2String(string) {
+  var date = new Date(string)
+  return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDay()
+}
