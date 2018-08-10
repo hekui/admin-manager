@@ -281,19 +281,27 @@ export function hideLoading(store) {
 /**
  *
  * @param {*} string 2018-08-08
- * return 1398250549490
+ * return 1533657600000 ms
  */
-export function date2String(string) {
-  var date = new Date(string)
+export function date2TimeStamp(string) {
+  if (string === '' || string === undefined || string === null) {
+    return 0
+  }
+  var date = new Date(string.replace(/-/g, '/'))
   return date.getTime()
 }
 
 /**
  *
- * @param {*} string  1398250549490
+ * @param {*} string  1533657600000 ms
  * return 2018-08-08
  */
 export function format2String(string) {
-  var date = new Date(string)
-  return date.getFullYear() + '-' + date.getMonth() + '-' + date.getDay()
+  if (string === '' || string === undefined || string === null) {
+    return ''
+  }
+  var date = new Date(parseInt(string))
+  var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1)
+  var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
+  return date.getFullYear() + '-' + M + '-' + day
 }

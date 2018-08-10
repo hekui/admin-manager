@@ -44,6 +44,9 @@
               prop="createTime"
               type="date"
               width="150">
+              <template slot-scope="scope">
+                <span>{{scope.row.createTime | format2String}}</span>
+              </template>
             </el-table-column>
             <el-table-column
               label="意见反馈"
@@ -63,7 +66,6 @@
           class="pages"
           background
           layout="prev, pager, next"
-          style="right"
           :total="listData.totalRecords"
           :page-size="listData.pageSize"
           :current-page="listData.curPage"
@@ -74,6 +76,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { date2TimeStamp } from './../../utils'
 
 export default {
   name: 'feedbackList',
@@ -123,8 +126,8 @@ export default {
     loadData() {
       this.loading = true
       const tempForm = {
-        beginTime: this.form.dateTime[0],
-        endTime: this.form.dateTime[1]
+        beginTime: date2TimeStamp(this.form.dateTime[0]),
+        endTime: date2TimeStamp(this.form.dateTime[1])
       }
       this.$store.dispatch('getFeedbackList', Object.assign({}, tempForm, this.page)).then(() => {
         this.loading = false
@@ -162,6 +165,7 @@ export default {
 .user-list-page{
     .pages{
       margin-top: 10px;
+      float: right;
     }
 }
 </style>
