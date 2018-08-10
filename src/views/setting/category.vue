@@ -6,126 +6,192 @@
 <template>
   <div class="category-container">
     <div class="content-container" v-loading="loading">
-      <el-tabs v-model="activeName" @tab-click="handleChangeTabs">
+      <el-tabs v-model="activeName">
         <div class="add">
-          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增类型</el-button>
+          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新增类型</el-button>
         </div>
-        <div class="head">
-          <span>类型</span>
-          <span class="custom-right-text">
-            <span class="status">状态</span>
-            <span class="handle">操作</span>
-          </span>
+        <div class="table">
+          <div class="head">
+            <span style="margin-left: 24px;">类型</span>
+            <span class="custom-right-text">
+              <span class="status">状态</span>
+              <span class="handle">操作</span>
+            </span>
+          </div>
+          <el-tab-pane label="文章" name="article">
+            <el-tree
+              :props="props"
+              :data="treeData3"
+              node-key="id"
+              default-expand-all
+              :expand-on-click-node="false">
+              <span class="custom-tree-node" slot-scope="{ node, data }">
+                <span class="custom-left-text">
+                  <span>{{ node.label }}</span>
+                  <span>
+                    <span title="添加子类" @click="handleAdd(node)">
+                      <SvgIcon :iconClass="'add'" :className="'icon-add'"></SvgIcon>
+                    </span>
+                    <!-- <span title="删除" @click="handleDelete(node)">
+                      <SvgIcon :iconClass="'delete'" :className="'icon-delete'"></SvgIcon>
+                    </span> -->
+                  </span>
+                </span>
+                <span class="custom-right-text">
+                  <span class="status">{{ node.data.typeStatus === 0 ? '激活' : '锁定' }}</span>
+                  <span class="handle">
+                    <el-button
+                      type="text"
+                      size="mini"
+                      @click="handleStatus(node)">
+                      {{ node.data.typeStatus === 0 ? '锁定' : '激活' }}
+                    </el-button>
+                    <el-button
+                      type="text"
+                      size="mini"
+                      @click="handleEdit(node)">
+                      编辑
+                    </el-button>
+                  </span>
+                </span>
+              </span>
+            </el-tree>
+          </el-tab-pane>
+          <el-tab-pane label="公众号" name="publicNo">
+            <el-tree
+              :props="props"
+              :data="treeData1"
+              node-key="id"
+              default-expand-all
+              :expand-on-click-node="false">
+              <span class="custom-tree-node" slot-scope="{ node, data }">
+                <span class="custom-left-text">
+                  <span>{{ node.label }}</span>
+                  <span>
+                    <span title="添加子类" @click="handleAdd(node)">
+                      <SvgIcon :iconClass="'add'" :className="'icon-add'"></SvgIcon>
+                    </span>
+                    <!-- <span title="删除" @click="handleDelete(node)">
+                      <SvgIcon :iconClass="'delete'" :className="'icon-delete'"></SvgIcon>
+                    </span> -->
+                  </span>
+                </span>
+                <span class="custom-right-text">
+                  <span class="status">{{ node.data.typeStatus === 0 ? '激活' : '锁定' }}</span>
+                  <span class="handle">
+                    <el-button
+                      type="text"
+                      size="mini"
+                      @click="handleStatus(node)">
+                      {{ node.data.typeStatus === 0 ? '锁定' : '激活' }}
+                    </el-button>
+                    <el-button
+                      type="text"
+                      size="mini"
+                      @click="handleEdit(node)">
+                      编辑
+                    </el-button>
+                  </span>
+                </span>
+              </span>
+            </el-tree>
+          </el-tab-pane>
+          <el-tab-pane label="标签" name="tag">
+            <el-tree
+              :props="props"
+              :data="treeData2"
+              node-key="id"
+              default-expand-all
+              :expand-on-click-node="false">
+              <span class="custom-tree-node" slot-scope="{ node, data }">
+                <span class="custom-left-text">
+                  <span>{{ node.label }}</span>
+                  <span>
+                    <span title="添加子类" @click="handleAdd(node)">
+                      <SvgIcon :iconClass="'add'" :className="'icon-add'"></SvgIcon>
+                    </span>
+                    <!-- <span title="删除" @click="handleDelete(node)">
+                      <SvgIcon :iconClass="'delete'" :className="'icon-delete'"></SvgIcon>
+                    </span> -->
+                  </span>
+                </span>
+                <span class="custom-right-text">
+                  <span class="status">{{ node.data.typeStatus === 0 ? '激活' : '锁定' }}</span>
+                  <span class="handle">
+                    <el-button
+                      type="text"
+                      size="mini"
+                      @click="handleStatus(node)">
+                      {{ node.data.typeStatus === 0 ? '锁定' : '激活' }}
+                    </el-button>
+                    <el-button
+                      type="text"
+                      size="mini"
+                      @click="handleEdit(node)">
+                      编辑
+                    </el-button>
+                  </span>
+                </span>
+              </span>
+            </el-tree>
+          </el-tab-pane>
         </div>
-        <el-tab-pane label="公众号" name="publicNo">
-          <el-tree
-            :data="treeData1"
-            show-checkbox
-            node-key="id"
-            default-expand-all
-            :expand-on-click-node="false">
-            <span class="custom-tree-node" slot-scope="{ node, data }">
-              <span>{{ node.label }}</span>
-              <span class="custom-right-text">
-                <span class="status">{{ node.status === 1 ? '激活' : '锁定' }}</span>
-                <span class="handle">
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="handleStatus(node)">
-                    {{ node.status === 1 ? '锁定' : '激活' }}
-                  </el-button>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="handleEdit(node)">
-                    编辑
-                  </el-button>
-                </span>
-              </span>
-            </span>
-          </el-tree>
-        </el-tab-pane>
-        <el-tab-pane label="标签" name="tag">
-          <el-tree
-            :data="treeData2"
-            show-checkbox
-            node-key="id"
-            default-expand-all
-            :expand-on-click-node="false">
-            <span class="custom-tree-node" slot-scope="{ node, data }">
-              <span>{{ node.label }}</span>
-              <span class="custom-right-text">
-                <span class="status">{{ node.status === 1 ? '激活' : '锁定' }}</span>
-                <span class="handle">
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="handleStatus(node)">
-                    {{ node.status === 1 ? '锁定' : '激活' }}
-                  </el-button>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="handleEdit(node)">
-                    编辑
-                  </el-button>
-                </span>
-              </span>
-            </span>
-          </el-tree>
-        </el-tab-pane>
-        <el-tab-pane label="文章" name="article">
-          <el-tree
-            :data="treeData3"
-            show-checkbox
-            node-key="id"
-            default-expand-all
-            :expand-on-click-node="false">
-            <span class="custom-tree-node" slot-scope="{ node, data }">
-              <span>{{ node.label }}</span>
-              <span class="custom-right-text">
-                <span class="status">{{ node.status === 1 ? '激活' : '锁定' }}</span>
-                <span class="handle">
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="handleStatus(node)">
-                    {{ node.status === 1 ? '锁定' : '激活' }}
-                  </el-button>
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="handleEdit(node)">
-                    编辑
-                  </el-button>
-                </span>
-              </span>
-            </span>
-          </el-tree>
-        </el-tab-pane>
       </el-tabs>
     </div>
+    <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
+      <el-form v-loading="dialogLoading" ref="form" :model="form" :rules="rules">
+        <el-form-item label="类型名称：" prop="name">
+          <el-input v-model="form.name" placeholder="请输入名称" :clearable="true"></el-input>
+        </el-form-item>
+        <el-form-item label="上级类型：">
+          <el-cascader
+            :change-on-select="true"
+            :show-all-levels="false"
+            expand-trigger="hover"
+            :options="getOptions()"
+            v-model="form.parentTypeId"
+            :props="props"
+            :clearable="true"
+            :disabled="dialogType !== 'addnew'">
+          </el-cascader>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="handleCancel">取 消</el-button>
+          <el-button type="primary" size="mini" @click="handleConfirm('form')">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import SvgIcon from '@/components/SvgIcon'
 
 export default {
   name: 'category',
+  components: { SvgIcon },
   data() {
     return {
       activeName: 'publicNo',
       loading: false,
+      dialogLoading: false,
       showDialog: false,
       dialogType: '',
       form: {
         id: '',
-        tagName: '',
-        guide: 0,
-        status: 1,
-        category: []
+        name: '',
+        parentTypeId: []
+      },
+      props: {
+        value: 'id',
+        label: 'name',
+        children: 'childList'
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入类型名称', trigger: ['change', 'blur'] }
+        ]
       }
     }
   },
@@ -133,49 +199,103 @@ export default {
     ...mapState({
       treeData1: state => state.category.treeData1,
       treeData2: state => state.category.treeData2,
-      treeData3: state => state.category.treeData3
+      treeData3: state => state.category.treeData3,
     }),
     dialogTitle() {
-      return this.dialogType === 'add' ? '新增标签' : '编辑标签'
+      return this.dialogType === 'edit' ? '编辑类型' : '新增类型'
     }
   },
   created() {
     this.fetchData()
   },
   methods: {
-    handleChangeTabs() {
-
+    getOptions() {
+      if (this.activeName === 'publicNo') return this.treeData1
+      if (this.activeName === 'tag') return this.treeData2
+      if (this.activeName === 'article') return this.treeData3
+      return []
     },
     // 查询标签
     fetchData() {
       this.loading = true
-      this.$store.dispatch('getTreeList', Object.assign({}, this.filter, this.page)).then(() => {
+      this.$store.dispatch('getCategoryList', Object.assign({}, this.filter, this.page)).then(() => {
         this.loading = false
       }).catch(() => {
         this.loading = false
       })
     },
-    // 新增标签
-    handleAdd() {
-      this.form = {
-        id: '',
-        tagName: '',
-        guide: 0,
-        status: 1,
-        category: []
-      }
-      this.dialogType = 'add'
-      this.showDialog = true
-    },
-    // 锁定/激活
-    handleStatus(data) {
-      this.$confirm('是否要下线?', '提示', {
+    // 删除标签
+    handleDelete(node) {
+      this.$confirm('是否要删除?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.loading = true
-        this.$store.dispatch('offlineAdvert', data).then(() => {
+        this.$store.dispatch('deleteCategory', { id: node.data.id }).then(() => {
+          this.loading = false
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.fetchData()
+        }).catch(() => {
+          this.loading = false
+          this.$message({
+            message: '删除失败！',
+            type: 'error'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
+      })
+    },
+    // 新增标签
+    handleAdd(node) {
+      this.form = {
+        id: '',
+        name: '',
+        // typeStatus: 0,
+        parentTypeId: []
+      }
+      this.form.parentTypeId = this.getTypeId(node, this.form.parentTypeId)
+      this.dialogType = 'addnew'
+      if (node) this.dialogType = 'addsub'
+      this.showDialog = true
+    },
+    // 根据节点获取类型级联Id
+    getTypeId(node, typeId) {
+      if (node) {
+        typeId.unshift(node.data.id)
+        this.getTypeId(node.parent, typeId)
+      }
+      return typeId
+    },
+    // 编辑标签
+    handleEdit(node) {
+      this.form = Object.assign({}, {
+        id: node.data.id,
+        name: node.data.name,
+        // typeStatus: node.data.typeStatus,
+        parentTypeId: []
+      })
+      this.form.parentTypeId = this.getTypeId(node, this.form.parentTypeId)
+      this.dialogType = 'edit'
+      this.showDialog = true
+    },
+    // 锁定/激活
+    handleStatus(node) {
+      const tips = node.data.typeStatus === 0 ? '是否要锁定' : '是否要激活'
+      this.$confirm(tips, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        this.$store.dispatch('changeCategoryStatus', { id: node.data.id, typeStatus: node.data.typeStatus ? 0 : 1 }).then(() => {
           this.loading = false
           this.$message({
             type: 'success',
@@ -196,45 +316,47 @@ export default {
           message: '已取消操作!'
         })
       })
-    },
-    // 编辑标签
-    handleEdit(data) {
-      this.form = Object.assign({}, data)
-      this.dialogType = 'edit'
-      this.showDialog = true
     },
     // 取消
     handleCancel() {
       this.showDialog = false
     },
     // 提交新增/编辑
-    handleConfirm() {
-      this.$confirm('是否要提交?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.loading = true
-        this.$store.dispatch('saveAdvert', this.form).then(() => {
-          this.loading = false
-          this.$message({
-            type: 'success',
-            message: '操作成功!'
+    handleConfirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$confirm('是否要提交?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.dialogLoading = true
+            const param = Object.assign({}, this.form)
+            param.parentTypeId = param.parentTypeId.pop() || '' // 取最后一个元素作为typeId保存到数据库
+            this.$store.dispatch('saveAdvert', param).then(() => {
+              this.dialogLoading = false
+              this.$message({
+                type: 'success',
+                message: '操作成功!'
+              })
+              this.showDialog = false
+              this.fetchData()
+            }).catch(() => {
+              this.dialogLoading = false
+              this.$message({
+                message: '操作失败！',
+                type: 'error'
+              })
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消操作!'
+            })
           })
-          this.showDialog = false
-          this.fetchData()
-        }).catch(() => {
-          this.loading = false
-          this.$message({
-            message: '操作失败！',
-            type: 'error'
-          })
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消操作!'
-        })
+        } else {
+          return false
+        }
       })
     },
   }
@@ -254,35 +376,69 @@ export default {
     .add {
       margin-bottom: 10px;
     }
-    .head {
-      padding: 10px 8px 10px 45px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: #909399;
-      user-select: none;
-      font-weight: bold;
-      border-bottom: 1px solid #eee;
-    }
-    .custom-tree-node {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 14px;
-      padding-right: 8px;
-    }
-    .head, .custom-tree-node {
-      .custom-right-text {
+    .table {
+      padding-bottom: 5px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+      .head {
+        padding-right: 8px;
+        height: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #909399;
+        user-select: none;
+        font-weight: bold;
+        border-bottom: 1px solid #eee;
+      }
+      .custom-tree-node {
+        height: 100%;
+        flex: 1;
         display: flex;
         align-items: center;
-        .status {
-          margin-right: 300px;
-          width: 50px;
+        justify-content: space-between;
+        font-size: 14px;
+        padding-right: 8px;
+        .custom-left-text {
+          .icon-add, .icon-delete {
+            display: none;
+            color: #409EFF;
+            font-size: 17px;
+            &:hover {
+              color: rgba(64, 158, 255, .8)
+            }
+          }
+          .icon-add {
+            margin-left: 5px;
+          }
         }
-        .handle {
-          width: 80px;
-          text-align: center;
+        &:hover {
+          .icon-add, .icon-delete {
+            display: inline;
+          }
+        }
+      }
+      .head, .custom-tree-node {
+        .custom-right-text {
+          height: 100%;
+          display: flex;
+          align-items: center;
+          .status {
+            padding-left: 8px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            width: 80px;
+            border-left: 1px solid #eee;
+          }
+          .handle {
+            padding-left: 8px;
+            width: 80px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            border-left: 1px solid #eee;
+          }
         }
       }
     }
@@ -308,6 +464,9 @@ export default {
     .el-form-item__label {
       width: 110px;
       font-size: 12px;
+    }
+    .el-form-item__error {
+      margin-left: 110px;
     }
   }
 }

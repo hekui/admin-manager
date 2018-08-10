@@ -1,6 +1,6 @@
 import Mock from 'mockjs'
 import account from './account'
-import paccount from './paccount'
+// import paccount from './paccount'
 import content from './content'
 import topic from './topic'
 import articlesearch from './articlesearch'
@@ -8,6 +8,7 @@ import articlesearch from './articlesearch'
 // import feedback from './feedback'
 import advert from './advert'
 import tag from './tag'
+import category from './category'
 
 Mock.setup({
   timeout: '350-600'
@@ -19,8 +20,8 @@ Mock.mock(/\/account\/logout/, account.logout)
 Mock.mock(/\/account\/userinfo/, account.getUserInfo)
 
 // 公众号相关
-Mock.mock(/\/paccount\/list/, paccount.index)
-Mock.mock(/\/paccount\/article/, paccount.article)
+// Mock.mock(/\/paccount\/list/, paccount.index)
+// Mock.mock(/\/paccount\/article/, paccount.article)
 
 // 内容管理相关
 Mock.mock(/\/content\/list/, content.list)
@@ -47,5 +48,11 @@ Mock.mock(/\/label\/list/, tag.list)
 Mock.mock(/\/label\/querybyid/, tag.querybyid)
 Mock.mock(/\/label\/saveoredit/, tag.save)
 Mock.mock(/\/label\/status/, tag.status)
+// 类型管理相关
+Mock.mock(/\/typedict\/list/, category.list)
+Mock.mock(/\/typedict\/querybyid/, category.querybyid)
+Mock.mock(/\/typedict\/saveoredit/, category.save)
+Mock.mock(/\/typedict\/editstatus/, category.status)
+Mock.mock(/\/typedict\/delete/, category.delete)
 
 export default Mock
