@@ -48,6 +48,7 @@ Mock.mock(/\/label\/list/, tag.list)
 Mock.mock(/\/label\/querybyid/, tag.querybyid)
 Mock.mock(/\/label\/saveoredit/, tag.save)
 Mock.mock(/\/label\/status/, tag.status)
+Mock.mock(/\/label\/updateSequenceNum/, tag.updateSequenceNum)
 // 类型管理相关
 // Mock.mock(/\/typedict\/list/, category.list)
 Mock.mock(/\/typedict\/querybyid/, category.querybyid)

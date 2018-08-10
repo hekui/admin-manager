@@ -42,6 +42,14 @@ export default {
       }, res => {
         return Promise.resolve(res)
       })
+    },
+    // 上传
+    uploadAdertImage({ commit }, params) {
+      return api.post('/uploadimage', params).then(res => {
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
     }
   }
 }

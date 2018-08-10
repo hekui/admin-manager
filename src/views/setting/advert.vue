@@ -109,15 +109,20 @@
           <el-input v-model="form.adName" placeholder="请输入名称" :clearable="true"></el-input>
         </el-form-item>
         <el-form-item label="广告头图：" prop="adPicture">
+          <el-input v-model="form.adPicture" style="display: none;"></el-input>
           <el-upload
             class="upload-demo"
             ref="upload"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action=""
+            :http-request="handleUpload"
             :file-list="fileList"
-            :auto-upload="false">
-            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-            <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+            :auto-upload="false"
+            :on-change="fileChange"
+            :before-remove="beforeFileRemove"
+            :limit="1">
+            <el-button slot="trigger" size="small" type="primary" :class="{disabled: uploadFiles.length > 0}">选取文件</el-button>
+            <el-button style="margin-left: 10px;" size="small" type="success" :disabled="uploadFiles.length < 1" @click="submitUpload">上传到服务器</el-button>
+            <div slot="tip" class="el-upload__tip">必须为图片格式，且文件大小不能超过5Mb，建议不超过2Mb</div>
           </el-upload>
         </el-form-item>
         <el-form-item label="启用时间：" prop="onlineTime">
@@ -191,10 +196,12 @@ export default {
           }
         }]
       },
+      uploadFiles: [], // 已选中的图片（不区分是否已上传）
+      fileList: [], // 已上传的图片
       form: {
         id: '',
         adName: '',
-        adPicture: [{ name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100' }],
+        adPicture: '',
         onlineTime: [],
         url: ''
       },
@@ -203,11 +210,16 @@ export default {
           { required: true, message: '请输入广告名称', trigger: ['change', 'blur'] }
         ],
         adPicture: [
-          { required: true, message: '请选择广告头图', trigger: ['change', 'blur'] }
+          { required: true, message: '请上传广告头图', trigger: 'change' }
         ],
-        onlineTime: [
-          { required: true, message: '请选择启用时间', trigger: ['change', 'blur'] }
-        ]
+        onlineTime: [{
+          validator: function(rule, value, callback) {
+            if (!value || value.length === 0) {
+              callback(new Error('请选择启用时间'))
+            }
+          },
+          trigger: ['change', 'blur']
+        }]
       }
     }
   },
@@ -304,19 +316,59 @@ export default {
       this.form = {
         id: '',
         adName: '',
-        adPicture: [],
+        adPicture: '',
         onlineTime: [],
         url: ''
       }
+      this.fileList = []
+      this.uploadFiles = this.fileList
       this.dialogType = 'add'
       this.showDialog = true
     },
     // 编辑广告
     handleEdit(data) {
-      data.onlineTime = [new Date(data.onlineTime[0]), new Date(data.onlineTime[1])]
-      this.form = Object.assign({}, data)
+      this.form = {
+        id: data.id,
+        adName: data.adName,
+        adPicture: data.adPicture,
+        onlineTime: [new Date(data.onlineTime[0]), new Date(data.onlineTime[1])],
+        url: data.url
+      }
+      this.fileList = [{ name: data.adName, adPicture: data.adPicture }]
+      this.uploadFiles = this.fileList
       this.dialogType = 'edit'
       this.showDialog = true
+    },
+    // 文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
+    fileChange(file, fileList) {
+      this.uploadFiles = fileList
+    },
+    // 删除文件之前的钩子
+    beforeFileRemove(file, fileList) {
+      this.uploadFiles = []
+      this.form.adPicture = ''
+    },
+    // 提交上传图片到服务器
+    submitUpload() {
+      if (this.uploadFiles.length < 1) return
+      this.$refs.upload.submit()
+    },
+    // 上传图片到服务器真实行为
+    handleUpload(node) {
+      console.log('adPicture', this.form.adPicture)
+      this.$store.dispatch('uploadAdertImage', { file: node.file }).then((res) => {
+        this.form.adPicture = res.data.url
+        this.$message({
+          type: 'success',
+          message: '上传成功!'
+        })
+        console.log('adPicture', this.form.adPicture)
+      }).catch(() => {
+        this.$message({
+          message: '上传失败！',
+          type: 'error'
+        })
+      })
     },
     // 取消
     handleCancel() {
@@ -388,10 +440,11 @@ export default {
       height: 100%;
     }
   }
+  .disabled {
+    display: none;
+  }
 }
-.el-input {
-  width: 220px;
-}
+
 </style>
 <style rel="stylesheet/scss" lang="scss">
 .advert-container {
@@ -413,7 +466,7 @@ export default {
       width: 90px;
       font-size: 12px;
     }
-    .el-form-item__error {
+    .el-form-item__error, .el-upload__tip, .el-upload-list {
       margin-left: 90px;
     }
   }

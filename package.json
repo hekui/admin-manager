@@ -38,6 +38,7 @@
     "connect": "3.6.6",
     "connect-history-api-fallback": "^1.5.0",
     "cookie-parser": "^1.4.3",
+    "dayjs": "^1.7.5",
     "driver.js": "0.5.2",
     "dropzone": "5.2.0",
     "echarts": "3.8.5",
