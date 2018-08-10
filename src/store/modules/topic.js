@@ -20,13 +20,10 @@ export default {
     }
   },
   actions: {
-    /**
-     * @param {Object} params 入参对象，例如：{pageNo:1, pageSize: 20}
-     * @returns {Object} Promise 约定所有actions方法均返回Promise对象
-     */
     getTopicList({ commit }, params) {
       // 获取公众号列表代码
-      return api.post('/topic/list', params).then(res => {
+      return api.post('/topic/list?page=true', params).then(res => {
+        console.log(res.data)
         commit('topicSet', {
           target: 'listData',
           data: res.data

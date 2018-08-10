@@ -141,7 +141,7 @@ export const asyncRouterMap = [
         // if do not set roles, means: this page does not require permission
       }
     }, {
-      path: 'edit',
+      path: 'edit/:topicId',
       component: () => import('@/views/topic/edit'),
       name: 'topicEdit',
       hidden: true,
