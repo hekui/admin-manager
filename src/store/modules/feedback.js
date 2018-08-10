@@ -26,7 +26,7 @@ export default {
      */
     getFeedbackList({ commit }, params) {
       // 获取用户列表代码
-      return api.post('/userfeedback/list', params).then(res => {
+      return api.post('/userfeedback/list?page=true', params).then(res => {
         commit('feedbackSet', {
           target: 'listData',
           data: res.data

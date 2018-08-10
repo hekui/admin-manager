@@ -99,7 +99,6 @@
 
 <script>
 import { mapState } from 'vuex'
-import { date2TimeStamp } from './../../utils'
 
 export default {
   name: 'userList',
@@ -152,8 +151,8 @@ export default {
       this.loading = true
       const tempForm = {
         userName: this.form.userName,
-        startTime: date2TimeStamp(this.form.dateTime[0]),
-        endTime: date2TimeStamp(this.form.dateTime[1])
+        startTime: this.form.dateTime === null ? '' : this.form.dateTime[0],
+        endTime: this.form.dateTime === null ? '' : this.form.dateTime[1]
       }
       this.$store.dispatch('getUserList', Object.assign({}, tempForm, this.page)).then(() => {
         this.loading = false

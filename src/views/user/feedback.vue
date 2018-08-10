@@ -76,7 +76,6 @@
 
 <script>
 import { mapState } from 'vuex'
-import { date2TimeStamp } from './../../utils'
 
 export default {
   name: 'feedbackList',
@@ -126,8 +125,8 @@ export default {
     loadData() {
       this.loading = true
       const tempForm = {
-        beginTime: date2TimeStamp(this.form.dateTime[0]),
-        endTime: date2TimeStamp(this.form.dateTime[1])
+        beginTime: this.form.dateTime === null ? '' : this.form.dateTime[0],
+        endTime: this.form.dateTime === null ? '' : this.form.dateTime[1]
       }
       this.$store.dispatch('getFeedbackList', Object.assign({}, tempForm, this.page)).then(() => {
         this.loading = false
