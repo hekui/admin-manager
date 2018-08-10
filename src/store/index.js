@@ -37,13 +37,20 @@ const store = new Vuex.Store({
         cityName: '西安'
       }
     ],
-    pstatus: {
-      0: '正常',
-      1: '锁定',
+    typeDict: { // 类型字典
+      1: 'paccount', // 1,公众号
+      2: 'tag', // 2,标签
+      3: 'article' // 3,文章
+    },
+    paccountTypeDict: [],
+    tagTypeDict: [],
+    articleTypeDict: [],
+    // 公众号相关
+    wechatStatus: {
+      1: '启用',
       2: '停用'
     },
-    typedict: [],
-    ptype: [{
+    pclassify: [{
       id: 1,
       name: '房企'
     }, {
@@ -78,10 +85,11 @@ const store = new Vuex.Store({
   },
   actions: {
     // 获取指定城市下指定指定顶级类型下所有子项
-    getTypeDict({ commit }, params) {
+    getTypeDict({ commit, state }, params) {
       return api.post('/typedict/list', params).then(res => {
+        // console.log(`${state.typeDict[params.code]}TypeDict`, res)
         commit('stateSet', {
-          target: 'typedict',
+          target: `${state.typeDict[params.code]}TypeDict`,
           data: res.data.list
         })
         return res

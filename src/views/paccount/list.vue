@@ -7,15 +7,14 @@
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="filter.wechatStatus" :clearable="true" placeholder="活动状态">
-            <el-option label="启用" value="0"></el-option>
-            <el-option label="锁定" value="1"></el-option>
+            <el-option label="启用" value="1"></el-option>
             <el-option label="停用" value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="类型">
           <el-cascader
             v-model="filter.typeId"
-            :options="options"
+            :options="paccountTypeDict"
             :clearable="true"
             change-on-select
           ></el-cascader>
@@ -73,7 +72,7 @@
             label="状态"
             width="120">
             <template slot-scope="scope">
-              {{pstatus[scope.row.wechatStatus]}}
+              {{wechatStatus[scope.row.wechatStatus]}}
             </template>
           </el-table-column>
           <el-table-column
@@ -81,7 +80,7 @@
             label="分类"
             width="120">
             <template slot-scope="scope">
-              {{ptype[scope.row.classify]}}
+              {{pclassify[scope.row.classify]}}
             </template>
           </el-table-column>
           <el-table-column
@@ -89,7 +88,7 @@
             label="类型"
             width="180">
             <template slot-scope="scope">
-              {{  listData.types[0] }}
+              {{  scope.row.types[0] }}
             </template>
           </el-table-column>
           <el-table-column
@@ -133,7 +132,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 export default {
   name: 'paccountList',
   data() {
@@ -145,8 +144,8 @@ export default {
       },
       filter: {
         name: '',
-        wechatStatus: 0,
-        typeId: '',
+        wechatStatus: '',
+        typeId: [],
         date: ''
       },
       pickerOptions: { // 日期快捷选项
@@ -179,11 +178,12 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['paccountTypeDict']),
     ...mapState({
       cityId: state => state.cityId,
-      options: state => state.typedict,
-      pstatus: state => state.pstatus,
-      ptype: state => state.ptype,
+      options: state => state.paccountTypeDict,
+      wechatStatus: state => state.wechatStatus,
+      pclassify: state => state.pclassify,
       listData: state => state.paccount.listData
     })
   },
@@ -196,7 +196,8 @@ export default {
       console.log('this.filter', this.filter)
 
       this.$store.dispatch('getTypeDict', {
-        cityId: this.cityId
+        cityId: this.cityId,
+        code: 1
       })
       const params = {
         startTime: this.filter.date[0],
