@@ -24,9 +24,14 @@ export default {
     }],
     tagOptions: ['标签1', '标签2', '标签3'],
     listData: { // 预计后端返回数据格式 - 未定
-      totalPage: 0,
       curPage: 1,
+      hasNext: true,
+      hasPrevious: false,
+      nextPage: 2,
       pageSize: 10,
+      qualification: '',
+      sortType: '',
+      totalPage: 0,
       totalRecords: 0,
       list: []
     },

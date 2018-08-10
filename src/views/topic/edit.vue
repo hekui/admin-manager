@@ -5,12 +5,12 @@
         <el-input v-model="form.name" clearable></el-input>
       </el-form-item>
       <el-form-item label="专题副标题">
-        <el-input v-model="form.subname" clearable></el-input>
+        <el-input v-model="form.subtitle" clearable></el-input>
       </el-form-item>
       <el-form-item label="专题模板">
-        <el-select v-model="form.type">
+        <el-select v-model="form.template">
           <el-option
-            v-for="item in options"
+            v-for="item in topicTemplate"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -18,54 +18,59 @@
         </el-select>
       </el-form-item>
       <el-form-item label="专题生效时间">
-        <div class="enable-time-wrapper">
-          <el-date-picker
-            v-model="form.enabletimebegin"
-            type="datetime"
-            placeholder="开始时间"
-            default-time="12:00:00">
-          </el-date-picker>
-          至
-          <el-date-picker
-            v-model="form.enabletimeend"
-            type="datetime"
-            placeholder="结束时间"
-            default-time="12:00:00">
-          </el-date-picker>
-        </div>
-
+        <el-date-picker
+          v-model="date"
+          type="datetimerange"
+          :picker-options="datePickerOptions"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
       </el-form-item>
       <el-form-item label="首页推荐">
-        <el-radio v-model="form.recommend" label="1">是</el-radio>
-        <el-radio v-model="form.recommend" label="0">否</el-radio>
+        <el-switch
+          v-model="form.isRecommend"
+          active-color="#13ce66"
+          inactive-color="#606266">
+        </el-switch>
       </el-form-item>
       <el-form-item label="专题标签">
-        <el-checkbox v-model="form.tag" label="1">标签1</el-checkbox>
-        <el-checkbox v-model="form.tag" label="2">标签2</el-checkbox>
-        <el-checkbox v-model="form.tag" label="3">标签3</el-checkbox>
+        <el-checkbox-group
+          class="topic-tags"
+          v-model="form.labels">
+          <el-checkbox
+            v-for="item in allTags"
+            :label="item.id">
+            {{item.name}}
+          </el-checkbox>
+        </el-checkbox-group>
       </el-form-item>
       <el-form-item label="专题头图">
         <el-upload
           class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
+          action="http://rap2s.maifangma.com/app/mock/16/POST/uploadimage"
           :show-file-list="false"
-          :on-success="handleAvatarSuccess"
+          :on-success="uploadAvatarSuccess"
           :before-upload="beforeAvatarUpload">
-          <img v-if="form.imageUrl" :src="form.imageUrl" class="avatar">
+          <img v-if="form.headUrl" :src="form.headUrl" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </el-form-item>
       <el-form-item label="指向地址">
-        <el-radio v-model="form.focusaddress" label="1">链接</el-radio>
+        <el-radio v-model="isAddress" label="0">链接</el-radio>
       </el-form-item>
       <el-form-item label="链接">
         <div class="url-wrapper">
-          <el-input v-model="form.articleurl" clearable></el-input>
+          <el-input v-model="form.destinationUrl" clearable></el-input>
           <el-button class="btn" @click="choosearticle">选择文件链接</el-button>
         </div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" class="savebtn">
+        <el-button
+          type="primary"
+          class="savebtn"
+          @click="saveClick">
           保存
         </el-button>
       </el-form-item>
@@ -75,11 +80,11 @@
       width="80%"
       :visible.sync="showselectarticle">
       <div class="dialog-content">
-        <filechoose></filechoose>
+        <filechoose ref="filechoose"></filechoose>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="showselectarticle = false">取 消</el-button>
-        <el-button type="primary" @click="showselectarticle = false">确 定</el-button>
+        <el-button type="primary" @click="selectCurrentArticle">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -88,47 +93,114 @@
 <script>
   import { mapState } from 'vuex'
   import filechoose from './filechoose'
+  import api from '@/api'
 
   export default {
     name: 'topicEdit',
     data() {
       return {
+        id: '',
+        allTags: [],
+        isAddress: '0',
         form: {
+          id: '',
           name: '',
-          subname: '',
-          type: '选项1',
-          enabletimebegin: '',
-          enabletimeend: '',
-          imageUrl: '',
-          recommend: '0',
-          tag: [],
-          focusaddress: '1',
-          articleurl: ''
+          subtitle: '',
+          template: 0,
+          effectTime: '',
+          expireTime: '',
+          isRecommend: '0',
+          labels: [],
+          headUrl: '',
+          destinationUrl: ''
         },
-        options: [
-          {
-            value: '选项1',
-            label: '指向类'
-          }
-        ],
-        showselectarticle: false
+        topicTemplate: [{
+          value: 0,
+          label: '指向类'
+        }],
+        showselectarticle: false,
+        datePickerOptions: {
+          shortcuts: [{
+            text: '最近一周',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近一个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
+            }
+          }, {
+            text: '最近三个月',
+            onClick(picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
+            }
+          }]
+        }
       }
     },
     computed: {
       ...mapState({
-        options: state => state.options,
         listData: state => state.topic.listData
-      })
+      }),
+      date: {
+        set: function(newVal) {
+          console.log(newVal)
+          this.form.effectTime = newVal[0]
+          this.form.expireTime = newVal[1]
+        },
+        get: function() {
+          return [this.form.effectTime, this.form.expireTime]
+        }
+      }
+    },
+    watch: {
+      id: function(newVal, oldVal) {
+        console.log('----------')
+        console.log(newVal, oldVal)
+        console.log('----------')
+      },
+      'form.effectTime': function(newVal, oldVal) {
+        console.log(newVal)
+      },
+      'form.labels': function(newVal, oldVal) {
+        console.log(newVal)
+      }
     },
     created() {
+      this.id = this.$route.params.topicId
+
+      api.post('/label/list', { cityID: this.$store.state.cityId }).then(res => {
+        this.allTags = res.data.list
+      }, res => {
+        console.log('error')
+      })
+
+      if (this.id.length) {
+        api.post('/topic/find', { id: this.id }).then(res => {
+          this.form = res.data
+        }, res => {
+          console.log('error')
+        })
+      }
     },
     methods: {
       choosearticle() {
         this.showselectarticle = true
       },
 
-      handleAvatarSuccess(res, file) {
-        this.form.imageUrl = URL.createObjectURL(file.raw)
+      uploadAvatarSuccess(res, file) {
+        console.log(res, file)
+        this.form.headUrl = res.url
       },
       beforeAvatarUpload(file) {
         const isJPG = file.type === 'image/jpeg'
@@ -141,6 +213,19 @@
           this.$message.error('上传头像图片大小不能超过 2MB!')
         }
         return isJPG && isLt2M
+      },
+      saveClick() {
+        this.form.id = this.id
+        api.post('/topic/edit', Object.assign({}, this.form)).then(res => {
+          console.log(res)
+        }, res => {
+          console.log('error')
+        })
+      },
+      selectCurrentArticle() {
+        this.showselectarticle = false
+        this.form.destinationUrl = this.$refs.filechoose.currentArticle.contentUrl
+        console.log(this.$refs.filechoose.currentArticle)
       }
     },
     components: {
@@ -154,6 +239,13 @@
     .el-form {
       .el-input {
         max-width: 500px;
+      }
+      .topic-tags {
+        justify-content: start;
+        .el-checkbox {
+          margin-left: 0px;
+          margin-right: 30px;
+        }
       }
       .avatar-uploader  {
         .el-upload {
@@ -175,7 +267,7 @@
           text-align: center;
         }
         .avatar {
-          width: 178px;
+          min-width: 178px;
           height: 178px;
           display: block;
         }

@@ -3,7 +3,6 @@ import account from './account'
 // import paccount from './paccount'
 import content from './content'
 import topic from './topic'
-import articlesearch from './articlesearch'
 // import user from './user'
 // import feedback from './feedback'
 import advert from './advert'
@@ -30,8 +29,10 @@ Mock.mock(/\/content\/save/, content.save)
 Mock.mock(/\/content\/status/, content.status)
 
 // 专题相关
-Mock.mock(/\/topic\/list/, topic)
-Mock.mock(/\/topic\/articlesearch/, articlesearch)
+// Mock.mock(/\/topic\/list/, topic.topiclist)
+Mock.mock(/\/topic\/articlesearch/, topic.articlelist)
+// Mock.mock(/\/tag\/list/, topic.taglist)
+// Mock.mock(/\/topic\/find/, topic.topicinfo)
 
 // 用户管理
 // Mock.mock(/\/user\/list/, user)

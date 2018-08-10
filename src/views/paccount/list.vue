@@ -6,9 +6,15 @@
           <el-input v-model="filter.name" :clearable="true"></el-input>
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="filter.wechatStatus" :clearable="true" placeholder="活动状态">
+          <el-select v-model="filter.status" :clearable="true" placeholder="请选择">
             <el-option label="启用" value="1"></el-option>
             <el-option label="停用" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否授权">
+          <el-select v-model="filter.wechatStatus" :clearable="true" placeholder="请选择">
+            <el-option label="授权" value="1"></el-option>
+            <el-option label="未授权" value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="类型">
@@ -42,8 +48,6 @@
       <div class="table-top">
         <el-button type="primary" icon="el-icon-plus" @click="addHandle">新增公众号监控</el-button>
       </div>
-
-      
       <div class="table-main">
         <el-table
           :data="listData.list"
@@ -63,48 +67,60 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="cityName"
             label="所在城市"
-            width="120">
+            prop="city"
+            width="80">
           </el-table-column>
           <el-table-column
-            prop="province"
+            prop="status"
             label="状态"
-            width="120">
+            width="60">
             <template slot-scope="scope">
-              {{wechatStatus[scope.row.wechatStatus]}}
+              {{ status[scope.row.status]  }}
             </template>
           </el-table-column>
+          <el-table-column
+            prop="wechatStatus"
+            label="是否授权"
+            width="120">
+            <template slot-scope="scope">
+              {{ wechatStatus[scope.row.wechatStatus]  }}
+            </template>
+          </el-table-column>
+          
           <el-table-column
             prop="classify"
             label="分类"
-            width="120">
+            width="100">
             <template slot-scope="scope">
-              {{pclassify[scope.row.classify]}}
+              {{ pclassify[scope.row.classify] }}
             </template>
           </el-table-column>
           <el-table-column
-            prop="types"
+            prop="type"
             label="类型"
-            width="180">
-            <template slot-scope="scope">
-              {{  scope.row.types[0] }}
-            </template>
+            width="120">
           </el-table-column>
           <el-table-column
             prop="createTime"
             label="添加时间"
-            width="120">
+            width="140">
+            <template slot-scope="scope">
+              {{ scope.row.createTime | formatDate('YYYY-MM-DD') }}
+            </template>
           </el-table-column>
           <el-table-column
             prop="lastRecordTime"
             label="最后收录时间"
-            width="120">
+            width="140">
+            <template slot-scope="scope">
+              {{ scope.row.lastRecordTime | formatDate('YYYY-MM-DD') }}
+            </template>
           </el-table-column>
           <el-table-column
             prop="articleNum"
             label="收录文章数量"
-            width="120">
+            width="110">
           </el-table-column>
           <el-table-column
             fixed="right"
@@ -132,6 +148,7 @@
 </template>
 
 <script>
+
 import { mapState, mapGetters } from 'vuex'
 export default {
   name: 'paccountList',
@@ -145,6 +162,7 @@ export default {
       filter: {
         name: '',
         wechatStatus: '',
+        status: '',
         typeId: [],
         date: ''
       },
@@ -182,6 +200,7 @@ export default {
     ...mapState({
       cityId: state => state.cityId,
       options: state => state.paccountTypeDict,
+      status: state => state.status,
       wechatStatus: state => state.wechatStatus,
       pclassify: state => state.pclassify,
       listData: state => state.paccount.listData
@@ -194,19 +213,18 @@ export default {
   methods: {
     fetchData() {
       console.log('this.filter', this.filter)
-
+      // 获取公众号类型列表
       this.$store.dispatch('getTypeDict', {
         cityId: this.cityId,
         code: 1
       })
       const params = {
-        startTime: this.filter.date[0],
-        endTime: this.filter.date[1]
+        startTime: this.filter.date[0] || '',
+        endTime: this.filter.date[1] || '',
+        typeId: this.filter.typeId[this.filter.typeId.length - 1]
       }
-      const a = Object.assign({}, this.filter, params)
-
       this.loading = true
-      this.$store.dispatch('getPaccountList', Object.assign({}, a, this.page)).then(() => {
+      this.$store.dispatch('getPaccountList', Object.assign({}, this.filter, params, this.page)).then(() => {
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -226,7 +244,6 @@ export default {
       })
     },
     showDetail(id) {
-      console.log('id', id)
       this.$router.push({
         path: '/paccount/edit',
         query: {

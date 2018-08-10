@@ -3,7 +3,10 @@
     <div class="filter">
       <el-form ref="form" :inline="true" :model="filter">
         <el-form-item label="文章标题">
-          <el-input v-model="filename" :clearable="true"></el-input>
+          <el-input
+            v-model="filter.title"
+            placeholder="请输入文章标题"
+            clearable></el-input>
         </el-form-item>
         <el-form-item>
           <el-button icon="el-icon-search" @click="submitFilter">查询</el-button>
@@ -33,9 +36,9 @@
           width="100">
         </el-table-column>
         <el-table-column
-          prop="name"
+          prop="wechatName"
           label="公众号名称"
-          width="140">
+          min-width="120">
         </el-table-column>
         <el-table-column
           prop="city"
@@ -43,24 +46,27 @@
           width="120">
         </el-table-column>
         <el-table-column
-          prop="articletitle"
+          prop="title"
           label="文章标题"
-          min-width="120">
+          min-width="160">
         </el-table-column>
         <el-table-column
-          prop="publish-date"
+          prop="releaseTime"
           label="发布时间"
           width="120">
+          <template slot-scope="scope">
+            <pan>{{scope.row.releaseTime | formatDate('YYYY-MM-DD HH:mm')}}</pan>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="type"
+          prop="typeName"
           label="类型"
-          width="120">
+          width="140">
         </el-table-column>
         <el-table-column
-          prop="count"
+          prop="readNum"
           label="阅读量"
-          width="120">
+          width="140">
         </el-table-column>
       </el-table>
     </div>
@@ -78,31 +84,22 @@
 </template>
 
 <script>
-  import api from '@/api'
+  import { mapState } from 'vuex'
 
   export default {
     name: 'topicList',
     data() {
       return {
         currentRow: '',
-        filename: '',
+        currentArticle: {},
         loading: false,
         page: {
-          pageNo: 1,
+          curPage: 1,
           pageSize: 10
         },
-        listData: {
-          totalPage: 0,
-          curPage: 1,
-          pageSize: 10,
-          totalRecords: 0,
-          list: []
+        filter: {
+          title: '',
         }
-      }
-    },
-    watch: {
-      currentRow() {
-        console.log(this.currentRow)
       }
     },
     created() {
@@ -110,29 +107,31 @@
     },
     methods: {
       tableCurrentChange(row) {
+        console.log(row)
         this.currentRow = row.id
+        this.currentArticle = row
       },
       submitFilter() {
-        api.post('/topic/articlesearch', { 'filter': this.filename }).then(res => {
-          this.listData = res.data
-        }, res => {
-          console.log('error')
-        })
+        this.page.curPage = 1
+        this.fetchData()
       },
       fetchData() {
         this.loading = true
-        api.post('/topic/articlesearch', Object.assign({}, this.filter, this.page)).then(res => {
-          this.listData = res.data
+        this.$store.dispatch('getContentList', Object.assign({}, this.filter, this.page)).then(() => {
           this.loading = false
-        }, res => {
-          console.log('error')
+        }).catch(() => {
           this.loading = false
         })
       },
       changePage(curPage) {
-        this.page.pageNo = curPage
+        this.page.curPage = curPage
         this.fetchData()
       }
+    },
+    computed: {
+      ...mapState({
+        listData: state => state.content.listData
+      })
     }
   }
 </script>
