@@ -91,7 +91,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="type"
+              prop="typeName"
               label="类型"
               width="120">
             </el-table-column>
@@ -173,7 +173,6 @@
           <el-button type="primary" @click="onSubmit('editInfo')">立即添加</el-button>
         </el-form-item>
       </el-form>
-
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-else>
         <el-form-item label="微信号" prop="wechatAccount">
           <el-input v-model="form.wechatAccount" placeholder="请输入微信号，注意大小写" :clearable="true" ></el-input>
@@ -252,33 +251,6 @@ export default{
         typeId: [],
         status: '',
       },
-      pickerOptions: { // 日期快捷选项
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
       rules: {
         wechatAccount: [
           { required: true, message: '请输入微信号，注意大小写', trigger: 'blur' }
@@ -295,6 +267,7 @@ export default{
       cityId: state => state.cityId,
       pclassify: state => state.pclassify,
       options: state => state.paccountTypeDict,
+      pickerOptions: state => state.pickerOptions,
       infoData: state => state.paccount.infoData,
       detailsStatus: state => state.paccount.detailsStatus,
       articleData: state => state.paccount.articleData
@@ -304,7 +277,9 @@ export default{
     this.id = this.$route.query.id
     this.wxid = this.$route.query.wxid
     this.fetchDict()
-    this.fetchData()
+    if (this.id) { // 查看和编辑分开接口调用
+      this.fetchData()
+    }
   },
   methods: {
     fetchDict() {
@@ -336,7 +311,7 @@ export default{
       const params = {
         beginDate: this.filter.date[0] || '',
         endDate: this.filter.date[1] || '',
-        typeId: this.filter.typeId[this.filter.typeId.length - 1]
+        typeId: this.id
       }
       this.loading = true
       this.$store.dispatch('getArticleList', Object.assign({}, this.filter, params, this.page)).then(() => {

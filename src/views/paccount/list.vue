@@ -97,7 +97,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="type"
+            prop="typeName"
             label="类型"
             width="120">
           </el-table-column>
@@ -166,33 +166,6 @@ export default {
         status: '',
         typeId: [],
         date: ''
-      },
-      pickerOptions: { // 日期快捷选项
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
       }
     }
   },
@@ -204,6 +177,7 @@ export default {
       status: state => state.status,
       wechatStatus: state => state.wechatStatus,
       pclassify: state => state.pclassify,
+      pickerOptions: state => state.pickerOptions,
       listData: state => state.paccount.listData
     })
   },
