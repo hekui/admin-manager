@@ -10,8 +10,8 @@
         <div class="status-choice">
           <span class="text">状态：</span>
           <el-radio-group v-model="status">
-            <el-radio :label="1" @change="open">启用</el-radio>
-            <el-radio :label="2" @change="open">禁用</el-radio>
+            <el-radio :label="1" @change="changState">启用</el-radio>
+            <el-radio :label="2" @change="changState">禁用</el-radio>
           </el-radio-group>
         </div>
       </div>
@@ -91,7 +91,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="type"
+              prop="typeName"
               label="类型"
               width="120">
             </el-table-column>
@@ -135,17 +135,55 @@
       </div>
     </div>
     <div class="add-paccount" v-else>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="editInfo" :model="editInfo" :rules="rules" label-width="80px" v-if="wxid" >
         <el-form-item label="微信号" prop="wechatAccount">
-          <el-input v-model="form.wechatAccount" placeholder="请输入微信号，注意大小写"  :clearable="true"></el-input>
+          <el-input v-model="editInfo.wechatAccount" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="状态"  prop="status">
+        <el-form-item label="状态">
+          <el-radio-group v-model="editInfo.status">
+            <el-radio :label="1">启用</el-radio>
+            <el-radio :label="2">禁用</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="是否授权">
+          <el-radio-group v-model="editInfo.wechatStatus">
+            <el-radio :label="1">授权</el-radio>
+            <el-radio :label="2">未授权</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="所属分类" prop="classify">
+          <el-select v-model="editInfo.classify" placeholder="请选择">
+            <el-option
+              v-for="(value, key, index) in pclassify"
+              :key="index"
+              :label="value"
+              :value="key">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属类型">
+          <el-cascader placeholder="请选择所属类型"
+            v-model="editInfo.typeId"
+            :options="paccountTypeDict"
+            :clearable="true"
+            change-on-select
+          ></el-cascader>
+        </el-form-item>
+        <el-form-item v-if="editInfo.wechatAccount">
+          <el-button type="primary" @click="onSubmit('editInfo')">立即添加</el-button>
+        </el-form-item>
+      </el-form>
+      <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-else>
+        <el-form-item label="微信号" prop="wechatAccount">
+          <el-input v-model="form.wechatAccount" placeholder="请输入微信号，注意大小写" :clearable="true" ></el-input>
+        </el-form-item>
+        <el-form-item label="状态">
           <el-radio-group v-model="form.status">
             <el-radio :label="1">启用</el-radio>
             <el-radio :label="2">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="是否授权" prop="wechatStatus">
+        <el-form-item label="是否授权">
           <el-radio-group v-model="form.wechatStatus">
             <el-radio :label="1">授权</el-radio>
             <el-radio :label="2">未授权</el-radio>
@@ -171,6 +209,8 @@
           <el-button type="primary" @click="onSubmit('form')">立即添加</el-button>
         </el-form-item>
       </el-form>
+         
+      
     </div>
   </div>
 </template>
@@ -182,6 +222,7 @@ export default{
   data() {
     return {
       id: '',
+      wxid: '',
       status: '',
       changeStatus: '',
       loading: false,
@@ -197,43 +238,18 @@ export default{
       form: {
         wechatAccount: '',
         wechatStatus: 1,
-        classify: '',
+        classify: [],
         typeId: [],
         status: 1
       },
+      typeDictList: [], // 编辑的时候获取状态 this.formatTypeId
       editInfo: {
         id: '',
+        wechatAccount: '',
         wechatStatus: '',
-        classify: '',
-        types: '',
-        status: ''
-      },
-      pickerOptions: { // 日期快捷选项
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
+        classify: [],
+        typeId: [],
+        status: '',
       },
       rules: {
         wechatAccount: [
@@ -242,9 +258,6 @@ export default{
         classify: [
           { required: true, message: '请选择公众号类型', trigger: 'change' }
         ],
-        typeId: [
-          { required: true, message: '请选择所属类型', trigger: 'change' }
-        ],
       }
     }
   },
@@ -252,7 +265,9 @@ export default{
     ...mapGetters(['paccountTypeDict', 'pclassifyTypeDict']),
     ...mapState({
       cityId: state => state.cityId,
+      pclassify: state => state.pclassify,
       options: state => state.paccountTypeDict,
+      pickerOptions: state => state.pickerOptions,
       infoData: state => state.paccount.infoData,
       detailsStatus: state => state.paccount.detailsStatus,
       articleData: state => state.paccount.articleData
@@ -260,8 +275,11 @@ export default{
   },
   created() {
     this.id = this.$route.query.id
+    this.wxid = this.$route.query.wxid
     this.fetchDict()
-    this.fetchData()
+    if (this.id) { // 查看和编辑分开接口调用
+      this.fetchData()
+    }
   },
   methods: {
     fetchDict() {
@@ -272,15 +290,18 @@ export default{
       })
       // 查询公众号基本信息
       this.$store.dispatch('getPaccountInfo', {
-        id: this.id
+        id: this.id ? this.id : this.wxid
       }).then((res) => {
         this.status = res.data.status
         this.changeStatus = res.data.status
+        const typeid = res.data.typeDictList
+        this.formatTypeId(typeid)
         this.editInfo = {
           id: res.data.id,
+          wechatAccount: res.data.wechatAccount,
           wechatStatus: res.data.wechatStatus,
-          classify: res.data.classify,
-          types: res.data.classify,
+          classify: '' + res.data.classify,
+          typeId: this.typeDictList,
           status: res.data.status
         }
       })
@@ -290,7 +311,7 @@ export default{
       const params = {
         beginDate: this.filter.date[0] || '',
         endDate: this.filter.date[1] || '',
-        typeId: this.filter.typeId[this.filter.typeId.length - 1]
+        typeId: this.id
       }
       this.loading = true
       this.$store.dispatch('getArticleList', Object.assign({}, this.filter, params, this.page)).then(() => {
@@ -306,36 +327,60 @@ export default{
     onSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log('ok', this.form)
-
-          // this.$store.dispatch('addPaccountInfo', Object.assign({}, this.form, params, this.page)).then(() => {
-          //   this.loading = false
-          // }).catch(() => {
-          //   this.loading = false
-          // })
-
-          // this.$alert('<strong>添加成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
-          //   type: 'success',
-          //   dangerouslyUseHTMLString: true,
-          //   showClose: false,
-          //   confirmButtonText: '知道了'
-          // }).then(() => {
-          //   this.$router.push({ path: '/paccount/list' })
-          // })
-
-          // this.$alert('<strong>添加失败</strong><p>请稍后重试，或者联系技术解决</p>', {
-          //   type: 'error',
-          //   dangerouslyUseHTMLString: true,
-          //   showClose: false,
-          //   confirmButtonText: '知道了'
-          // })
+          if (this.wxid) {
+            const params = { typeId: this.editInfo.typeId[this.editInfo.typeId.length - 1] }
+            this.loading = true
+            this.$store.dispatch('editPaccountInfo', Object.assign({}, this.editInfo, params)).then(() => {
+              this.loading = false
+              this.$alert('<strong>编辑成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
+                type: 'success',
+                dangerouslyUseHTMLString: true,
+                showClose: false,
+                confirmButtonText: '知道了'
+              }).then(() => {
+                this.$router.replace({ path: '/paccount/list' })
+              })
+            }).catch(() => {
+              this.loading = false
+              this.$alert('<strong>编辑失败</strong><p>请稍后重试，或者联系技术解决</p>', {
+                type: 'error',
+                dangerouslyUseHTMLString: true,
+                showClose: false,
+                confirmButtonText: '知道了'
+              })
+            })
+          } else {
+            const params = {
+              classify: this.form.classify[this.form.classify.length - 1],
+              typeId: this.form.typeId[this.form.typeId.length - 1]
+            }
+            this.loading = true
+            this.$store.dispatch('updatestatusStateInfo', Object.assign({}, this.form, params)).then(() => {
+              this.loading = false
+              this.$alert('<strong>添加成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
+                type: 'success',
+                dangerouslyUseHTMLString: true,
+                showClose: false,
+                confirmButtonText: '知道了'
+              }).then(() => {
+                this.$router.replace({ path: '/paccount/list' })
+              })
+            }).catch(() => {
+              this.loading = false
+              this.$alert('<strong>添加失败</strong><p>请稍后重试，或者联系技术解决</p>', {
+                type: 'error',
+                dangerouslyUseHTMLString: true,
+                showClose: false,
+                confirmButtonText: '知道了'
+              })
+            })
+          }
         } else {
-          console.log('error submit!!')
           return false
         }
       })
     },
-    open() {
+    changState() {
       const type = this.status
       const params = {
         id: this.id,
@@ -418,6 +463,14 @@ export default{
         path: '/content/edit',
         query: {
           id
+        }
+      })
+    },
+    formatTypeId(data) {
+      data.map((item) => {
+        this.typeDictList.push(item.id)
+        if (item.childList.length > 0) {
+          this.formatTypeId(item.childList)
         }
       })
     }

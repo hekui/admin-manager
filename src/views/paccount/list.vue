@@ -46,7 +46,7 @@
     </div>
     <div class="form-wrapper">
       <div class="table-top">
-        <el-button type="primary" icon="el-icon-plus" @click="addHandle">新增公众号监控</el-button>
+        <el-button type="primary" icon="el-icon-plus" @click="addHandle()">新增公众号监控</el-button>
       </div>
       <div class="table-main">
         <el-table
@@ -97,7 +97,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="type"
+            prop="typeName"
             label="类型"
             width="120">
           </el-table-column>
@@ -128,6 +128,7 @@
             width="150">
             <template slot-scope="scope">
               <el-button type="text" @click="showDetail(scope.row.id)">详情</el-button>
+              <el-button type="text" @click="addHandle(scope.row.id)">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -165,33 +166,6 @@ export default {
         status: '',
         typeId: [],
         date: ''
-      },
-      pickerOptions: { // 日期快捷选项
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
       }
     }
   },
@@ -203,6 +177,7 @@ export default {
       status: state => state.status,
       wechatStatus: state => state.wechatStatus,
       pclassify: state => state.pclassify,
+      pickerOptions: state => state.pickerOptions,
       listData: state => state.paccount.listData
     })
   },
@@ -238,14 +213,23 @@ export default {
       this.page.curPage = curPage
       this.fetchData()
     },
-    addHandle() {
-      this.$router.push({
-        path: '/paccount/add'
-      })
+    addHandle(wxid) {
+      if (wxid) {
+        this.$router.push({
+          path: '/paccount/edit',
+          query: {
+            wxid
+          }
+        })
+      } else {
+        this.$router.push({
+          path: '/paccount/add'
+        })
+      }
     },
     showDetail(id) {
       this.$router.push({
-        path: '/paccount/edit',
+        path: '/paccount/detail',
         query: {
           id
         }

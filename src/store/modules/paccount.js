@@ -66,9 +66,17 @@ export default {
         return Promise.resolve(res)
       })
     },
-    editPaccountInfo({ commit }, params) {
-      // 编辑公众号基本信息
+    updatestatusStateInfo({ commit }, params) {
+      // 更新公众号状态
       return api.post('/subscription/updatestatus', params).then(res => {
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
+    editPaccountInfo({ commit }, params) {
+      // 编辑公众号
+      return api.post('/subscription/edit', params).then(res => {
         return res
       }, res => {
         return Promise.resolve(res)
