@@ -20,8 +20,7 @@
           </div>
           <el-tab-pane label="文章" name="article">
             <el-tree
-              :props="props"
-              :data="treeData3"
+              :data="articleTypeDict"
               node-key="id"
               default-expand-all
               :expand-on-click-node="false">
@@ -59,8 +58,7 @@
           </el-tab-pane>
           <el-tab-pane label="公众号" name="publicNo">
             <el-tree
-              :props="props"
-              :data="treeData1"
+              :data="paccountTypeDict"
               node-key="id"
               default-expand-all
               :expand-on-click-node="false">
@@ -98,8 +96,7 @@
           </el-tab-pane>
           <el-tab-pane label="标签" name="tag">
             <el-tree
-              :props="props"
-              :data="treeData2"
+              :data="tagTypeDict"
               node-key="id"
               default-expand-all
               :expand-on-click-node="false">
@@ -146,11 +143,8 @@
         <el-form-item label="上级类型：">
           <el-cascader
             :change-on-select="true"
-            :show-all-levels="false"
-            expand-trigger="hover"
             :options="getOptions()"
-            v-model="form.parentTypeId"
-            :props="props"
+            v-model="form.parentId"
             :clearable="true"
             :disabled="dialogType !== 'addnew'">
           </el-cascader>
@@ -165,7 +159,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import SvgIcon from '@/components/SvgIcon'
 
 export default {
@@ -181,12 +175,7 @@ export default {
       form: {
         id: '',
         name: '',
-        parentTypeId: []
-      },
-      props: {
-        value: 'id',
-        label: 'name',
-        children: 'childList'
+        parentId: []
       },
       rules: {
         name: [
@@ -196,32 +185,30 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      treeData1: state => state.category.treeData1,
-      treeData2: state => state.category.treeData2,
-      treeData3: state => state.category.treeData3,
-    }),
+    ...mapGetters(['paccountTypeDict', 'tagTypeDict', 'articleTypeDict']),
     dialogTitle() {
       return this.dialogType === 'edit' ? '编辑类型' : '新增类型'
     }
   },
   created() {
-    this.fetchData()
+    this.fetchData(1) // 查询公众号类型
+    this.fetchData(2) // 查询标签类型
+    this.fetchData(3) // 查询文章类型
   },
   methods: {
     getOptions() {
-      if (this.activeName === 'publicNo') return this.treeData1
-      if (this.activeName === 'tag') return this.treeData2
-      if (this.activeName === 'article') return this.treeData3
+      if (this.activeName === 'publicNo') return this.paccountTypeDict
+      if (this.activeName === 'tag') return this.tagTypeDict
+      if (this.activeName === 'article') return this.articleTypeDict
       return []
     },
     // 查询标签
-    fetchData() {
-      this.loading = true
-      this.$store.dispatch('getCategoryList', Object.assign({}, this.filter, this.page)).then(() => {
-        this.loading = false
+    fetchData(code) {
+      if (code === 1) this.loading = true
+      this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: code }).then(() => {
+        if (code === 1) this.loading = false
       }).catch(() => {
-        this.loading = false
+        if (code === 1) this.loading = false
       })
     },
     // 删除标签
@@ -259,32 +246,39 @@ export default {
         id: '',
         name: '',
         // typeStatus: 0,
-        parentTypeId: []
+        parentId: []
       }
-      this.form.parentTypeId = this.getTypeId(node, this.form.parentTypeId)
+      this.form.parentId = this.getParentId(node, this.form.parentId)
       this.dialogType = 'addnew'
       if (node) this.dialogType = 'addsub'
       this.showDialog = true
     },
     // 根据节点获取类型级联Id
-    getTypeId(node, typeId) {
-      if (node) {
-        typeId.unshift(node.data.id)
-        this.getTypeId(node.parent, typeId)
+    getParentId(node, typeId) {
+      if (node && node.level > 1) {
+        typeId.unshift(node.parent.data.value)
+        this.getParentId(node.parent, typeId)
       }
       return typeId
     },
     // 编辑标签
     handleEdit(node) {
-      this.form = Object.assign({}, {
-        id: node.data.id,
-        name: node.data.name,
-        // typeStatus: node.data.typeStatus,
-        parentTypeId: []
+      this.$store.dispatch('getCategoryById', { id: node.data.value }).then((res) => {
+        this.form = Object.assign({}, {
+          id: node.data.value,
+          name: res.data.name,
+          // typeStatus: res.data.typeStatus,
+          parentId: []
+        })
+        this.form.parentId = this.getParentId(node, this.form.parentId)
+        this.dialogType = 'edit'
+        this.showDialog = true
+      }).catch(() => {
+        this.$message({
+          message: '获取类型信息失败！',
+          type: 'error'
+        })
       })
-      this.form.parentTypeId = this.getTypeId(node, this.form.parentTypeId)
-      this.dialogType = 'edit'
-      this.showDialog = true
     },
     // 锁定/激活
     handleStatus(node) {
@@ -295,7 +289,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        this.$store.dispatch('changeCategoryStatus', { id: node.data.id, typeStatus: node.data.typeStatus ? 0 : 1 }).then(() => {
+        this.$store.dispatch('changeCategoryStatus', { id: node.data.value, typeStatus: node.data.typeStatus ? 0 : 1 }).then(() => {
           this.loading = false
           this.$message({
             type: 'success',
@@ -332,8 +326,11 @@ export default {
           }).then(() => {
             this.dialogLoading = true
             const param = Object.assign({}, this.form)
-            param.parentTypeId = param.parentTypeId.pop() || '' // 取最后一个元素作为typeId保存到数据库
-            this.$store.dispatch('saveAdvert', param).then(() => {
+            if (this.activeName === 'publicNo') param.code = 1
+            if (this.activeName === 'tag') param.code = 2
+            if (this.activeName === 'article') param.code = 3
+            param.parentId = param.parentId.pop() || '' // 取最后一个元素作为typeId保存到数据库
+            this.$store.dispatch('saveOrEditType', param).then(() => {
               this.dialogLoading = false
               this.$message({
                 type: 'success',

@@ -1,11 +1,11 @@
 import Mock from 'mockjs'
 import account from './account'
 // import paccount from './paccount'
-import content from './content'
+// import content from './content'
 import topic from './topic'
 // import user from './user'
 // import feedback from './feedback'
-import advert from './advert'
+// import advert from './advert'
 import tag from './tag'
 import category from './category'
 
@@ -24,9 +24,9 @@ Mock.mock(/\/account\/userinfo/, account.getUserInfo)
 
 // 内容管理相关
 // Mock.mock(/\/content\/list/, content.list)
-Mock.mock(/\/content\/detail/, content.detail)
-Mock.mock(/\/content\/save/, content.save)
-Mock.mock(/\/content\/status/, content.status)
+// Mock.mock(/\/content\/detail/, content.detail)
+// Mock.mock(/\/content\/save/, content.save)
+// Mock.mock(/\/content\/updatestatus/, content.status)
 
 // 专题相关
 // Mock.mock(/\/topic\/list/, topic.topiclist)
@@ -41,20 +41,20 @@ Mock.mock(/\/topic\/articlesearch/, topic.articlelist)
 
 // 配置管理相关
 // 广告管理相关
-Mock.mock(/\/advert\/list/, advert.list)
-Mock.mock(/\/advert\/save/, advert.save)
-Mock.mock(/\/advert\/offline/, advert.offline)
+// Mock.mock(/\/advert\/list/, advert.list)
+// Mock.mock(/\/advert\/save/, advert.save)
+// Mock.mock(/\/advert\/offline/, advert.offline)
 // 标签管理相关
-Mock.mock(/\/label\/list/, tag.list)
+// Mock.mock(/\/label\/list/, tag.list)
 Mock.mock(/\/label\/querybyid/, tag.querybyid)
-Mock.mock(/\/label\/saveoredit/, tag.save)
+// Mock.mock(/\/label\/saveoredit/, tag.save)
 Mock.mock(/\/label\/status/, tag.status)
 Mock.mock(/\/label\/updateSequenceNum/, tag.updateSequenceNum)
 // 类型管理相关
 // Mock.mock(/\/typedict\/list/, category.list)
-Mock.mock(/\/typedict\/querybyid/, category.querybyid)
-Mock.mock(/\/typedict\/saveoredit/, category.save)
-Mock.mock(/\/typedict\/editstatus/, category.status)
+// Mock.mock(/\/typedict\/querybyid/, category.querybyid)
+// Mock.mock(/\/typedict\/saveoredit/, category.save)
+// Mock.mock(/\/typedict\/editstatus/, category.status)
 Mock.mock(/\/typedict\/delete/, category.delete)
 
 export default Mock

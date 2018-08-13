@@ -8,10 +8,10 @@
     <section class="form">
       <el-form ref="form" :inline="true" :model="filter">
         <el-form-item label="文章标题：">
-          <el-input v-model="filter.title" placeholder="请输入名称orID" :clearable="true"></el-input>
+          <el-input v-model="filter.title" placeholder="请输入文章标题" :clearable="true"></el-input>
         </el-form-item>
         <el-form-item label="公众号名称：">
-          <el-input v-model="filter.wechatName" placeholder="请输入名称or微信号" :clearable="true"></el-input>
+          <el-input v-model="filter.wechatName" placeholder="请输入公众号名称" :clearable="true"></el-input>
         </el-form-item>
         <el-form-item label="文章类型：" class="article-type-label">
           <el-cascader
@@ -121,7 +121,7 @@
               <el-button @click="handleEdit(scope.row)" type="text" size="small">二次编辑</el-button>
             </div>
             <div>
-              <el-button v-if="scope.row.status === 1 || scope.row.status === 2" style="color: red;" @click="handleEnable(scope.row)" type="text" size="small">{{scope.row.status === 1 ? '锁定' : scope.row.status === 2 ? '启用' : '' }}</el-button>
+              <el-button v-if="scope.row.status === 1 || scope.row.status === 2" style="color: red;" @click="handleStatus(scope.row)" type="text" size="small">{{scope.row.status === 1 ? '锁定' : scope.row.status === 2 ? '启用' : '' }}</el-button>
             </div>
           </template>
         </el-table-column>
@@ -237,7 +237,7 @@ export default {
       this.$router.push({ path: '/content/edit', query: { id: data.id }})
     },
     // 禁用/启用
-    handleEnable(data) {
+    handleStatus(data) {
       let tips = '是否启用?'
       if (data.status === 1) tips = '是否禁用?'
       this.$confirm(tips, '提示', {
@@ -246,7 +246,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        this.$store.dispatch('changeContentStatus', data).then(() => {
+        this.$store.dispatch('changeContentStatus', { id: data.id, status: data.status === 1 ? 2 : 1 }).then(() => {
           this.loading = false
           this.fetchData()
           this.$message({

@@ -4,34 +4,35 @@
  * @date: 2018-8-6
  */
 <template>
-  <div class="detail-container">
+  <div class="detail-container" v-loading="loading">
     <div class="content-container">
-      <section class="link">
-        <a class="url" target="_blank" :href="detailData.url || '#'">{{detailData.url || ''}}</a>
+      <section v-if="detailData.contentUrl" class="link">
+        <a class="url" target="_blank" :href="detailData.contentUrl || '#'">{{detailData.contentUrl || ''}}</a>
         <el-button type="info" size="mini" @click="handleUrl">访问</el-button>
       </section>
       <section class="article">
-        <h1 class="title">{{detailData.articleTitle || ''}}</h1>
+        <h1 class="title">{{detailData.title || ''}}</h1>
         <div class="subsidiary">
-          <div class="sub name">{{detailData.name || ''}}</div>
-          <div class="sub origin">{{detailData.origin || ''}}</div>
-          <div class="sub date">{{detailData.date || ''}}</div>
+          <div class="sub name">{{detailData.wechatAccount || ''}}</div>
+          <div class="sub origin">{{detailData.wechatName || ''}}</div>
+          <div class="sub date">{{releaseTimeFilter(detailData.releaseTime) || ''}}</div>
         </div>
-        <div class="article-content" v-html="detailData.articleContent || ''"></div>
+        <iframe class="article-content" :src="detailData.contentUrl" frameborder="0"></iframe>
         <div :class="['right-suspension', {'isEdit': flag==='edit'}]">
           <div class="count">
-            <div class="praising">点赞：<span>{{detailData.praisingQuantity || 0}}</span></div>
-            <div class="reading">阅读：<span>{{detailData.readingQuantity || 0}}</span></div>
+            <div class="praising">点赞：<span>{{detailData.likeNum || 0}}</span></div>
+            <div class="reading">阅读：<span>{{detailData.readNum || 0}}</span></div>
           </div>
           <div class="edit">
-            <div class="lon-lat" @click="handleBinding('lonlat')">绑定坐标：<span>{{detailData.lonlat || '暂无'}}</span></div>
-            <div class="lon-lat" @click="handleBinding('articleType')">对应类型：<span>{{articleTypeFilter() || '暂无'}}</span></div>
-            <div class="lon-lat" @click="handleBinding('tags')">对应标签：<span>{{detailData.tags.join(',') || '暂无'}}</span></div>
+            <!-- <div @click="handleBinding('lonlat')">绑定坐标：<span>{{detailData.lonlat || '新增'}}</span></div> -->
+            <div>绑定坐标：<span>--</span></div>
+            <div class="active" @click="handleBinding('articleType')">对应类型：<span>{{articleType.name.join('-') || '新增'}}</span></div>
+            <div class="active" @click="handleBinding('tags')">对应标签：<span>{{articleTags.join(',') || '新增'}}</span></div>
           </div>
-          <div class="btn">
+          <!-- <div class="btn">
             <el-button type="info" class="to-edit" @click="handleToEdit">二次编辑</el-button>
             <el-button type="info" class="save" @click="handleSave">保存</el-button>
-          </div>
+          </div> -->
         </div>
       </section>
     </div>
@@ -45,11 +46,11 @@
       <template v-if="dialogType==='articleType'">
         <div class="type">
           <el-form :inline="true">
-            <el-form-item label="公众号类型：">
+            <el-form-item label="类型：">
               <el-cascader
-                expand-trigger="hover"
-                :options="articleOptions"
+                :options="articleTypeDict"
                 v-model="binding.articleType"
+                :change-on-select="true"
                 :clearable="true">
               </el-cascader>
             </el-form-item>
@@ -58,7 +59,7 @@
       </template>
       <template v-if="dialogType==='tags'">
         <div class="tags">
-          <el-button v-for="item in tagOptions" :key="item" :type="tagFilter(item)" @click="handleTags(item)">{{item}}</el-button>
+          <el-button v-for="item in allTags" :key="item.id" :type="indexOfTag(item) > -1 ? 'primary': ''" @click="handleTags(item)">{{item.name}}</el-button>
         </div>
       </template>
       <div slot="footer" class="dialog-footer">
@@ -70,14 +71,16 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
+import { parseTime } from '@/utils'
 
 export default {
   name: 'contentdetail',
   data() {
     return {
       loading: false,
-      flag: this.$route.path === '/content/edit' ? 'edit' : 'detail',
+      // flag: this.$route.path === '/content/edit' ? 'edit' : 'detail',
+      flag: 'edit',
       id: this.$route.query.id,
       showDialog: false,
       dialogType: '',
@@ -91,43 +94,41 @@ export default {
   computed: {
     ...mapState({
       detailData: state => state.content.detailData,
-      articleOptions: state => state.content.options,
-      tagOptions: state => state.content.tagOptions
+      allTags: state => state.tag.allTags
     }),
+    ...mapGetters(['articleTypeDict']),
     dialogTitle() {
       return this.dialogType === 'lonlat' ? '绑定坐标' : this.dialogType === 'articleType' ? '对应类型' : this.dialogType === 'tags' ? '对应标签' : ''
+    },
+    articleType() {
+      const name = []
+      const id = []
+      if (!this.detailData.typeDictList || Object.prototype.toString.call(this.detailData.typeDictList) !== '[object Array]') return { id, name }
+      getType(this.detailData.typeDictList)
+      function getType(list) {
+        if (list.length > 0) {
+          name.push(list[0].name)
+          id.push(list[0].id)
+          getType(list[0].childList || [])
+        }
+      }
+      return { id, name }
+    },
+    articleTags() {
+      const labels = []
+      if (!this.detailData.labels || Object.prototype.toString.call(this.detailData.labels) !== '[object Array]') return labels
+      this.detailData.labels.forEach(element => {
+        labels.push(element.name)
+      })
+      return labels
     }
   },
   created() {
+    this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: 3 }) // 查询文章类型
     this.fetchData()
+    this.getAllTags()
   },
   methods: {
-    articleTypeFilter() {
-      const articleType = []
-      let targetOptions = this.articleOptions
-      for (let i = 0; i < this.detailData.articleType.length; i++) {
-        const value = this.detailData.articleType[i]
-        targetOptions = getLabel(value, targetOptions)
-      }
-
-      function getLabel(value, data) {
-        if (data.length === 0) return
-        let children = []
-        for (let i = 0; i < data.length; i++) {
-          const option = data[i]
-          if (option.value === value) {
-            articleType.push(option.label)
-            children = option.children
-            break
-          }
-        }
-        return children
-      }
-      return articleType.join('/')
-    },
-    tagFilter(item) {
-      return this.binding.tags.indexOf(item) > -1 ? 'primary' : ''
-    },
     fetchData() {
       this.loading = true
       this.$store.dispatch('getContentDetail', Object.assign({}, { id: this.id })).then(() => {
@@ -136,9 +137,22 @@ export default {
         this.loading = false
       })
     },
+    // 获取所有标签
+    getAllTags() {
+      this.$store.dispatch('getAllTags')
+    },
+    releaseTimeFilter(time) {
+      return parseTime(Number(time))
+    },
+    indexOfTag(item) {
+      for (let i = 0; i < this.binding.tags.length; i++) {
+        if (this.binding.tags[i].id === item.id) return i
+      }
+      return -1
+    },
     // 访问
     handleUrl() {
-      window.open(this.detailData.url)
+      window.open(this.detailData.contentUrl)
     },
     // 显示绑定弹窗
     handleBinding(type) {
@@ -146,46 +160,48 @@ export default {
       this.dialogType = type
       this.showDialog = true
       this.binding.lonlat = this.detailData.lonlat
-      this.binding.articleType = [...this.detailData.articleType]
-      this.binding.tags = [...this.detailData.tags]
+      this.binding.articleType = this.articleType.id
+      this.binding.tags = [...this.detailData.labels]
     },
     handleToEdit() {
       this.$router.push({ path: '/content/edit', query: { id: this.id }})
     },
     handleTags(item) {
-      var index = this.binding.tags.indexOf(item)
-      if (index > -1) {
-        this.binding.tags.splice(index, 1)
-      } else {
-        this.binding.tags.push(item)
+      let flag = false
+      for (let i = 0; i < this.binding.tags.length; i++) {
+        if (this.binding.tags[i].id === item.id) {
+          this.binding.tags.splice(i, 1)
+          flag = true
+        }
       }
+      if (!flag) this.binding.tags.push(item)
       // 排序
-      this.binding.tags = this.tagOptions.filter(tag => {
-        return this.binding.tags.indexOf(tag) > -1
+      this.binding.tags = this.allTags.filter(tag => {
+        return this.indexOfTag(tag) > -1
       })
     },
     handleCancel() {
       this.showDialog = false
     },
     handleConfirm() {
+      if (this.dialogType === 'lonlat') this.handleSaveLonLat()
+      if (this.dialogType === 'articleType') this.handleSaveArticleType()
+      if (this.dialogType === 'tags') this.handleSaveTags()
       this.showDialog = false
-      const targetObj = {
-        [this.dialogType]: this.binding[this.dialogType]
-      }
-      this.$store.commit('contentSet', {
-        target: 'detailData',
-        data: Object.assign({}, this.detailData, targetObj)
-      })
     },
-    // 保存
-    handleSave() {
+    // 保存经纬度
+    handleSaveLonLat() {
+
+    },
+    // 保存标签
+    handleSaveTags() {
       this.$confirm('是否要保存?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.loading = true
-        this.$store.dispatch('saveContentEdit').then(() => {
+        this.$store.dispatch('saveContentTags', {}).then(() => {
           this.loading = false
           this.$message({
             message: '保存成功！',
@@ -193,6 +209,32 @@ export default {
           })
         }).catch(() => {
           this.loading = false
+          this.$message({
+            message: '保存失败！',
+            type: 'error'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
+      })
+    },
+    // 保存类型
+    handleSaveArticleType() {
+      this.$confirm('是否要保存?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const articleType = [...this.binding.articleType]
+        this.$store.dispatch('saveContentType', { id: this.id, typeId: articleType.pop() }).then(() => {
+          this.$message({
+            message: '保存成功！',
+            type: 'success'
+          })
+        }).catch(() => {
           this.$message({
             message: '保存失败！',
             type: 'error'
@@ -235,7 +277,9 @@ export default {
     }
     .article {
       position: relative;
-      padding-right: 200px;
+      padding-right: 210px;
+      height: calc(100% - 70px);
+      overflow: hidden;
       .right-suspension {
         position: absolute;
         right: 0;
@@ -268,11 +312,13 @@ export default {
         }
         &.isEdit {
           .edit {
-            span {
-              cursor: pointer;
-              color: #409eff;
-              &:hover {
-                text-decoration: underline;
+            .active {
+              span {
+                cursor: pointer;
+                color: #409eff;
+                &:hover {
+                  text-decoration: underline;
+                }
               }
             }
           }
@@ -292,6 +338,10 @@ export default {
             color: #409eff;
           }
         }
+      }
+      .article-content {
+        width: 100%;
+        height: calc(100% - 86px);
       }
     }
   }
@@ -322,7 +372,6 @@ export default {
       font-size: 12px;
     }
     .el-form-item__label {
-      width: 90px;
       font-size: 12px;
     }
   }

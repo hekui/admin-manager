@@ -118,8 +118,8 @@
         </el-form-item>
         <el-form-item label="类型：">
           <el-cascader
-            expand-trigger="hover"
-            :options="tagOptions"
+            :change-on-select="true"
+            :options="tagTypeDict"
             v-model="form.typeId"
             :clearable="true">
           </el-cascader>
@@ -134,7 +134,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'tag',
@@ -174,14 +174,15 @@ export default {
   },
   computed: {
     ...mapState({
-      tagOptions: state => state.tag.tagOptions,
       listData: state => state.tag.listData
     }),
+    ...mapGetters(['tagTypeDict']),
     dialogTitle() {
       return this.dialogType === 'add' ? '新增标签' : '编辑标签'
     }
   },
   created() {
+    this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: 2 })
     this.fetchData()
   },
   methods: {
@@ -320,7 +321,7 @@ export default {
             this.dialogLoading = true
             const param = Object.assign({}, this.form)
             param.typeId = param.typeId.pop() || '' // 取最后一个元素作为typeId保存到数据库
-            this.$store.dispatch('saveAdvert', param).then(() => {
+            this.$store.dispatch('saveOrEditTag', param).then(() => {
               this.dialogLoading = false
               this.$message({
                 type: 'success',

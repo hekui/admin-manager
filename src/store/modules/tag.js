@@ -22,13 +22,14 @@ export default {
         label: '二级分类2'
       }]
     }],
+    allTags: [], // 全部标签
     listData: { // 预计后端返回数据格式 - 未定
       totalPage: 0,
       curPage: 1,
       pageSize: 10,
       totalRecords: 0,
       list: []
-    }
+    },
   },
   mutations: {
     tagSet(state, data) {
@@ -39,10 +40,22 @@ export default {
     }
   },
   actions: {
+    // 获取所有标签（不分页）
+    getAllTags({ commit, rootState }) {
+      return api.post('/label/list', { cityId: rootState.cityId }).then(res => {
+        commit('tagSet', {
+          target: 'allTags',
+          data: res.data.list
+        })
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
     // 获取标签列表
     getTagList({ commit, rootState }, params) {
       params.cityId = rootState.cityId
-      return api.post('/label/list', params).then(res => {
+      return api.post('/label/listpage', params).then(res => {
         commit('tagSet', {
           target: 'listData',
           data: res.data
@@ -84,7 +97,7 @@ export default {
       })
     },
     // 新增/修改一条标签
-    saveAdvert({ commit, rootState }, params) {
+    saveOrEditTag({ commit, rootState }, params) {
       params.cityId = rootState.cityId
       return api.post('/label/saveoredit', params).then(res => {
         return res

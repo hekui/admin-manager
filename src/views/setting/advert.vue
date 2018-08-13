@@ -9,20 +9,21 @@
       <section class="form">
         <el-form :inline="true" :model="filter">
           <el-form-item label="广告名称：">
-            <el-input v-model="filter.adName" placeholder="请输入名称orID" :clearable="true"></el-input>
+            <el-input v-model="filter.name" placeholder="请输入名称orID" :clearable="true"></el-input>
           </el-form-item>
           <el-form-item label="发布时间：">
             <el-date-picker
-              v-model="filter.deliveryTime"
-              type="daterange"
+              v-model="releaseTime"
+              type="datetimerange"
               align="right"
               unlink-panels
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               :clearable="true"
-              value-format="yyyy-MM-dd"
-              :picker-options="pickerOptions">
+              value-format="yyyy-MM-dd HH:mm:ss"
+              :picker-options="pickerOptions"
+              @change="releaseTimeChange" >
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -46,7 +47,7 @@
             :index="getIndex">
           </el-table-column>
           <el-table-column
-            prop="adName"
+            prop="name"
             label="广告名称"
             width="250">
           </el-table-column>
@@ -54,25 +55,27 @@
             label="广告头图"
             width="180">
             <template slot-scope="scope">
-              <img class="ad-pic" :src="scope.row.adPicture">
+              <img class="ad-pic" :src="scope.row.headUrl">
             </template>
           </el-table-column>
           <el-table-column
             label="广告状态"
             width="80">
             <template slot-scope="scope">
-              <span>{{scope.row.adStatus === -1 ? '下线' : scope.row.adStatus === 0 ? '待上线' : '上线'}}</span>
+              <span>{{scope.row.advertStatus === 0 ? '待上线' : scope.row.advertStatus === 1 ? '上线' : scope.row.advertStatus === 2 ? '下线': ''}}</span>
             </template>
           </el-table-column>
           <el-table-column
-            prop="deliveryTime"
             label="修改时间"
             width="180">
+            <template slot-scope="scope">
+              <span>{{releaseTimeFilter(scope.row.updateTime)}}</span>
+            </template>
           </el-table-column>
           <el-table-column
             label="启用时间">
             <template slot-scope="scope">
-              <span>{{onlineTimeFilter(scope.row.onlineTime)}}</span>
+              <span>{{releaseTimeFilter(scope.row.effectTime) + '~' + releaseTimeFilter(scope.row.expireTime)}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -84,7 +87,7 @@
                 <el-button v-if="scope.row.adStatus === 1" @click="handleOffline(scope.row)" type="text" size="small">下线</el-button>
               </div>
               <div>
-                <el-button v-if="scope.row.adStatus !== -1" @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+                <el-button v-if="scope.row.adStatus !== 2" @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
               </div>
             </template>
           </el-table-column>
@@ -105,11 +108,11 @@
     </div>
     <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
       <el-form ref="form" :model="form" :rules="rules">
-        <el-form-item label="广告名称：" prop="adName">
-          <el-input v-model="form.adName" placeholder="请输入名称" :clearable="true"></el-input>
+        <el-form-item label="广告名称：" prop="name">
+          <el-input v-model="form.name" placeholder="请输入名称" :clearable="true"></el-input>
         </el-form-item>
-        <el-form-item label="广告头图：" prop="adPicture">
-          <el-input v-model="form.adPicture" style="display: none;"></el-input>
+        <el-form-item label="广告头图：" prop="headUrl">
+          <el-input v-model="form.headUrl" style="display: none;"></el-input>
           <el-upload
             class="upload-demo"
             ref="upload"
@@ -121,7 +124,7 @@
             :before-remove="beforeFileRemove"
             :limit="1">
             <el-button slot="trigger" size="small" type="primary" :class="{disabled: uploadFiles.length > 0}">选取文件</el-button>
-            <el-button style="margin-left: 10px;" size="small" type="success" :disabled="uploadFiles.length < 1" @click="submitUpload">上传到服务器</el-button>
+            <el-button style="margin-left: 10px;" size="small" type="success" :disabled="uploadFiles.length < 1 || fileList.length > 0" @click="submitUpload">上传到服务器</el-button>
             <div slot="tip" class="el-upload__tip">必须为图片格式，且文件大小不能超过5Mb，建议不超过2Mb</div>
           </el-upload>
         </el-form-item>
@@ -136,16 +139,17 @@
             end-placeholder="结束日期"
             :clearable="true"
             value-format="yyyy-MM-dd HH:mm:ss"
-            :picker-options="pickerOptions">
+            :picker-options="pickerOptions"
+            @change="onlineTimeChange" >
           </el-date-picker>
         </el-form-item>
         <el-form-item class="link" label="链接：">
-          <el-input v-model="form.url" placeholder="URL" :clearable="true"></el-input>
+          <el-input v-model="form.destinationUrl" placeholder="URL" :clearable="true"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="mini" @click="handleCancel">取 消</el-button>
-          <el-button type="primary" size="mini" @click="handleConfirm('form')">确 定</el-button>
+        <el-button type="primary" size="mini" @click="handleConfirm('form')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -153,63 +157,43 @@
 
 <script>
 import { mapState } from 'vuex'
+import { parseTime, pickerOptions } from '@/utils'
 
 export default {
-  name: 'contentlist',
+  name: 'advertlist',
   data() {
     return {
       loading: false,
       showDialog: false,
       dialogType: '',
       filter: {
-        deliveryTime: '', // 发布时间
-        adName: '' // 广告名称
+        name: '', // 广告名称
+        beginDate: '', // 时间段查询-起（精确到分）
+        endDate: '' // 时间段查询-止（精确到分）
       },
+      releaseTime: [],
       page: {
         pageNo: 1,
         pageSize: 10
       },
-      pickerOptions: { // 日期快捷选项
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
+      pickerOptions,
       uploadFiles: [], // 已选中的图片（不区分是否已上传）
       fileList: [], // 已上传的图片
+      uploadSuccess: false,
       form: {
         id: '',
-        adName: '',
-        adPicture: '',
+        name: '',
+        headUrl: '',
         onlineTime: [],
-        url: ''
+        effectTime: '',
+        expireTime: '',
+        destinationUrl: ''
       },
       rules: {
-        adName: [
+        name: [
           { required: true, message: '请输入广告名称', trigger: ['change', 'blur'] }
         ],
-        adPicture: [
+        headUrl: [
           { required: true, message: '请上传广告头图', trigger: 'change' }
         ],
         onlineTime: [{
@@ -217,6 +201,7 @@ export default {
             if (!value || value.length === 0) {
               callback(new Error('请选择启用时间'))
             }
+            callback()
           },
           trigger: ['change', 'blur']
         }]
@@ -249,22 +234,8 @@ export default {
       return (this.page.pageNo - 1) * this.page.pageSize + index + 1
     },
     // 格式化时间
-    onlineTimeFilter(onlineTime) {
-      function format(str) {
-        const date = new Date(str)
-        let month = date.getMonth() + 1
-        let day = date.getDate()
-        let hours = date.getHours()
-        let minutes = date.getMinutes()
-        let seconds = date.getSeconds()
-        if (month < 10) month = '0' + month
-        if (day < 10) day = '0' + day
-        if (hours < 10) hours = '0' + hours
-        if (minutes < 10) minutes = '0' + minutes
-        if (seconds < 10) seconds = '0' + seconds
-        return date.getFullYear() + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
-      }
-      return format(onlineTime[0]) + ' ~ ' + format(onlineTime[1])
+    releaseTimeFilter(time) {
+      return parseTime(Number(time))
     },
     // 改变每页条数
     handleSizeChange(val) {
@@ -275,6 +246,18 @@ export default {
     handleCurrentChange(val) {
       this.page.pageNo = val
       this.fetchData()
+    },
+    // 发布时间改变触发
+    releaseTimeChange(value) {
+      value = value || ['', '']
+      this.filter.beginDate = value[0]
+      this.filter.endDate = value[1]
+    },
+    // 发布时间改变触发
+    onlineTimeChange(value) {
+      value = value || ['', '']
+      this.form.effectTime = value[0]
+      this.form.expireTime = value[1]
     },
     // 条件查询
     submitFilter() {
@@ -289,7 +272,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        this.$store.dispatch('offlineAdvert', data).then(() => {
+        this.$store.dispatch('updateAdvertStatus', data).then(() => {
           this.loading = false
           this.$message({
             type: 'success',
@@ -315,10 +298,11 @@ export default {
     handleAdd() {
       this.form = {
         id: '',
-        adName: '',
-        adPicture: '',
-        onlineTime: [],
-        url: ''
+        name: '',
+        headUrl: '',
+        effectTime: '',
+        expireTime: '',
+        destinationUrl: ''
       }
       this.fileList = []
       this.uploadFiles = this.fileList
@@ -327,17 +311,26 @@ export default {
     },
     // 编辑广告
     handleEdit(data) {
-      this.form = {
-        id: data.id,
-        adName: data.adName,
-        adPicture: data.adPicture,
-        onlineTime: [new Date(data.onlineTime[0]), new Date(data.onlineTime[1])],
-        url: data.url
-      }
-      this.fileList = [{ name: data.adName, adPicture: data.adPicture }]
-      this.uploadFiles = this.fileList
-      this.dialogType = 'edit'
-      this.showDialog = true
+      this.$store.dispatch('getAdvertById', { id: data.id }).then((res) => {
+        this.form = {
+          id: data.id,
+          name: res.data.name,
+          headUrl: res.data.headUrl,
+          onlineTime: [new Date(Number(res.data.effectTime)), new Date(Number(res.data.expireTime))],
+          effectTime: this.releaseTimeFilter(res.data.effectTime),
+          expireTime: this.releaseTimeFilter(res.data.expireTime),
+          destinationUrl: res.data.destinationUrl
+        }
+        this.fileList = [{ name: data.name, url: res.data.headUrl }]
+        this.uploadFiles = this.fileList
+        this.dialogType = 'edit'
+        this.showDialog = true
+      }).catch(() => {
+        this.$message({
+          message: '获取广告信息失败！',
+          type: 'error'
+        })
+      })
     },
     // 文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
     fileChange(file, fileList) {
@@ -345,8 +338,9 @@ export default {
     },
     // 删除文件之前的钩子
     beforeFileRemove(file, fileList) {
+      this.fileList = []
       this.uploadFiles = []
-      this.form.adPicture = ''
+      this.form.headUrl = ''
     },
     // 提交上传图片到服务器
     submitUpload() {
@@ -355,14 +349,13 @@ export default {
     },
     // 上传图片到服务器真实行为
     handleUpload(node) {
-      console.log('adPicture', this.form.adPicture)
       this.$store.dispatch('uploadAdertImage', { file: node.file }).then((res) => {
-        this.form.adPicture = res.data.url
+        this.form.headUrl = res.data.url
+        this.fileList = [{ name: node.file.name, url: res.data.url }]
         this.$message({
           type: 'success',
           message: '上传成功!'
         })
-        console.log('adPicture', this.form.adPicture)
       }).catch(() => {
         this.$message({
           message: '上传失败！',
@@ -384,7 +377,9 @@ export default {
             type: 'warning'
           }).then(() => {
             this.loading = true
-            this.$store.dispatch('saveAdvert', this.form).then(() => {
+            const params = Object.assign({}, this.form)
+            delete params.onlineTime
+            this.$store.dispatch(this.dialogType === 'add' ? 'addAdvert' : 'editAdvert', params).then(() => {
               this.loading = false
               this.$message({
                 type: 'success',
