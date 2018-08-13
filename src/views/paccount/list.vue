@@ -46,7 +46,7 @@
     </div>
     <div class="form-wrapper">
       <div class="table-top">
-        <el-button type="primary" icon="el-icon-plus" @click="addHandle">新增公众号监控</el-button>
+        <el-button type="primary" icon="el-icon-plus" @click="addHandle()">新增公众号监控</el-button>
       </div>
       <div class="table-main">
         <el-table
@@ -128,6 +128,7 @@
             width="150">
             <template slot-scope="scope">
               <el-button type="text" @click="showDetail(scope.row.id)">详情</el-button>
+              <el-button type="text" @click="addHandle(scope.row.id)">编辑</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -238,14 +239,23 @@ export default {
       this.page.curPage = curPage
       this.fetchData()
     },
-    addHandle() {
-      this.$router.push({
-        path: '/paccount/add'
-      })
+    addHandle(wxid) {
+      if (wxid) {
+        this.$router.push({
+          path: '/paccount/edit',
+          query: {
+            wxid
+          }
+        })
+      } else {
+        this.$router.push({
+          path: '/paccount/add'
+        })
+      }
     },
     showDetail(id) {
       this.$router.push({
-        path: '/paccount/edit',
+        path: '/paccount/detail',
         query: {
           id
         }

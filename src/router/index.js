@@ -79,12 +79,21 @@ export const asyncRouterMap = [
         // if do not set roles, means: this page does not require permission
       }
     }, {
-      path: 'edit',
+      path: 'detail',
       hidden: true,
       component: () => import('@/views/paccount/edit'),
       name: 'paccountDetail',
       meta: {
         title: 'paccountDetail'
+        // if do not set roles, means: this page does not require permission
+      }
+    }, {
+      path: 'edit',
+      hidden: true,
+      component: () => import('@/views/paccount/edit'),
+      name: 'paccountEdit',
+      meta: {
+        title: 'paccountEdit'
         // if do not set roles, means: this page does not require permission
       }
     }]
