@@ -40,18 +40,18 @@
             width="80">
             <template slot-scope="scope">
               <div class="sequenceNum">
-                <div :id="'editable_value_' + scope.row.id"
+                <div :id="'editable_value_' + scope.$index"
                   class="editable_value visible"
-                  @click="sequenceNumFocus($event, scope.row)">
+                  @click="sequenceNumFocus($event, scope)">
                   {{scope.row.sequenceNum}}
                 </div>
-                <input type="number" :id="'editable_copy_' + scope.row.id"
+                <input type="number" :id="'editable_copy_' + scope.$index"
                   class="editable_copy"
                   v-model="beforeEditableValue"
                   value="number"
-                  @blur="sequenceNumBlur($event, scope.row)"
+                  @blur="sequenceNumBlur($event, scope)"
                   @keyup.enter="sequenceNumConfirm($event, scope)"
-                  @keyup.esc="sequenceNumCancel($event, scope.row)" />
+                  @keyup.esc="sequenceNumCancel($event, scope)" />
               </div>
             </template>
           </el-table-column>
@@ -135,6 +135,7 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+import { handleInvalidType } from '@/utils'
 
 export default {
   name: 'tag',
@@ -228,16 +229,16 @@ export default {
       this.showDialog = true
     },
     // 获取焦点
-    sequenceNumFocus(event, data) {
-      this.beforeEditableValue = data.sequenceNum
-      const nextElement = document.getElementById('editable_copy_' + data.id)
+    sequenceNumFocus(event, scope) {
+      this.beforeEditableValue = scope.row.sequenceNum
+      const nextElement = document.getElementById('editable_copy_' + scope.$index)
       event.target.className = 'editable_value'
       nextElement.className = 'editable_copy visible'
       nextElement.focus()
     },
     // 失去焦点
-    sequenceNumBlur(event, data) {
-      const prevElement = document.getElementById('editable_value_' + data.id)
+    sequenceNumBlur(event, scope) {
+      const prevElement = document.getElementById('editable_value_' + scope.$index)
       event.target.className = 'editable_copy'
       prevElement.className = 'editable_value visible'
       this.$message({
@@ -248,7 +249,7 @@ export default {
     // 回车确认修改排序
     sequenceNumConfirm(event, scope) {
       this.$store.dispatch('updateSequenceNum', { id: scope.row.id, index: scope.$index, sequenceNum: this.beforeEditableValue }).then((res) => {
-        this.sequenceNumBlur(event, scope.row)
+        this.sequenceNumBlur(event, scope)
         this.$message({
           type: 'success',
           message: '修改成功!'
@@ -261,8 +262,8 @@ export default {
       })
     },
     // ESC取消修改
-    sequenceNumCancel(event, data) {
-      this.sequenceNumBlur(event, data)
+    sequenceNumCancel(event, scope) {
+      this.sequenceNumBlur(event, scope)
     },
     handleStatus(data) {
       this.loading = true
@@ -292,12 +293,14 @@ export default {
         res.data.typeId = []
         getTypeId(res.data.typeDictList)
         this.form = Object.assign({}, res.data)
+        this.form.typeId = [1, 2, 5]
+        this.form.typeId = handleInvalidType(this.tagTypeDict, this.form.typeId)
 
         function getTypeId(list) {
           if (!list) return
           for (let i = 0; i < list.length; i++) {
             res.data.typeId.push(list[i].id)
-            getTypeId(list[i].child)
+            getTypeId(list[i].childList)
             return
           }
         }

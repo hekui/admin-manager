@@ -270,3 +270,21 @@ export function showLoading(store) {
 export function hideLoading(store) {
   store.commit('HIDE_LOADING')
 }
+
+export function handleInvalidType(tree, ids) {
+  let subTree = tree
+  for (let i = 0; i < ids.length; i++) {
+    subTree = getSubTree(subTree, ids[i])
+    if (!subTree) return []
+  }
+  return ids
+
+  function getSubTree(list, id) {
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].value === id) {
+        return list[i].children || []
+      }
+    }
+    return null
+  }
+}
