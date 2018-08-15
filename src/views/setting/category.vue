@@ -21,6 +21,7 @@
           <el-tab-pane label="文章" name="article">
             <el-tree
               :data="articleTypeDict"
+              :props="props"
               node-key="id"
               default-expand-all
               :expand-on-click-node="false">
@@ -59,6 +60,7 @@
           <el-tab-pane label="公众号" name="publicNo">
             <el-tree
               :data="paccountTypeDict"
+              :props="props"
               node-key="id"
               default-expand-all
               :expand-on-click-node="false">
@@ -97,6 +99,7 @@
           <el-tab-pane label="标签" name="tag">
             <el-tree
               :data="tagTypeDict"
+              :props="props"
               node-key="id"
               default-expand-all
               :expand-on-click-node="false">
@@ -144,6 +147,7 @@
           <el-cascader
             :change-on-select="true"
             :options="getOptions()"
+            :props="props"
             v-model="form.parentId"
             :clearable="true"
             :disabled="dialogType !== 'addnew'">
@@ -159,7 +163,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import SvgIcon from '@/components/SvgIcon'
 
 export default {
@@ -172,6 +176,11 @@ export default {
       dialogLoading: false,
       showDialog: false,
       dialogType: '',
+      props: {
+        value: 'id',
+        label: 'name',
+        children: 'childList'
+      },
       form: {
         id: '',
         name: '',
@@ -185,7 +194,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['paccountTypeDict', 'tagTypeDict', 'articleTypeDict']),
+    ...mapState({
+      paccountTypeDict: state => state.category.paccountTypeDict,
+      tagTypeDict: state => state.category.tagTypeDict,
+      articleTypeDict: state => state.category.articleTypeDict
+    }),
     dialogTitle() {
       return this.dialogType === 'edit' ? '编辑类型' : '新增类型'
     }
@@ -205,7 +218,7 @@ export default {
     // 查询标签
     fetchData(code) {
       if (code === 1) this.loading = true
-      this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: code }).then(() => {
+      this.$store.dispatch('getAllTypeDict', { cityId: this.$store.state.cityId, code: code }).then(() => {
         if (code === 1) this.loading = false
       }).catch(() => {
         if (code === 1) this.loading = false
@@ -245,40 +258,34 @@ export default {
       this.form = {
         id: '',
         name: '',
-        // typeStatus: 0,
         parentId: []
       }
-      this.form.parentId = this.getParentId(node, this.form.parentId)
       this.dialogType = 'addnew'
-      if (node) this.dialogType = 'addsub'
+      if (node) {
+        this.dialogType = 'addsub'
+        this.form.parentId = this.getParentId(node)
+      }
       this.showDialog = true
     },
     // 根据节点获取类型级联Id
     getParentId(node, typeId) {
-      if (node && node.level > 1) {
-        typeId.unshift(node.parent.data.value)
+      typeId = typeId || []
+      if (node && node.level > 0) {
+        typeId.unshift(node.data.id)
         this.getParentId(node.parent, typeId)
       }
       return typeId
     },
     // 编辑标签
     handleEdit(node) {
-      this.$store.dispatch('getCategoryById', { id: node.data.value }).then((res) => {
-        this.form = Object.assign({}, {
-          id: node.data.value,
-          name: res.data.name,
-          // typeStatus: res.data.typeStatus,
-          parentId: []
-        })
-        this.form.parentId = this.getParentId(node, this.form.parentId)
-        this.dialogType = 'edit'
-        this.showDialog = true
-      }).catch(() => {
-        this.$message({
-          message: '获取类型信息失败！',
-          type: 'error'
-        })
+      this.form = Object.assign({}, {
+        id: node.data.id,
+        name: node.data.name,
+        parentId: []
       })
+      this.form.parentId = this.getParentId(node.parent)
+      this.dialogType = 'edit'
+      this.showDialog = true
     },
     // 锁定/激活
     handleStatus(node) {
@@ -289,7 +296,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        this.$store.dispatch('changeCategoryStatus', { id: node.data.value, typeStatus: node.data.typeStatus ? 0 : 1 }).then(() => {
+        this.$store.dispatch('changeCategoryStatus', { id: node.data.id, typeStatus: node.data.typeStatus ? 0 : 1 }).then(() => {
           this.loading = false
           this.$message({
             type: 'success',

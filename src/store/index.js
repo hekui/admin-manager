@@ -113,8 +113,9 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    // 获取指定城市下指定指定顶级类型下所有子项
+    // 获取指定城市下指定大类（公众号、文章、标签）下所有已激活的子类型（不包括锁定）
     getTypeDict({ commit, state }, params) {
+      params.status = 1
       return api.post('/typedict/list', params).then(res => {
         // console.log(`${state.typeDict[params.code]}TypeDict`, res)
         commit('stateSet', {
