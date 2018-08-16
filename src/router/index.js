@@ -209,6 +209,14 @@ export const asyncRouterMap = [
         // roles: ['admin'] // or you can only set roles in sub nav
       }
     }, {
+      path: 'city',
+      component: () => import('@/views/setting/city'),
+      name: 'city',
+      meta: {
+        title: 'city'
+        // if do not set roles, means: this page does not require permission
+      }
+    }, {
       path: 'category',
       component: () => import('@/views/setting/category'),
       name: 'category',

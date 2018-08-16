@@ -14,6 +14,7 @@ import feedback from './modules/feedback'
 import advert from './modules/advert'
 import tag from './modules/tag'
 import category from './modules/category'
+import city from './modules/city'
 import api from './../api'
 Vue.use(Vuex)
 
@@ -141,7 +142,8 @@ const store = new Vuex.Store({
     feedback,
     advert,
     tag,
-    category
+    category,
+    city
   },
   getters
 })

@@ -40,7 +40,7 @@ export default {
     }
   },
   actions: {
-    // 获取所有标签（不分页）
+    // 获取所有标签（不分页,内容管理文章关联标签使用到）
     getAllTags({ commit, rootState }) {
       return api.post('/label/list', { cityId: rootState.cityId }).then(res => {
         commit('tagSet', {
@@ -55,7 +55,7 @@ export default {
     // 获取标签列表
     getTagList({ commit, rootState }, params) {
       params.cityId = rootState.cityId
-      return api.post('/label/listpage', params).then(res => {
+      return api.post('/label/listpage?page=true', params).then(res => {
         commit('tagSet', {
           target: 'listData',
           data: res.data

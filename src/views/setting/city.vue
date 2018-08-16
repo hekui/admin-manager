@@ -1,27 +1,19 @@
 /**
- * @description: 标签管理
+ * @description: 城市管理
  * @author: zhangchenle
- * @date: 2018-8-7
+ * @date: 2018-8-16
  */
 <template>
   <div class="tag-container">
     <div class="content-container">
-      <section class="form">
-        <el-form :inline="true" :model="filter">
-          <el-form-item label="标签名称：">
-            <el-input v-model="filter.name" placeholder="请输入名称" :clearable="true"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button icon="el-icon-search" @click="submitFilter">搜索</el-button>
-          </el-form-item>
-          <div class="add">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增标签</el-button>
-          </div>
-        </el-form>
-      </section>
+      <!-- <section class="form">
+        <div class="add">
+          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增城市</el-button>
+        </div>
+      </section> -->
       <section class="table">
         <el-table
-          :data="listData.list"
+          :data="listData"
           border
           v-loading="loading"
           style="width: 100%">
@@ -32,61 +24,32 @@
             :index="getIndex">
           </el-table-column>
           <el-table-column
+            prop="code"
+            label="城市编码">
+          </el-table-column>
+          <el-table-column
             prop="name"
-            label="标签名称">
-          </el-table-column>
-          <el-table-column
-            label="排序"
-            width="80">
-            <template slot-scope="scope">
-              <div class="sequenceNum">
-                <div :id="'editable_value_' + scope.$index"
-                  class="editable_value visible"
-                  @click="sequenceNumFocus($event, scope)">
-                  {{scope.row.sequenceNum}}
-                </div>
-                <input type="number" :id="'editable_copy_' + scope.$index"
-                  class="editable_copy"
-                  v-model="beforeEditableValue"
-                  value="number"
-                  @blur="sequenceNumBlur($event, scope)"
-                  @keyup.enter="sequenceNumConfirm($event, scope)"
-                  @keyup.esc="sequenceNumCancel($event, scope)" />
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="是否前端引导"
-            width="120">
-            <template slot-scope="scope">
-              <span>{{scope.row.hasGuide === 0 ? '是' : '否'}}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="类型">
-            <template slot-scope="scope">
-              <span>{{scope.row.typeName || '-'}}</span>
-            </template>
+            label="名称">
           </el-table-column>
           <el-table-column
             label="状态"
             width="80">
             <template slot-scope="scope">
-              <span>{{scope.row.labelStatus === 0 ?  '激活' : '锁定'}}</span>
+              <span>{{scope.row.status === 1 ? '激活' : scope.row.status === 2 ? '锁定' : ''}}</span>
             </template>
           </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             fixed="right"
             label="操作"
             width="100">
             <template slot-scope="scope">
-              <el-button @click="handleStatus(scope.row)" type="text" size="small">{{ scope.row.labelStatus === 0 ? '锁定' : '激活' }}</el-button>
+              <el-button v-if="scope.row.status === 1 || scope.row.status === 2" @click="handleStatus(scope.row)" type="text" size="small">{{ scope.row.status === 1 ? '锁定' : scope.row.status === 2 ? '激活' : '' }}</el-button>
               <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </section>
-      <section class="pagination">
+      <!-- <section class="pagination">
         <el-pagination
           background
           @size-change="handleSizeChange"
@@ -97,32 +60,18 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="listData.totalPage">
         </el-pagination>
-      </section>
+      </section> -->
     </div>
     <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
       <el-form v-loading="dialogLoading" ref="form" :model="form" :rules="rules">
-        <el-form-item label="标签名称：" prop="name">
+        <el-form-item label="城市名称：" prop="name">
           <el-input v-model="form.name" placeholder="请输入名称" :clearable="true"></el-input>
         </el-form-item>
-        <el-form-item label="是否前端引导：" prop="hasGuide">
-          <el-radio-group v-model="form.hasGuide">
-            <el-radio :label="0">是</el-radio>
-            <el-radio :label="1">否</el-radio>
-          </el-radio-group>
+        <el-form-item label="城市拼音：" prop="pinyin">
+          <el-input v-model="form.pinyin" placeholder="请输入名称" :clearable="true"></el-input>
         </el-form-item>
-        <el-form-item label="状态：" prop="labelStatus">
-          <el-radio-group v-model="form.labelStatus">
-            <el-radio :label="0">激活</el-radio>
-            <el-radio :label="1">锁定</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="类型：">
-          <el-cascader
-            :change-on-select="true"
-            :options="tagTypeDict"
-            v-model="form.typeId"
-            :clearable="true">
-          </el-cascader>
+        <el-form-item label="城市编码：" prop="code">
+          <el-input v-model="form.code" placeholder="请输入名称" :clearable="true"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -134,7 +83,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import { handleInvalidType } from '@/utils'
 
 export default {
@@ -145,57 +94,45 @@ export default {
       dialogLoading: false,
       showDialog: false,
       dialogType: '',
-      beforeEditableValue: '',
-      filter: {
-        name: '' // 标签名称
-      },
       page: {
-        curPage: 1,
-        pageSize: 20
+        // curPage: 1,
+        // pageSize: 20
       },
       form: {
         id: '',
         name: '',
-        hasGuide: 1,
-        labelStatus: 0,
-        typeId: []
+        pinyin: '',
+        code: ''
       },
       rules: {
         name: [
-          { required: true, message: '请输入标签名称', trigger: ['change', 'blur'] }
+          { required: true, message: '请输入城市名称', trigger: ['change', 'blur'] }
         ],
-        hasGuide: [
-          { required: true, message: '请选择是否前端引导', trigger: 'change' }
+        pinyin: [
+          { required: true, message: '请输入城市拼音', trigger: ['change', 'blur'] }
         ],
-        labelStatus: [
-          { required: true, message: '请选择标签状态', trigger: 'change' }
+        code: [
+          { required: true, message: '请输入城市编码', trigger: ['change', 'blur'] }
         ]
       }
     }
   },
   computed: {
     ...mapState({
-      listData: state => state.tag.listData
+      listData: state => state.city.allCitys
     }),
-    ...mapGetters(['tagTypeDict']),
     dialogTitle() {
-      return this.dialogType === 'add' ? '新增标签' : '编辑标签'
+      return this.dialogType === 'add' ? '新增城市' : '编辑城市'
     }
   },
   created() {
-    this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: 2 })
     this.fetchData()
   },
   methods: {
-    // 条件查询
-    submitFilter() {
-      this.page.curPage = 1
-      this.fetchData()
-    },
     // 查询标签
     fetchData() {
       this.loading = true
-      this.$store.dispatch('getTagList', Object.assign({}, this.filter, this.page)).then(() => {
+      this.$store.dispatch('getAllCitys', Object.assign({}, this.page)).then(() => {
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -203,7 +140,8 @@ export default {
     },
     // 获取序号
     getIndex(index) {
-      return (this.page.curPage - 1) * this.page.pageSize + index + 1
+      // return (this.page.curPage - 1) * this.page.pageSize + index + 1
+      return index + 1
     },
     // 改变每页条数
     handleSizeChange(val) {
@@ -228,46 +166,9 @@ export default {
       this.dialogType = 'add'
       this.showDialog = true
     },
-    // 获取焦点
-    sequenceNumFocus(event, scope) {
-      this.beforeEditableValue = scope.row.sequenceNum
-      const nextElement = document.getElementById('editable_copy_' + scope.$index)
-      event.target.className = 'editable_value'
-      nextElement.className = 'editable_copy visible'
-      nextElement.focus()
-    },
-    // 失去焦点
-    sequenceNumBlur(event, scope) {
-      const prevElement = document.getElementById('editable_value_' + scope.$index)
-      event.target.className = 'editable_copy'
-      prevElement.className = 'editable_value visible'
-      this.$message({
-        type: 'info',
-        message: '已取消修改!'
-      })
-    },
-    // 回车确认修改排序
-    sequenceNumConfirm(event, scope) {
-      this.$store.dispatch('updateSequenceNum', { id: scope.row.id, index: scope.$index, sequenceNum: this.beforeEditableValue }).then((res) => {
-        this.sequenceNumBlur(event, scope)
-        this.$message({
-          type: 'success',
-          message: '修改成功!'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'error',
-          message: '修改失败!'
-        })
-      })
-    },
-    // ESC取消修改
-    sequenceNumCancel(event, scope) {
-      this.sequenceNumBlur(event, scope)
-    },
     handleStatus(data) {
       this.loading = true
-      this.$store.dispatch('changeTagStatus', data).then((res) => {
+      this.$store.dispatch('changeCityStatus', data).then((res) => {
         this.loading = false
         this.$message({
           type: 'success',
@@ -288,7 +189,7 @@ export default {
       this.showDialog = true
       this.dialogLoading = true
       const param = { id: data.id }
-      this.$store.dispatch('queryTagById', param).then((res) => {
+      this.$store.dispatch('queryCityById', param).then((res) => {
         this.dialogLoading = false
         res.data.typeId = []
         getTypeId(res.data.typeDictList)
@@ -324,7 +225,7 @@ export default {
             this.dialogLoading = true
             const param = Object.assign({}, this.form)
             param.typeId = param.typeId.pop() || '' // 取最后一个元素作为typeId保存到数据库
-            this.$store.dispatch('saveOrEditTag', param).then(() => {
+            this.$store.dispatch('saveOrEditCity', param).then(() => {
               this.dialogLoading = false
               this.$message({
                 type: 'success',
