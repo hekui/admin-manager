@@ -1,7 +1,7 @@
 <template>
-  <el-dialog title="切换城市" :visible="cityDialog" :close-on-click-modal="false" @close="close">
+  <el-dialog v-loading="loading" title="切换城市" :visible="cityDialog" :close-on-click-modal="false" @close="close">
     <div class="citys">
-      <el-button v-for="item in cityOptions" :key="item.cityId" :type="item.cityId === cityId ? 'primary' : ''" @click="cityId = item.cityId">{{item.cityName}}</el-button>
+      <el-button v-for="item in cityOptions" :key="item.code" :type="item.code === cityId ? 'primary' : ''" @click="cityId = item.code">{{item.name}}</el-button>
     </div>
     <div slot="footer" class="dialog-footer">
       <el-button size="mini" @click="handleCancel">取 消</el-button>
@@ -18,14 +18,27 @@ export default {
   name: 'CityDialog',
   data() {
     return {
+      loading: false,
       cityId: this.$store.state.cityId
     }
   },
   computed: {
     ...mapState(['cityDialog', 'cityOptions'])
   },
+  created() {
+    this.getActivatedCitys()
+  },
   methods: {
-    ...mapMutations({ showCityDialog: 'SHOW_CITY_DIALOG', hideCityDialog: 'HIDE_CITY_DIALOG' }),
+    ...mapMutations({ hideCityDialog: 'HIDE_CITY_DIALOG' }),
+    // 获取激活城市
+    getActivatedCitys() {
+      this.loadin = true
+      this.$store.dispatch('getActivatedCitys').then(() => {
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+    },
     // 取消
     handleCancel() {
       this.hideCityDialog()

@@ -119,6 +119,7 @@
             action=""
             :http-request="handleUpload"
             :file-list="fileList"
+            list-type="picture"
             :auto-upload="false"
             :on-change="fileChange"
             :before-remove="beforeFileRemove"
@@ -321,7 +322,7 @@ export default {
           expireTime: this.releaseTimeFilter(res.data.expireTime),
           destinationUrl: res.data.destinationUrl
         }
-        this.fileList = [{ name: data.name, url: res.data.headUrl }]
+        this.fileList = [{ url: res.data.headUrl }]
         this.uploadFiles = this.fileList
         this.dialogType = 'edit'
         this.showDialog = true
@@ -351,7 +352,7 @@ export default {
     handleUpload(node) {
       this.$store.dispatch('uploadAdertImage', { file: node.file }).then((res) => {
         this.form.headUrl = res.data.url
-        this.fileList = [{ name: node.file.name, url: res.data.url }]
+        this.fileList = [{ url: res.data.url }]
         this.$message({
           type: 'success',
           message: '上传成功!'
@@ -463,6 +464,12 @@ export default {
     }
     .el-form-item__error, .el-upload__tip, .el-upload-list {
       margin-left: 90px;
+    }
+  }
+  .el-upload-list {
+    display: inline-block;
+    .el-upload-list__item-name {
+      display: none;
     }
   }
 }

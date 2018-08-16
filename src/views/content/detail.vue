@@ -72,7 +72,7 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { parseTime } from '@/utils'
+import { parseTime, handleInvalidType } from '@/utils'
 
 export default {
   name: 'contentdetail',
@@ -105,6 +105,7 @@ export default {
       const id = []
       if (!this.detailData.typeDictList || Object.prototype.toString.call(this.detailData.typeDictList) !== '[object Array]') return { id, name }
       getType(this.detailData.typeDictList)
+
       function getType(list) {
         if (list.length > 0) {
           name.push(list[0].name)
@@ -160,7 +161,7 @@ export default {
       this.dialogType = type
       this.showDialog = true
       this.binding.lonlat = this.detailData.lonlat
-      this.binding.articleType = this.articleType.id
+      this.binding.articleType = handleInvalidType(this.articleTypeDict, this.articleType.id)
       this.binding.tags = [...this.detailData.labels]
     },
     handleToEdit() {
