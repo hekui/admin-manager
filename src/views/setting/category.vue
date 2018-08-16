@@ -6,7 +6,7 @@
 <template>
   <div class="category-container">
     <div class="content-container" v-loading="loading">
-      <el-tabs v-model="activeName">
+      <el-tabs v-model="activeName" @tab-click="handleTabClick">
         <div class="add">
           <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新增类型</el-button>
         </div>
@@ -29,7 +29,7 @@
                 <span class="custom-left-text">
                   <span>{{ node.label }}</span>
                   <span>
-                    <span title="添加子类" @click="handleAdd(node)">
+                    <span title="新增子类" @click="handleAdd(node)">
                       <SvgIcon :iconClass="'add'" :className="'icon-add'"></SvgIcon>
                     </span>
                     <!-- <span title="删除" @click="handleDelete(node)">
@@ -68,7 +68,7 @@
                 <span class="custom-left-text">
                   <span>{{ node.label }}</span>
                   <span>
-                    <span title="添加子类" @click="handleAdd(node)">
+                    <span title="新增子类" @click="handleAdd(node)">
                       <SvgIcon :iconClass="'add'" :className="'icon-add'"></SvgIcon>
                     </span>
                     <!-- <span title="删除" @click="handleDelete(node)">
@@ -107,7 +107,7 @@
                 <span class="custom-left-text">
                   <span>{{ node.label }}</span>
                   <span>
-                    <span title="添加子类" @click="handleAdd(node)">
+                    <span title="新增子类" @click="handleAdd(node)">
                       <SvgIcon :iconClass="'add'" :className="'icon-add'"></SvgIcon>
                     </span>
                     <!-- <span title="删除" @click="handleDelete(node)">
@@ -147,7 +147,6 @@
           <el-cascader
             :change-on-select="true"
             :options="getOptions()"
-            :props="props"
             v-model="form.parentId"
             :clearable="true"
             :disabled="dialogType !== 'addnew'">
@@ -163,7 +162,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import SvgIcon from '@/components/SvgIcon'
 
 export default {
@@ -199,30 +198,44 @@ export default {
       tagTypeDict: state => state.category.tagTypeDict,
       articleTypeDict: state => state.category.articleTypeDict
     }),
+    ...mapGetters({
+      paccountTypeDictActivated: 'paccountTypeDict',
+      tagTypeDictActivated: 'tagTypeDict',
+      articleTypeDictActivated: 'articleTypeDict',
+    }),
     dialogTitle() {
       return this.dialogType === 'edit' ? '编辑类型' : '新增类型'
     }
   },
   created() {
-    this.fetchData(1) // 查询公众号类型
-    this.fetchData(2) // 查询标签类型
-    this.fetchData(3) // 查询文章类型
+    const code = this.activeName === 'publicNo' ? 1 : this.activeName === 'tag' ? 2 : 3
+    this.fetchData(code) // 查询该类型所有数据
+    this.fetchActivatedData(code) // 查询该类型激活数据
   },
   methods: {
     getOptions() {
-      if (this.activeName === 'publicNo') return this.paccountTypeDict
-      if (this.activeName === 'tag') return this.tagTypeDict
-      if (this.activeName === 'article') return this.articleTypeDict
+      if (this.activeName === 'publicNo') return this.paccountTypeDictActivated
+      if (this.activeName === 'tag') return this.tagTypeDictActivated
+      if (this.activeName === 'article') return this.articleTypeDictActivated
       return []
     },
-    // 查询标签
+    handleTabClick(tab) {
+      const code = tab.name === 'publicNo' ? 1 : tab.name === 'tag' ? 2 : 3
+      this.fetchData(code) // 查询该类型所有数据
+      this.fetchActivatedData(code) // 查询该类型激活数据
+    },
+    // 查询该类型所有数据
     fetchData(code) {
-      if (code === 1) this.loading = true
+      this.loading = true
       this.$store.dispatch('getAllTypeDict', { cityId: this.$store.state.cityId, code: code }).then(() => {
-        if (code === 1) this.loading = false
+        this.loading = false
       }).catch(() => {
-        if (code === 1) this.loading = false
+        this.loading = false
       })
+    },
+    // 查询该类型激活数据
+    fetchActivatedData(code) {
+      this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: code })
     },
     // 删除标签
     handleDelete(node) {
@@ -255,15 +268,22 @@ export default {
     },
     // 新增标签
     handleAdd(node) {
+      if (node) {
+        if (node.data.typeStatus === 1) {
+          this.$message({
+            type: 'warning',
+            message: '类型被锁定，无法新增子类'
+          })
+          return
+        }
+        this.dialogType = 'addsub'
+      } else {
+        this.dialogType = 'addnew'
+      }
       this.form = {
         id: '',
         name: '',
-        parentId: []
-      }
-      this.dialogType = 'addnew'
-      if (node) {
-        this.dialogType = 'addsub'
-        this.form.parentId = this.getParentId(node)
+        parentId: this.getParentId(node)
       }
       this.showDialog = true
     },
@@ -278,6 +298,13 @@ export default {
     },
     // 编辑标签
     handleEdit(node) {
+      if (node.data.typeStatus === 1) {
+        this.$message({
+          type: 'warning',
+          message: '类型被锁定，无法编辑'
+        })
+        return
+      }
       this.form = Object.assign({}, {
         id: node.data.id,
         name: node.data.name,
