@@ -6,7 +6,7 @@ import topic from './topic'
 // import user from './user'
 // import feedback from './feedback'
 // import advert from './advert'
-import tag from './tag'
+// import tag from './tag'
 import category from './category'
 
 Mock.setup({
@@ -47,9 +47,9 @@ Mock.mock(/\/topic\/articlesearch/, topic.articlelist)
 // 标签管理相关
 // Mock.mock(/\/label\/list/, tag.list)
 // Mock.mock(/\/label\/querybyid/, tag.querybyid)
-// Mock.mock(/\/label\/saveoredit/, tag.save)
-Mock.mock(/\/label\/status/, tag.status)
-Mock.mock(/\/label\/updateSequenceNum/, tag.updateSequenceNum)
+// // Mock.mock(/\/label\/saveoredit/, tag.save)
+// Mock.mock(/\/label\/status/, tag.status)
+// Mock.mock(/\/label\/updateSequenceNum/, tag.updateSequenceNum)
 // 类型管理相关
 // Mock.mock(/\/typedict\/list/, category.list)
 // Mock.mock(/\/typedict\/querybyid/, category.querybyid)

@@ -27,7 +27,7 @@ export default {
 
       function formatType(list) {
         list.map((item) => {
-          if (item.childList.length > 0) {
+          if (Object.prototype.toString.call(item.childList) === '[object Array]' && item.childList.length > 0) {
             formatType(item.childList)
           } else {
             delete item.childList

@@ -183,7 +183,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: 2 })
+    this.$store.dispatch('getTypeDict', { code: 2 })
     this.fetchData()
   },
   methods: {
@@ -266,8 +266,12 @@ export default {
       this.sequenceNumBlur(event, scope)
     },
     handleStatus(data) {
+      const param = Object.assign({}, {
+        id: data.id,
+        labelStatus: data.labelStatus === 0 ? 1 : 0,
+      })
       this.loading = true
-      this.$store.dispatch('changeTagStatus', data).then((res) => {
+      this.$store.dispatch('changeTagStatus', param).then((res) => {
         this.loading = false
         this.$message({
           type: 'success',
@@ -293,7 +297,6 @@ export default {
         res.data.typeId = []
         getTypeId(res.data.typeDictList)
         this.form = Object.assign({}, res.data)
-        this.form.typeId = [1, 2, 5]
         this.form.typeId = handleInvalidType(this.tagTypeDict, this.form.typeId)
 
         function getTypeId(list) {
@@ -322,8 +325,13 @@ export default {
             type: 'warning'
           }).then(() => {
             this.dialogLoading = true
-            const param = Object.assign({}, this.form)
-            param.typeId = param.typeId.pop() || '' // 取最后一个元素作为typeId保存到数据库
+            const param = Object.assign({}, {
+              id: this.form.id,
+              name: this.form.name,
+              hasGuide: this.form.hasGuide,
+              labelStatus: this.form.labelStatus,
+              typeId: ([...this.form.typeId]).pop() || '' // 取最后一个元素作为typeId保存到数据库
+            })
             this.$store.dispatch('saveOrEditTag', param).then(() => {
               this.dialogLoading = false
               this.$message({

@@ -41,8 +41,8 @@ export default {
   },
   actions: {
     // 获取所有标签（不分页,内容管理文章关联标签使用到）
-    getAllTags({ commit, rootState }) {
-      return api.post('/label/list', { cityId: rootState.cityId }).then(res => {
+    getAllTags({ commit }) {
+      return api.post('/label/list').then(res => {
         commit('tagSet', {
           target: 'allTags',
           data: res.data.list
@@ -53,9 +53,8 @@ export default {
       })
     },
     // 获取标签列表
-    getTagList({ commit, rootState }, params) {
-      params.cityId = rootState.cityId
-      return api.post('/label/listpage?page=true', params).then(res => {
+    getTagList({ commit }, params) {
+      return api.post('/label/listpage', params).then(res => {
         commit('tagSet', {
           target: 'listData',
           data: res.data
@@ -71,7 +70,7 @@ export default {
         id: data.id,
         sequenceNum: data.sequenceNum
       }
-      return api.post('/label/updateSequenceNum', params).then(res => {
+      return api.post('/label/updatelabel', params).then(res => {
         commit('sequenceNum', { index: data.index, sequenceNum: data.sequenceNum })
         return res
       }, res => {
@@ -79,8 +78,7 @@ export default {
       })
     },
     // 根据标签id查询
-    queryTagById({ commit, rootState }, params) {
-      params.cityId = rootState.cityId
+    queryTagById({ commit }, params) {
       return api.post('/label/querybyid', params).then(res => {
         return res
       }, res => {
@@ -88,17 +86,15 @@ export default {
       })
     },
     // 切换标签状态
-    changeTagStatus({ commit, rootState }, params) {
-      params.cityId = rootState.cityId
-      return api.post('/label/status', params).then(res => {
+    changeTagStatus({ commit }, params) {
+      return api.post('/label/updatelabel', params).then(res => {
         return res
       }, res => {
         return Promise.resolve(res)
       })
     },
     // 新增/修改一条标签
-    saveOrEditTag({ commit, rootState }, params) {
-      params.cityId = rootState.cityId
+    saveOrEditTag({ commit }, params) {
       return api.post('/label/saveoredit', params).then(res => {
         return res
       }, res => {

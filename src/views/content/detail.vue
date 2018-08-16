@@ -125,7 +125,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: 3 }) // 查询文章类型
+    this.$store.dispatch('getTypeDict', { code: 3 }) // 查询文章类型
     this.fetchData()
     this.getAllTags()
   },

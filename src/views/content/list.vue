@@ -174,8 +174,8 @@ export default {
     ...mapGetters(['paccountTypeDict', 'articleTypeDict'])
   },
   created() {
-    this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: 1 }) // 查询公众号类型
-    this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: 3 }) // 查询文章类型
+    this.$store.dispatch('getTypeDict', { code: 1 }) // 查询公众号类型
+    this.$store.dispatch('getTypeDict', { code: 3 }) // 查询文章类型
     this.fetchData()
   },
   methods: {

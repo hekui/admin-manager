@@ -38,13 +38,14 @@
                   </span>
                 </span>
                 <span class="custom-right-text">
-                  <span class="status">{{ node.data.typeStatus === 0 ? '激活' : '锁定' }}</span>
+                  <span class="status">{{ node.data.status === 1 ? '激活' : node.data.status === 2 ? '锁定' : '' }}</span>
                   <span class="handle">
                     <el-button
+                      v-if="node.data.status === 1 || node.data.status === 2"
                       type="text"
                       size="mini"
                       @click="handleStatus(node)">
-                      {{ node.data.typeStatus === 0 ? '锁定' : '激活' }}
+                      {{ node.data.status === 1 ? '锁定' : node.data.status === 2 ? '激活' : '' }}
                     </el-button>
                     <el-button
                       type="text"
@@ -77,13 +78,14 @@
                   </span>
                 </span>
                 <span class="custom-right-text">
-                  <span class="status">{{ node.data.typeStatus === 0 ? '激活' : '锁定' }}</span>
+                  <span class="status">{{ node.data.status === 1 ? '激活' : node.data.status === 2 ? '锁定' : '' }}</span>
                   <span class="handle">
                     <el-button
+                      v-if="node.data.status === 1 || node.data.status === 2"
                       type="text"
                       size="mini"
                       @click="handleStatus(node)">
-                      {{ node.data.typeStatus === 0 ? '锁定' : '激活' }}
+                      {{ node.data.status === 1 ? '锁定' : node.data.status === 2 ? '激活' : '' }}
                     </el-button>
                     <el-button
                       type="text"
@@ -116,13 +118,14 @@
                   </span>
                 </span>
                 <span class="custom-right-text">
-                  <span class="status">{{ node.data.typeStatus === 0 ? '激活' : '锁定' }}</span>
+                  <span class="status">{{ node.data.status === 1 ? '激活' : node.data.status === 2 ? '锁定' : '' }}</span>
                   <span class="handle">
                     <el-button
+                      v-if="node.data.status === 1 || node.data.status === 2"
                       type="text"
                       size="mini"
                       @click="handleStatus(node)">
-                      {{ node.data.typeStatus === 0 ? '锁定' : '激活' }}
+                      {{ node.data.status === 1 ? '锁定' : node.data.status === 2 ? '激活' : '' }}
                     </el-button>
                     <el-button
                       type="text"
@@ -227,7 +230,7 @@ export default {
     // 查询该类型所有数据
     fetchData(code) {
       this.loading = true
-      this.$store.dispatch('getAllTypeDict', { cityId: this.$store.state.cityId, code: code }).then(() => {
+      this.$store.dispatch('getAllTypeDict', { code: code }).then(() => {
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -235,7 +238,7 @@ export default {
     },
     // 查询该类型激活数据
     fetchActivatedData(code) {
-      this.$store.dispatch('getTypeDict', { cityId: this.$store.state.cityId, code: code })
+      this.$store.dispatch('getTypeDict', { code: code })
     },
     // 删除标签
     handleDelete(node) {
@@ -251,7 +254,9 @@ export default {
             type: 'success',
             message: '删除成功!'
           })
-          this.fetchData()
+          const code = this.activeName === 'publicNo' ? 1 : this.activeName === 'tag' ? 2 : 3
+          this.fetchData(code)
+          this.fetchActivatedData(code)
         }).catch(() => {
           this.loading = false
           this.$message({
@@ -269,10 +274,10 @@ export default {
     // 新增标签
     handleAdd(node) {
       if (node) {
-        if (node.data.typeStatus === 1) {
+        if (node.data.status !== 1) {
           this.$message({
             type: 'warning',
-            message: '类型被锁定，无法新增子类'
+            message: '类型未激活，无法新增子类'
           })
           return
         }
@@ -298,10 +303,10 @@ export default {
     },
     // 编辑标签
     handleEdit(node) {
-      if (node.data.typeStatus === 1) {
+      if (node.data.status !== 1) {
         this.$message({
           type: 'warning',
-          message: '类型被锁定，无法编辑'
+          message: '类型未激活，无法编辑'
         })
         return
       }
@@ -316,21 +321,23 @@ export default {
     },
     // 锁定/激活
     handleStatus(node) {
-      const tips = node.data.typeStatus === 0 ? '是否要锁定' : '是否要激活'
+      const tips = node.data.status === 1 ? '是否要锁定' : '是否要激活'
       this.$confirm(tips, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         this.loading = true
-        this.$store.dispatch('changeCategoryStatus', { id: node.data.id, typeStatus: node.data.typeStatus ? 0 : 1 }).then(() => {
+        this.$store.dispatch('changeCategoryStatus', { id: node.data.id, status: node.data.status === 1 ? 2 : 1 }).then(() => {
           this.loading = false
           this.$message({
             type: 'success',
             message: '操作成功!'
           })
           this.showDialog = false
-          this.fetchData()
+          const code = this.activeName === 'publicNo' ? 1 : this.activeName === 'tag' ? 2 : 3
+          this.fetchData(code)
+          this.fetchActivatedData(code)
         }).catch(() => {
           this.loading = false
           this.$message({
@@ -358,22 +365,24 @@ export default {
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.dialogLoading = true
+            this.loading = true
             const param = Object.assign({}, this.form)
             if (this.activeName === 'publicNo') param.code = 1
             if (this.activeName === 'tag') param.code = 2
             if (this.activeName === 'article') param.code = 3
             param.parentId = param.parentId.pop() || '' // 取最后一个元素作为typeId保存到数据库
             this.$store.dispatch('saveOrEditType', param).then(() => {
-              this.dialogLoading = false
+              this.loading = false
               this.$message({
                 type: 'success',
                 message: '操作成功!'
               })
               this.showDialog = false
-              this.fetchData()
+              const code = this.activeName === 'publicNo' ? 1 : this.activeName === 'tag' ? 2 : 3
+              this.fetchData(code)
+              this.fetchActivatedData(code)
             }).catch(() => {
-              this.dialogLoading = false
+              this.loading = false
               this.$message({
                 message: '操作失败！',
                 type: 'error'

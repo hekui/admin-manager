@@ -5,7 +5,7 @@ function formatType(data) {
       value: item.id,
       label: item.name
     }
-    if (item.childList.length > 0) {
+    if (Object.prototype.toString.call(item.childList) === '[object Array]' && item.childList.length > 0) {
       result.children = formatType(item.childList)
     }
 
