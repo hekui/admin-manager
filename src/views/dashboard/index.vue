@@ -4,7 +4,7 @@
       <p>您好，{{account.name}}。</p>
       <p>当前管理城市是：{{cityName}} <el-button type="text" @click="changeCity">切换城市</el-button></p>
       <p>您的管理角色是：超级管理员</p>
-      <p>您可管理的城市是：<span class="citys" v-for="item in cityOptions" :key="item.cityId">{{item.cityName}}</span></p>
+      <p>您可管理的城市是：<span class="citys" v-for="item in cityOptions" :key="item.code">{{item.name}}</span></p>
     </div>
     <!-- <component :is="currentRole"></component> -->
   </div>

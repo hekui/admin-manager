@@ -24,18 +24,18 @@ const store = new Vuex.Store({
     cityDialog: false, // 城市弹窗
     cityId: '51010000', // 城市Id
     cityName: '成都',
-    cityOptions: [
+    cityOptions: [ // 激活状态的所有城市
       {
-        cityId: '51010000',
-        cityName: '成都'
+        code: '51010000',
+        name: '成都'
       },
       {
-        cityId: '50000000',
-        cityName: '重庆'
+        code: '50000000',
+        name: '重庆'
       },
       {
-        cityId: '61010000',
-        cityName: '西安'
+        code: '61010000',
+        name: '西安'
       }
     ],
     typeDict: { // 类型字典
@@ -95,6 +95,9 @@ const store = new Vuex.Store({
     'HIDE_LOADING': (state) => {
       state.routerLoading = false
     },
+    'SET_CITY_OPTIONS': (state, data) => {
+      state.cityOptions = data
+    },
     'SHOW_CITY_DIALOG': (state) => {
       state.cityDialog = true
     },
@@ -104,8 +107,8 @@ const store = new Vuex.Store({
     'SET_CITYID': (state, cityId) => {
       state.cityId = cityId
       state.cityOptions.forEach((option) => {
-        if (option.cityId === cityId) {
-          state.cityName = option.cityName
+        if (option.code === cityId) {
+          state.cityName = option.name
         }
       })
     },
@@ -128,6 +131,15 @@ const store = new Vuex.Store({
         return Promise.resolve(res)
       })
     },
+    // 获取激活城市
+    getActivatedCitys({ commit }) {
+      return api.post('/city/list').then(res => {
+        commit('SET_CITY_OPTIONS', res.data.list)
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    }
   },
   modules: {
     app,

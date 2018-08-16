@@ -23,8 +23,9 @@ export default {
     tag: '标签管理'
   },
   navbar: {
-    logOut: '退出登录',
+    logOut: '注销',
     screenfull: '全屏',
+    exitScreenfull: '退出全屏',
     position: '切换城市'
   },
   login: {

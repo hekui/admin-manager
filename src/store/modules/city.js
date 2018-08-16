@@ -1,8 +1,7 @@
 import api from './../../api'
 export default {
   state: {
-    allCitys: [], // 所有城市
-    activatedCitys: [] // 激活状态的城市
+    allCitys: [] // 所有城市
   },
   mutations: {
     citySet(state, data) {
@@ -15,18 +14,6 @@ export default {
       return api.post('/city/listall', params).then(res => {
         commit('citySet', {
           target: 'allCitys',
-          data: res.data.list
-        })
-        return res
-      }, res => {
-        return Promise.resolve(res)
-      })
-    },
-    // 获取激活城市
-    getActivatedCitys({ commit }) {
-      return api.post('/city/list').then(res => {
-        commit('citySet', {
-          target: 'activatedCitys',
           data: res.data.list
         })
         return res
