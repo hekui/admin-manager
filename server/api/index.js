@@ -94,9 +94,9 @@ class Api {
     }
   }
   // 输出多个服务端方法
-  fetch(host = 'javaHost', req, data){
-    return this.post(config[host], req, data)
-  }
+  // fetch(req, data){
+  //   return this.post(config['javaHost'], req, data)
+  // }
   fetchJava(req, data){
     return this.post(config['javaHost'], req, data)
   }
