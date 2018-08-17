@@ -227,12 +227,6 @@ export default {
       }).then(() => {
         const articleType = [...this.binding.articleType]
         this.$store.dispatch('saveContentType', { id: this.id, typeId: articleType.pop() }).then((res) => {
-          this.binding.articleType = []
-          let list = res.data.list
-          while (Object.prototype.toString.call(list) === '[object Array]' && list.length > 0) {
-            this.binding.articleType.push(list[0].id)
-            list = list[0].childList
-          }
           this.$message({
             message: '保存成功！',
             type: 'success'
