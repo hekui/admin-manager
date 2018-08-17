@@ -14,6 +14,7 @@ import feedback from './modules/feedback'
 import advert from './modules/advert'
 import tag from './modules/tag'
 import category from './modules/category'
+import city from './modules/city'
 import api from './../api'
 Vue.use(Vuex)
 
@@ -23,18 +24,18 @@ const store = new Vuex.Store({
     cityDialog: false, // 城市弹窗
     cityId: '51010000', // 城市Id
     cityName: '成都',
-    cityOptions: [
+    cityOptions: [ // 激活状态的所有城市
       {
-        cityId: '51010000',
-        cityName: '成都'
+        code: '51010000',
+        name: '成都'
       },
       {
-        cityId: '50000000',
-        cityName: '重庆'
+        code: '50000000',
+        name: '重庆'
       },
       {
-        cityId: '61010000',
-        cityName: '西安'
+        code: '61010000',
+        name: '西安'
       }
     ],
     typeDict: { // 类型字典
@@ -45,18 +46,47 @@ const store = new Vuex.Store({
     paccountTypeDict: [],
     tagTypeDict: [],
     articleTypeDict: [],
+    pclassifyTypeDict: [],
     // 公众号相关
-    wechatStatus: {
+    status: {
       1: '启用',
-      2: '停用'
+      2: '禁用'
     },
-    pclassify: [{
-      id: 1,
-      name: '房企'
-    }, {
-      id: 2,
-      name: 'KOL自媒体'
-    }]
+    wechatStatus: {
+      1: '授权',
+      2: '未授权'
+    },
+    pclassify: {
+      1: '房企',
+      2: 'KOL自媒体'
+    },
+    pickerOptions: { // 日期快捷选项
+      shortcuts: [{
+        text: '最近一周',
+        onClick(picker) {
+          const end = new Date()
+          const start = new Date()
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+          picker.$emit('pick', [start, end])
+        }
+      }, {
+        text: '最近一个月',
+        onClick(picker) {
+          const end = new Date()
+          const start = new Date()
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+          picker.$emit('pick', [start, end])
+        }
+      }, {
+        text: '最近三个月',
+        onClick(picker) {
+          const end = new Date()
+          const start = new Date()
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+          picker.$emit('pick', [start, end])
+        }
+      }]
+    }
   },
   mutations: {
     'SHOW_LOADING': (state) => {
@@ -64,6 +94,9 @@ const store = new Vuex.Store({
     },
     'HIDE_LOADING': (state) => {
       state.routerLoading = false
+    },
+    'SET_CITY_OPTIONS': (state, data) => {
+      state.cityOptions = data
     },
     'SHOW_CITY_DIALOG': (state) => {
       state.cityDialog = true
@@ -74,8 +107,8 @@ const store = new Vuex.Store({
     'SET_CITYID': (state, cityId) => {
       state.cityId = cityId
       state.cityOptions.forEach((option) => {
-        if (option.cityId === cityId) {
-          state.cityName = option.cityName
+        if (option.code === cityId) {
+          state.cityName = option.name
         }
       })
     },
@@ -84,8 +117,9 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    // 获取指定城市下指定指定顶级类型下所有子项
+    // 获取指定城市下指定大类（公众号、文章、标签）下所有已激活的子类型（不包括锁定）
     getTypeDict({ commit, state }, params) {
+      params.status = 1
       return api.post('/typedict/list', params).then(res => {
         // console.log(`${state.typeDict[params.code]}TypeDict`, res)
         commit('stateSet', {
@@ -97,6 +131,15 @@ const store = new Vuex.Store({
         return Promise.resolve(res)
       })
     },
+    // 获取激活城市
+    getActivatedCitys({ commit }) {
+      return api.post('/city/list').then(res => {
+        commit('SET_CITY_OPTIONS', res.data.list)
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    }
   },
   modules: {
     app,
@@ -111,7 +154,8 @@ const store = new Vuex.Store({
     feedback,
     advert,
     tag,
-    category
+    category,
+    city
   },
   getters
 })

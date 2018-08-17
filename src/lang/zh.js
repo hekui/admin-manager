@@ -18,12 +18,14 @@ export default {
     userFeedback: '用户反馈',
     setting: '配置管理',
     advert: '广告管理',
+    city: '城市管理',
     category: '类型管理',
     tag: '标签管理'
   },
   navbar: {
     logOut: '退出登录',
     screenfull: '全屏',
+    exitScreenfull: '退出全屏',
     position: '切换城市'
   },
   login: {

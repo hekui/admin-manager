@@ -6,20 +6,22 @@
 
     <div class="right-menu">
       <error-log class="errLog-container right-menu-item"></error-log>
-
-      <el-tooltip effect="dark" :content="$t('navbar.screenfull')" placement="bottom">
-        <screenfull class="screenfull right-menu-item"></screenfull>
-      </el-tooltip>
-
+   
+      <screenfull></screenfull>
+      
       <div class="username">您好 {{account.name}}</div>
 
-      <div class="position" :title="$t('navbar.position')" @click="changeCity">
-        <SvgIcon :iconClass="'position'" :className="'icon-position'"></SvgIcon>
-        <span>{{cityName}}</span>
-      </div>
+      <el-tooltip effect="dark" :content="$t('navbar.position')" placement="bottom">
+        <div class="position" @click="changeCity">
+          <SvgIcon :iconClass="'position'" :className="'icon-position'"></SvgIcon>
+          <span>{{cityName}}</span>
+        </div>
+      </el-tooltip>
 
-      <div class="logout" :title="$t('navbar.logOut')" @click="logout">{{$t('navbar.logOut')}}</div>
-      
+      <el-tooltip effect="dark" :content="$t('navbar.logOut')" placement="bottom">
+        <div class="logout" @click="logout">{{$t('navbar.logOut')}}</div>
+      </el-tooltip>
+
       <!-- <lang-select class="international right-menu-item"></lang-select> -->
 
       <!-- <el-tooltip effect="dark" :content="$t('navbar.theme')" placement="bottom">
@@ -154,9 +156,6 @@ export default {
     .right-menu-item {
       display: inline-block;
       margin: 0 8px;
-    }
-    .screenfull {
-      height: 20px;
     }
     .international{
       vertical-align: top;

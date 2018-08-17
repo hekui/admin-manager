@@ -1,5 +1,14 @@
 // set function parseTime,formatTime to filter
 export { parseTime, formatTime } from '@/utils'
+import dayjs from 'dayjs'
+
+// 日期格式化
+export function formatDate(date, temp) {
+  if (!date) {
+    return ''
+  }
+  return dayjs(Number(date)).format(temp || 'YYYY-MM-DD HH:mm:ss')
+}
 
 function pluralize(time, label) {
   if (time === 1) {

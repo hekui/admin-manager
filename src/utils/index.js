@@ -167,28 +167,20 @@ export function toggleClass(element, className) {
   }
   element.className = classString
 }
-
-export const pickerOptions = [
-  {
-    text: '今天',
-    onClick(picker) {
-      const end = new Date()
-      const start = new Date(new Date().toDateString())
-      end.setTime(start.getTime())
-      picker.$emit('pick', [start, end])
-    }
-  }, {
+// 日期快捷选项
+export const pickerOptions = {
+  shortcuts: [{
     text: '最近一周',
     onClick(picker) {
-      const end = new Date(new Date().toDateString())
+      const end = new Date()
       const start = new Date()
-      start.setTime(end.getTime() - 3600 * 1000 * 24 * 7)
+      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
       picker.$emit('pick', [start, end])
     }
   }, {
     text: '最近一个月',
     onClick(picker) {
-      const end = new Date(new Date().toDateString())
+      const end = new Date()
       const start = new Date()
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
       picker.$emit('pick', [start, end])
@@ -196,12 +188,13 @@ export const pickerOptions = [
   }, {
     text: '最近三个月',
     onClick(picker) {
-      const end = new Date(new Date().toDateString())
+      const end = new Date()
       const start = new Date()
       start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
       picker.$emit('pick', [start, end])
     }
   }]
+}
 
 export function getTime(type) {
   if (type === 'start') {
@@ -276,4 +269,22 @@ export function showLoading(store) {
 
 export function hideLoading(store) {
   store.commit('HIDE_LOADING')
+}
+
+export function handleInvalidType(tree, ids) {
+  let subTree = tree
+  for (let i = 0; i < ids.length; i++) {
+    subTree = getSubTree(subTree, ids[i])
+    if (!subTree) return []
+  }
+  return ids
+
+  function getSubTree(list, id) {
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].value === id) {
+        return list[i].children || []
+      }
+    }
+    return null
+  }
 }

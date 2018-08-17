@@ -11,7 +11,7 @@ const data = {
   'list|20': [{
     'id|+1': 1,
     userName: 'haha',
-    createTime: '2018-09-21',
+    createTime: '1533657600000',
     userId: 'afefefewfe34rfdsgfdg',
     openid: '2343254grgdfsggs',
     status: '第方',

@@ -49,6 +49,9 @@
               label="注册时间"
               prop="createTime"
               type="date">
+              <template slot-scope="scope">
+                <span>{{scope.row.createTime | formatDate('YYYY-MM-DD')}}</span>
+              </template>
             </el-table-column>
             <el-table-column
               label="UserId"
@@ -86,7 +89,6 @@
           class="pages"
           background
           layout="prev, pager, next"
-          style="right"
           :total="listData.totalRecords"
           :page-size="listData.pageSize"
           :current-page="listData.curPage"
@@ -149,8 +151,8 @@ export default {
       this.loading = true
       const tempForm = {
         userName: this.form.userName,
-        startTime: this.form.dateTime[0],
-        endTime: this.form.dateTime[1]
+        startTime: this.form.dateTime === null ? '' : this.form.dateTime[0],
+        endTime: this.form.dateTime === null ? '' : this.form.dateTime[1]
       }
       this.$store.dispatch('getUserList', Object.assign({}, tempForm, this.page)).then(() => {
         this.loading = false
@@ -184,7 +186,7 @@ export default {
 <style lang="scss">
 .user-list-page{
     .pages{
-      margin-top: 10px;
+      float: right;
     }
 }
 </style>

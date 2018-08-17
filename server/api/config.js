@@ -1,9 +1,10 @@
 
 const 
-  // javaHost = process.env.webHost || "http://mfmweb.test1.maifangma.com", // 测试环境
-  javaHost = 'http://mock.maifangma.com/', // rap2模拟数据
-  // encryptHost = process.env.encryptHost || "http://192.168.10.238:11000", // 加解密
-  passportHost = process.env.passportHost || "http://passport.test1.maifangma.com", // 工具接口 登陆 短信验证
+  // javaHost = process.env.javaHost || "http://mfmweb.test1.maifangma.com", // 测试环境
+  // javaHost = 'http://mock.maifangma.com/', // rap2模拟数据
+  javaHost = 'http://192.168.10.196:8089', // 周波PC
+  // javaHost = 'http://192.168.10.190:8089', // 张浩亮PC
+  passportHost = process.env.passportHost || "http://passport.test1.maifangma.com", // 登陆
   timeout = 3000; // 超时时间
 
 module.exports = {
