@@ -17,12 +17,13 @@ class Api {
           withCredentials: true,
           timeout: config.timeout,
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            // 'Content-Type': 'application/json'
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json'
           }
         }
         // data 数据处理
-        let rquestData = querystring.stringify(this.getData(req, data))
+        // let rquestData = querystring.stringify(this.getData(req, data))
+        let rquestData = this.getData(req, data)
         options.data = rquestData
         // console.log('options', options)
         axios(options).then(res => {
@@ -94,12 +95,9 @@ class Api {
     }
   }
   // 输出多个服务端方法
-  fetch(host = 'webHost', req, data){
-    return this.post(config[host], req, data)
-  }
-  fetchWeb(req, data){
-    return this.post(config['webHost'], req, data)
-  }
+  // fetch(req, data){
+  //   return this.post(config['javaHost'], req, data)
+  // }
   fetchJava(req, data){
     return this.post(config['javaHost'], req, data)
   }

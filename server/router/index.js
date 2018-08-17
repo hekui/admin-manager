@@ -32,7 +32,7 @@ const api = require('./../api')
 
 router.all('*', function(req, res, next){
   console.log('req.headers', req.headers.cityid)
-  api.fetchWeb(req, req.body).then(result => {
+  api.fetchJava(req, req.body).then(result => {
     res.json(result)
   }, result => {
     res.json(result)
