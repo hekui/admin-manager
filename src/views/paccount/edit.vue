@@ -30,7 +30,7 @@
           </el-form-item>
           <el-form-item label="添加时间">
             <el-date-picker
-              v-model="filter.date"
+              v-model="defaultDate"
               type="daterange"
               align="right"
               unlink-panels
@@ -38,8 +38,10 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               :clearable="true"
-              value-format="yyyy-MM-dd"
-              :picker-options="pickerOptions">
+              value-format="yyyy-MM-dd HH:mm"
+              :picker-options="pickerOptions"
+              @change="releaseTimeChange"
+            >
             </el-date-picker>
           </el-form-item>
           <el-form-item>
@@ -94,16 +96,25 @@
               prop="typeName"
               label="类型"
               width="120">
+              <template slot-scope="scope">
+                {{ scope.row.typeName || "-"}} 
+              </template>
             </el-table-column>
             <el-table-column
               prop="readNum"
               label="阅读量"
               width="80">
+              <template slot-scope="scope">
+                {{ scope.row.readNum || "-"}} 
+              </template>
             </el-table-column>
             <el-table-column
               prop="likeNum"
               label="点赞量"
               width="80">
+                <template slot-scope="scope">
+                {{ scope.row.likeNum || "-"}} 
+              </template>
             </el-table-column>
             <el-table-column
               prop="wordsNum"
@@ -233,8 +244,11 @@ export default{
       filter: {
         typeId: [],
         title: '',
-        date: ''
+        endDate: '',
+        beginDate: '',
+        id: ''
       },
+      defaultDate: '',
       form: {
         wechatAccount: '',
         wechatStatus: 1,
@@ -289,30 +303,39 @@ export default{
         code: 1
       })
       // 查询公众号基本信息
-      this.$store.dispatch('getPaccountInfo', {
-        id: this.id ? this.id : this.wxid
-      }).then((res) => {
-        this.status = res.data.status
-        this.changeStatus = res.data.status
-        const typeid = res.data.typeDictList
-        this.formatTypeId(typeid)
-        this.editInfo = {
-          id: res.data.id,
-          wechatAccount: res.data.wechatAccount,
-          wechatStatus: res.data.wechatStatus,
-          classify: '' + res.data.classify,
-          typeId: this.typeDictList,
-          status: res.data.status
-        }
-      })
+      if (this.id || this.wxid) {
+        this.$store.dispatch('getPaccountInfo', {
+          id: this.id ? this.id : this.wxid
+        }).then((res) => {
+          this.status = res.data.status
+          this.changeStatus = res.data.status
+          const typeid = res.data.typeDictList
+          if (typeid) {
+            this.formatTypeId(typeid)
+          }
+          this.editInfo = {
+            id: res.data.id,
+            wechatAccount: res.data.wechatAccount,
+            wechatStatus: res.data.wechatStatus,
+            classify: '' + res.data.classify,
+            typeId: this.typeDictList,
+            status: res.data.status
+          }
+        })
+      }
+    },
+    releaseTimeChange(value) {
+      const date = value || ['', '']
+      this.filter.beginDate = date[0]
+      this.filter.endDate = date[1]
     },
     fetchData() {
       // 公众号详情-分页
       const params = {
-        beginDate: this.filter.date[0] || '',
-        endDate: this.filter.date[1] || '',
-        typeId: this.id
+        id: this.id,
+        typeId: this.filter.typeId ? this.filter.typeId.pop() : ''
       }
+      console.log('this.filter', this.filter)
       this.loading = true
       this.$store.dispatch('getArticleList', Object.assign({}, this.filter, params, this.page)).then(() => {
         this.loading = false
@@ -355,7 +378,7 @@ export default{
               typeId: this.form.typeId[this.form.typeId.length - 1]
             }
             this.loading = true
-            this.$store.dispatch('updatestatusStateInfo', Object.assign({}, this.form, params)).then(() => {
+            this.$store.dispatch('addPaccountInfo', Object.assign({}, this.form, params)).then(() => {
               this.loading = false
               this.$alert('<strong>添加成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
                 type: 'success',
@@ -391,7 +414,7 @@ export default{
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        this.$store.dispatch('editPaccountInfo', params).then(() => {
+        this.$store.dispatch('updatestatusStateInfo', params).then(() => {
           this.$message({
             type: 'success',
             message: '成功切换'
@@ -469,7 +492,7 @@ export default{
     formatTypeId(data) {
       data.map((item) => {
         this.typeDictList.push(item.id)
-        if (item.childList.length > 0) {
+        if (item.childList) {
           this.formatTypeId(item.childList)
         }
       })
