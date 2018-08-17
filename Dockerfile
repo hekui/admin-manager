@@ -1,5 +1,4 @@
-FROM registry.cn-hangzhou.aliyuncs.com/fangguancha/base:nodejs-8.9.2
-
+FROM registry.cn-hangzhou.aliyuncs.com/fangguancha/base:nodejs-8.5
 MAINTAINER register <register@chuangjia.me>
 
 ENV PORT 3000
