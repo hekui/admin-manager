@@ -49,7 +49,7 @@ export default {
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 获取标签列表
@@ -61,7 +61,7 @@ export default {
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 修改排序
@@ -74,7 +74,7 @@ export default {
         commit('sequenceNum', { index: data.index, sequenceNum: data.sequenceNum })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 根据标签id查询
@@ -82,7 +82,7 @@ export default {
       return api.post('/label/querybyid', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 切换标签状态
@@ -90,7 +90,7 @@ export default {
       return api.post('/label/updatelabel', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 新增/修改一条标签
@@ -98,7 +98,7 @@ export default {
       return api.post('/label/saveoredit', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
   }

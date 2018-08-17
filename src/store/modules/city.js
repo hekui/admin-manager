@@ -18,7 +18,7 @@ export default {
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 根据城市id查询
@@ -26,7 +26,7 @@ export default {
       return api.post('', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 切换城市状态
@@ -34,7 +34,7 @@ export default {
       return api.post('', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 新增/修改一条城市
@@ -42,7 +42,7 @@ export default {
       return api.post('', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
   }

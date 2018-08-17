@@ -70,5 +70,11 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-
+.citys {
+  display: flex;
+  flex-direction: column;
+  .el-button {
+    margin: 0 0 5px;
+  }
+}
 </style>

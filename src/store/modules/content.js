@@ -29,14 +29,14 @@ export default {
   actions: {
     // 获取内容列表
     getContentList({ commit }, params) {
-      return api.post('/content/list?page=true', params).then(res => {
+      return api.post('/content/list', params).then(res => {
         commit('contentSet', {
           target: 'listData',
           data: res.data
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 改变内容启用/禁用状态
@@ -44,7 +44,7 @@ export default {
       return api.post('/content/updatestatus', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 获取内容详情
@@ -56,7 +56,7 @@ export default {
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 保存内容类型
@@ -65,7 +65,7 @@ export default {
         commit('SET_ARTICLE_TYPE', res.data.list)
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 保存内容标签
@@ -74,7 +74,7 @@ export default {
         commit('SET_ARTICLE_TAGS', res.data.list)
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     }
   }

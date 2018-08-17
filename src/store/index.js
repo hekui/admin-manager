@@ -23,21 +23,7 @@ const store = new Vuex.Store({
     routerLoading: false, // 路由切换loading效果
     cityDialog: false, // 城市弹窗
     cityId: '51010000', // 城市Id
-    cityName: '成都',
-    cityOptions: [ // 激活状态的所有城市
-      {
-        code: '51010000',
-        name: '成都'
-      },
-      {
-        code: '50000000',
-        name: '重庆'
-      },
-      {
-        code: '61010000',
-        name: '西安'
-      }
-    ],
+    cityOptions: [], // 激活状态的所有城市
     typeDict: { // 类型字典
       1: 'paccount', // 1,公众号
       2: 'tag', // 2,标签
@@ -106,11 +92,6 @@ const store = new Vuex.Store({
     },
     'SET_CITYID': (state, cityId) => {
       state.cityId = cityId
-      state.cityOptions.forEach((option) => {
-        if (option.code === cityId) {
-          state.cityName = option.name
-        }
-      })
     },
     stateSet(state, data) {
       state[data['target']] = data['data']

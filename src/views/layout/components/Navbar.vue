@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
@@ -74,12 +74,12 @@ export default {
     // ThemePicker
   },
   computed: {
-    ...mapState(['cityName']),
     ...mapGetters([
       'sidebar',
       'name',
       'avatar',
-      'account'
+      'account',
+      'cityName'
     ])
   },
   methods: {

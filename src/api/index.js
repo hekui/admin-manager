@@ -21,7 +21,7 @@ class Api {
             // 'X-Requested-With': 'XMLHttpRequest',
             // 'Content-Type': 'application/x-www-form-urlencoded',
             // 'Accept': '*/*',
-            'cityid': cookie.get('cityID') || 51010000, // 默认成都
+            'cityid': cookie.get('CITYID') || 51010000, // 默认成都
             'Content-Type': 'application/json'
           }
         }

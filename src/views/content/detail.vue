@@ -6,9 +6,9 @@
 <template>
   <div class="detail-container" v-loading="loading">
     <div class="content-container">
-      <section v-if="detailData.contentUrl" class="link">
-        <a class="url" target="_blank" :href="detailData.contentUrl || '#'">{{detailData.contentUrl || ''}}</a>
-        <el-button type="info" size="mini" @click="handleUrl">访问</el-button>
+      <section v-if="detailData.sourceUrl" class="link">
+        <!-- <a class="url" target="_blank" :href="detailData.sourceUrl || '#'">{{detailData.sourceUrl || ''}}</a> -->
+        <el-button type="info" size="mini" @click="handleUrl">访问原文</el-button>
       </section>
       <section class="article">
         <h1 class="title">{{detailData.title || ''}}</h1>
@@ -59,7 +59,7 @@
       </template>
       <template v-if="dialogType==='tags'">
         <div class="tags">
-          <el-button v-for="item in allTags" :key="item.id" :type="indexOfTag(item) > -1 ? 'primary': ''" @click="handleTags(item)">{{item.name}}</el-button>
+          <el-button v-for="(item, index) in allTags" :key="item.id" :type="indexOfTag(item, index) > -1 ? 'primary': ''" @click="handleTags(item, index)">{{item.name}}</el-button>
         </div>
       </template>
       <div slot="footer" class="dialog-footer">
@@ -145,15 +145,18 @@ export default {
     releaseTimeFilter(time) {
       return parseTime(Number(time))
     },
-    indexOfTag(item) {
+    indexOfTag(item, index) {
       for (let i = 0; i < this.binding.tags.length; i++) {
-        if (this.binding.tags[i].id === item.id) return i
+        if (this.binding.tags[i].id === item.id) {
+          this.binding.tags[i].$index = index
+          return i
+        }
       }
       return -1
     },
     // 访问
     handleUrl() {
-      window.open(this.detailData.contentUrl)
+      window.open(this.detailData.sourceUrl)
     },
     // 显示绑定弹窗
     handleBinding(type) {
@@ -167,7 +170,7 @@ export default {
     handleToEdit() {
       this.$router.push({ path: '/content/edit', query: { id: this.id }})
     },
-    handleTags(item) {
+    handleTags(item, index) {
       let flag = false
       for (let i = 0; i < this.binding.tags.length; i++) {
         if (this.binding.tags[i].id === item.id) {
@@ -176,10 +179,6 @@ export default {
         }
       }
       if (!flag) this.binding.tags.push(item)
-      // 排序
-      this.binding.tags = this.allTags.filter(tag => {
-        return this.indexOfTag(tag) > -1
-      })
     },
     handleCancel() {
       this.showDialog = false
@@ -202,7 +201,8 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        this.$store.dispatch('saveContentTags', {}).then(() => {
+        const params = { id: this.id, labels: this.binding.tags.map(tag => tag.id) }
+        this.$store.dispatch('saveContentTags', params).then(() => {
           this.loading = false
           this.$message({
             message: '保存成功！',
@@ -210,10 +210,6 @@ export default {
           })
         }).catch(() => {
           this.loading = false
-          this.$message({
-            message: '保存失败！',
-            type: 'error'
-          })
         })
       }).catch(() => {
         this.$message({
@@ -230,15 +226,16 @@ export default {
         type: 'warning'
       }).then(() => {
         const articleType = [...this.binding.articleType]
-        this.$store.dispatch('saveContentType', { id: this.id, typeId: articleType.pop() }).then(() => {
+        this.$store.dispatch('saveContentType', { id: this.id, typeId: articleType.pop() }).then((res) => {
+          this.binding.articleType = []
+          let list = res.data.list
+          while (Object.prototype.toString.call(list) === '[object Array]' && list.length > 0) {
+            this.binding.articleType.push(list[0].id)
+            list = list[0].childList
+          }
           this.$message({
             message: '保存成功！',
             type: 'success'
-          })
-        }).catch(() => {
-          this.$message({
-            message: '保存失败！',
-            type: 'error'
           })
         })
       }).catch(() => {

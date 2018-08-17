@@ -25,10 +25,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(['cityName', 'cityOptions']),
+    ...mapState(['cityOptions']),
     ...mapGetters([
       'roles',
-      'account'
+      'account',
+      'cityName'
     ])
   },
   created() {

@@ -17,6 +17,14 @@ const getters = {
   permission_routers: state => state.permission.routers,
   addRouters: state => state.permission.addRouters,
   errorLogs: state => state.errorLog.logs,
+  cityName: state => {
+    for (let i = 0; i < state.cityOptions.length; i++) {
+      if (state.cityOptions[i].code === state.cityId) {
+        return state.cityOptions[i].name
+      }
+    }
+    return ''
+  },
   // 格式化类型数据
   paccountTypeDict: state => { // 公众号类型
     console.log('state.paccountTypeDict', state.paccountTypeDict)

@@ -283,10 +283,6 @@ export default {
           this.fetchData()
         }).catch(() => {
           this.loading = false
-          this.$message({
-            message: '操作失败！',
-            type: 'error'
-          })
         })
       }).catch(() => {
         this.$message({
@@ -326,11 +322,6 @@ export default {
         this.uploadFiles = this.fileList
         this.dialogType = 'edit'
         this.showDialog = true
-      }).catch(() => {
-        this.$message({
-          message: '获取广告信息失败！',
-          type: 'error'
-        })
       })
     },
     // 文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
@@ -356,11 +347,6 @@ export default {
         this.$message({
           type: 'success',
           message: '上传成功!'
-        })
-      }).catch(() => {
-        this.$message({
-          message: '上传失败！',
-          type: 'error'
         })
       })
     },
@@ -390,10 +376,6 @@ export default {
               this.fetchData()
             }).catch(() => {
               this.loading = false
-              this.$message({
-                message: '操作失败！',
-                type: 'error'
-              })
             })
           }).catch(() => {
             this.$message({

@@ -259,15 +259,6 @@ export default {
           this.fetchActivatedData(code)
         }).catch(() => {
           this.loading = false
-          this.$message({
-            message: '删除失败！',
-            type: 'error'
-          })
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消操作!'
         })
       })
     },
@@ -340,10 +331,6 @@ export default {
           this.fetchActivatedData(code)
         }).catch(() => {
           this.loading = false
-          this.$message({
-            message: '操作失败！',
-            type: 'error'
-          })
         })
       }).catch(() => {
         this.$message({
@@ -383,10 +370,6 @@ export default {
               this.fetchActivatedData(code)
             }).catch(() => {
               this.loading = false
-              this.$message({
-                message: '操作失败！',
-                type: 'error'
-              })
             })
           }).catch(() => {
             this.$message({
