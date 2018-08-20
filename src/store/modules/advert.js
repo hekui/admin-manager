@@ -61,7 +61,9 @@ export default {
     },
     // 上传
     uploadAdertImage({ commit }, params) {
-      return api.post('/uploadimage', params).then(res => {
+      return api.post('/upload/image', params, {
+        'Content-Type': 'multipart/form-data'
+      }).then(res => {
         return res
       }, res => {
         return Promise.reject(res)

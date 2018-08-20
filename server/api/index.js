@@ -1,5 +1,4 @@
 const axios = require('axios')
-const querystring = require('querystring')
 const log = require('./../log')('java')
 const methods = ['post']
 const config = require('./config')
@@ -8,8 +7,8 @@ class Api {
   constructor() {
     methods.forEach(method => {
       this[method] = (baseUrl = '', req, data = {}) => new Promise((resolve, reject) => {
-        let url = baseUrl + req.url
-        // console.log('req', req.url)
+        console.log('data', data)
+        const url = baseUrl + req.url
         console.log('url', url)
         const options = {
           method: method,
@@ -18,20 +17,22 @@ class Api {
           timeout: config.timeout,
           headers: {
             // 'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Type': 'application/json'
+            // 'Content-Type': 'application/json'
+            'Content-Type': req.headers['content-type']
           }
         }
+        
         // data 数据处理
         // let rquestData = querystring.stringify(this.getData(req, data))
-        let rquestData = this.getData(req, data)
+        const rquestData = this.getData(req, data)
         options.data = rquestData
-        // console.log('options', options)
+        console.log('options', options.data)
         axios(options).then(res => {
           if (res.status === 200) {
-            let result = res.data
+            const result = res.data
             if (result.code === 0) {
               // 数据解密
-              let decryptResult = Object.assign(result, res.data.data ? {data: this.decryptData(result.data)} : {})
+              const decryptResult = Object.assign(result, res.data.data ? { data: this.decryptData(result.data) } : {})
               log.trace(`${url} - request data: - ${JSON.stringify(rquestData)} - data: ${JSON.stringify(data)} - response data: - ${JSON.stringify(decryptResult)}`)
               resolve(decryptResult)
             } else {
@@ -50,7 +51,7 @@ class Api {
   /**
    * 处理参数，拼接公共参数及业务参数加密
   */
-  getData(req, data){
+  getData(req, data) {
     return Object.assign({}, this.getCommonParams({
       sessionID: req.sessionID,
       ticketId: req.session.ticketId || '',
@@ -62,32 +63,32 @@ class Api {
   /**
    * 公共参数
    */
-  getCommonParams({cityId, ticketId, deviceNo}){
+  getCommonParams({ cityId, ticketId, deviceNo }) {
     return {
       repositoryId: 16, // rap2模拟时用
       cityId,
       deviceNo,
       ticketId,
       encryMode: 2, // 加密方式
-      version: "1.0.0", //接口版本
+      version: '1.0.0', // 接口版本
       userver: 2,
       utype: 2,
-      deviceType: 2, //设备类型
+      deviceType: 2, // 设备类型
     }
   }
-  /** 
-   * 加密数据
-  */
-  encryptData(data){
-    return new Buffer(JSON.stringify(data)).toString("base64")
+  /**
+   *  加密数据
+   */
+  encryptData(data) {
+    return new Buffer(JSON.stringify(data)).toString('base64')
   }
   /**
    * 解密数据
    * @param {Object} data
    */
-  decryptData(data){
+  decryptData(data) {
     try {
-      let result = JSON.parse(new Buffer(data, 'base64').toString())
+      const result = JSON.parse(new Buffer(data, 'base64').toString())
       return result
     } catch (error) {
       log.fatal(`decryptData error - input data - ${JSON.stringify(data)} - ${error}`)
@@ -98,10 +99,10 @@ class Api {
   // fetch(req, data){
   //   return this.post(config['javaHost'], req, data)
   // }
-  fetchJava(req, data){
+  fetchJava(req, data) {
     return this.post(config['javaHost'], req, data)
   }
-  fetchPassport(req, data){
+  fetchPassport(req, data) {
     return this.post(config['passportHost'], req, data)
   }
 }
