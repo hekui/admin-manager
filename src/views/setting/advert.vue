@@ -316,11 +316,11 @@ export default {
     },
     // 上传文件之前的钩子
     beforeAvatarUpload(file) {
-      const isType = file.type === 'image/jpeg' || 'image/jpg' || 'image/png'
+      const isType = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)
       const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isType) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+        this.$message.error('上传头像图片只能是 PNG/JPG/JPEG 格式!')
       }
       if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 2MB!')
