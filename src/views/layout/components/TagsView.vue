@@ -101,7 +101,6 @@ export default {
             this.$router.push('/')
           }
         }
-        this.$refs.scrollPane.resetScroll()
       })
     },
     closeOthersTags() {
