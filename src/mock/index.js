@@ -14,7 +14,7 @@ Mock.setup({
 })
 
 // 登录相关
-Mock.mock(/\/account\/login/, account.login)
+// Mock.mock(/\/account\/login/, account.login)
 Mock.mock(/\/account\/logout/, account.logout)
 Mock.mock(/\/account\/userinfo/, account.getUserInfo)
 
