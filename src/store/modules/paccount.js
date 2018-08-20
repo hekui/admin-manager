@@ -110,5 +110,13 @@ export default {
         return Promise.resolve(res)
       })
     },
+    syncPaccount({ commit }, params) {
+      // 同步公众号数据
+      return api.post('/subscription/sync', params).then(res => {
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
   }
 }

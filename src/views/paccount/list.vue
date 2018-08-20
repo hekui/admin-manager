@@ -133,10 +133,11 @@
           <el-table-column
             fixed="right"
             label="操作"
-            width="150">
+            width="170">
             <template slot-scope="scope">
               <el-button type="text" @click="showDetail(scope.row.id)">详情</el-button>
               <el-button type="text" @click="addHandle(scope.row.id)">编辑</el-button>
+              <el-button type="text" @click="syncHandle(scope.$index, listData.list, scope.row.wechatAccount)">同步数据</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -243,6 +244,24 @@ export default {
           path: '/paccount/add'
         })
       }
+    },
+    syncHandle(index, data, wechatAccount) {
+      // 同步公众号数据
+      this.$store.dispatch('syncPaccount', {
+        wechatAccount
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '同步成功'
+        })
+        // data[index].lastRecordTime = '1533878998639'
+        // data[index].articleNum = '45'
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '同步失败，请稍后重试'
+        })
+      })
     },
     showDetail(id) {
       this.$router.push({
