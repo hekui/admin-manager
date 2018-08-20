@@ -34,7 +34,7 @@ router.all('/upload/image', multer().single('file'), function(req, res, next) {
   uploadApi.fetchJava(req, req.file).then(result => {
     res.json(result)
   }, result => {
-    res.json(result)
+    res.json({ code: result.code, msg: result.message })
   })
 })
 
@@ -43,7 +43,7 @@ router.all('*', function(req, res, next) {
   api.fetchJava(req, req.body).then(result => {
     res.json(result)
   }, result => {
-    res.json(result)
+    res.json({ code: result.code, msg: result.message })
   })
 })
 

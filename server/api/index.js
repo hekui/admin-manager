@@ -21,7 +21,6 @@ class Api {
             'Content-Type': req.headers['content-type']
           }
         }
-        
         // data 数据处理
         // let rquestData = querystring.stringify(this.getData(req, data))
         const rquestData = this.getData(req, data)

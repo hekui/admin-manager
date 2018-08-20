@@ -121,7 +121,6 @@ class Api {
    *  加密数据
    */
   encryptData(data) {
-    debugger
     return new Buffer(JSON.stringify(data)).toString('base64')
   }
   /**
@@ -129,7 +128,6 @@ class Api {
    * @param {Object} data
    */
   decryptData(data) {
-    debugger
     try {
       const result = JSON.parse(new Buffer(data, 'base64').toString())
       return result
