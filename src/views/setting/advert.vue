@@ -97,12 +97,10 @@
       <section class="pagination">
         <el-pagination
           background
-          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="page.pageNo"
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size="page.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
+          :current-page="page.curPage"
+          :page-size="listData.pageSize"
+          layout="total, prev, pager, next, jumper"
           :total="listData.totalRecords">
         </el-pagination>
       </section>
@@ -171,8 +169,7 @@ export default {
       },
       releaseTime: [],
       page: {
-        pageNo: 1,
-        pageSize: 10
+        curPage: 1
       },
       pickerOptions,
       uploadSuccess: false,
@@ -227,20 +224,15 @@ export default {
     },
     // 获取序号
     getIndex(index) {
-      return (this.page.pageNo - 1) * this.page.pageSize + index + 1
+      return (this.page.curPage - 1) * this.listData.pageSize + index + 1
     },
     // 格式化时间
     releaseTimeFilter(time) {
       return parseTime(Number(time))
     },
-    // 改变每页条数
-    handleSizeChange(val) {
-      this.page.pageSize = val
-      this.fetchData()
-    },
     // 改变当前页
     handleCurrentChange(val) {
-      this.page.pageNo = val
+      this.page.curPage = val
       this.fetchData()
     },
     // 发布时间改变触发
@@ -257,7 +249,7 @@ export default {
     },
     // 条件查询
     submitFilter() {
-      this.page.pageNo = 1
+      this.page.curPage = 1
       this.fetchData()
     },
     // 下线

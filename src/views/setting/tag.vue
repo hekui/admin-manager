@@ -89,18 +89,16 @@
       <section class="pagination">
         <el-pagination
           background
-          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="page.curPage"
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size="page.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
+          :page-size="listData.pageSize"
+          layout="total, prev, pager, next, jumper"
           :total="listData.totalRecords">
         </el-pagination>
       </section>
     </div>
     <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
-      <el-form v-loading="dialogLoading" ref="form" :model="form" :rules="rules">
+      <el-form v-if="showDialog" v-loading="dialogLoading" ref="form" :model="form" :rules="rules">
         <el-form-item label="标签名称：" prop="name">
           <el-input v-model="form.name" placeholder="请输入名称" :clearable="true"></el-input>
         </el-form-item>
@@ -150,8 +148,7 @@ export default {
         name: '' // 标签名称
       },
       page: {
-        curPage: 1,
-        pageSize: 20
+        curPage: 1
       },
       form: {
         id: '',
@@ -203,13 +200,7 @@ export default {
     },
     // 获取序号
     getIndex(index) {
-      return (this.page.curPage - 1) * this.page.pageSize + index + 1
-    },
-    // 改变每页条数
-    handleSizeChange(val) {
-      this.page.curPage = 1
-      this.page.pageSize = val
-      this.fetchData()
+      return (this.page.curPage - 1) * this.listData.pageSize + index + 1
     },
     // 改变当前页
     handleCurrentChange(val) {
@@ -241,10 +232,6 @@ export default {
       const prevElement = document.getElementById('editable_value_' + scope.$index)
       event.target.className = 'editable_copy'
       prevElement.className = 'editable_value visible'
-      this.$message({
-        type: 'info',
-        message: '已取消修改!'
-      })
     },
     // 回车确认修改排序
     sequenceNumConfirm(event, scope) {
@@ -259,6 +246,10 @@ export default {
     // ESC取消修改
     sequenceNumCancel(event, scope) {
       this.sequenceNumBlur(event, scope)
+      this.$message({
+        type: 'info',
+        message: '已取消修改!'
+      })
     },
     handleStatus(data) {
       const tips = data.labelStatus === 0 ? '是否要锁定' : '是否要激活'
@@ -381,6 +372,7 @@ input[type='number']{
     .sequenceNum {
       padding: 1px;
       .editable_value {
+        cursor: text;
         display: none;
         border: 1px solid #dcdfe6;
       }
@@ -391,6 +383,8 @@ input[type='number']{
         line-height: 23px;
         border: 1px solid #409eff;
         outline: none;
+        color: #606266;
+        font-family: Microsoft YaHei, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Arial, sans-serif;
       }
       .visible {
         display: block;
