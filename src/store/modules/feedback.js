@@ -26,14 +26,15 @@ export default {
      */
     getFeedbackList({ commit }, params) {
       // 获取用户列表代码
-      return api.post('/wechatuser/feedbacklist?page=true', params).then(res => {
+      return api.post('/wechatuser/feedbacklist', params).then(res => {
         commit('feedbackSet', {
           target: 'listData',
           data: res.data
         })
+        console.log('res', res)
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     }
   }
