@@ -4,13 +4,8 @@ const
   // javaHost = process.env.javaHost || 'http://???', // 测试环境
   // javaHost = process.env.javaHost || 'http://japi.fangguancha.com', // 生产环境
   // javaHost = process.env.javaHost || 'http://192.168.10.196:8089', // 周波PC
-<<<<<<< HEAD
-  // javaHost = process.env.javaHost || 'http://192.168.10.190:8092', // 张浩亮PC
-  javaHost = process.env.javaHost || 'http://192.168.10.88:8092', // 何洋PC
-=======
   javaHost = process.env.javaHost || 'http://192.168.10.190:8092', // 张浩亮PC
   // javaHost = process.env.javaHost || 'http://192.168.10.88:8092', // 何洋PC
->>>>>>> e73bbdd8e9d997f1c019a86f85654ae29ab10d4f
   // passportHost = process.env.passportHost || 'http://passport.test1.maifangma.com', // 登陆
   // passportHost = process.env.passportHost || 'https://uiap.maifangma.com', // 登陆(正式环境)
   passportHost = process.env.passportHost || 'http://192.168.10.88:8090', // 登陆（何洋）
