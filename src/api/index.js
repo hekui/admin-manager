@@ -7,7 +7,7 @@ const methods = ['get', 'post']
 class Api {
   constructor(context = '') { // context 用于扩展多个端口的服务端。
     methods.forEach(method => {
-      this[method] = (path, data = {}) => new Promise((resolve, reject) => {
+      this[method] = (path, data = {}, headers = {}) => new Promise((resolve, reject) => {
         const url = apiContext + context + path
         console.log('url', url)
         // console.log('-------------------------------------')
@@ -17,13 +17,13 @@ class Api {
           url: url,
           withCredentials: true,
           timeout: 10000,
-          headers: {
+          headers: Object.assign({
             // 'X-Requested-With': 'XMLHttpRequest',
             // 'Content-Type': 'application/x-www-form-urlencoded',
             // 'Accept': '*/*',
-            'cityid': cookie.get('cityID') || 51010000, // 默认成都
+            'cityid': cookie.get('CITYID') || 51010000, // 默认成都
             'Content-Type': 'application/json'
-          }
+          }, headers)
         }
         data.ticketId = ''
         method === 'get' ? options.params = data : options.data = data

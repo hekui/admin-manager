@@ -17,14 +17,14 @@ export default {
   actions: {
     // 获取广告列表
     getAdvertList({ commit }, params) {
-      return api.post('/advert/list?page=true', params).then(res => {
+      return api.post('/advert/list', params).then(res => {
         commit('advertSet', {
           target: 'listData',
           data: res.data
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 获取广告信息
@@ -32,7 +32,7 @@ export default {
       return api.post('/advert/find', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 修改一条广告
@@ -40,7 +40,7 @@ export default {
       return api.post('/advert/edit', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 新增一条广告
@@ -48,23 +48,25 @@ export default {
       return api.post('/advert/add', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 广告下线
     updateAdvertStatus({ commit }, params) {
-      return api.post('/advert/updateStatus', params).then(res => {
+      return api.post('/advert/updateadvertstatus', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 上传
     uploadAdertImage({ commit }, params) {
-      return api.post('/uploadimage', params).then(res => {
+      return api.post('/upload/image', params, {
+        'Content-Type': 'multipart/form-data'
+      }).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     }
   }

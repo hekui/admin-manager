@@ -27,7 +27,7 @@
         </el-form-item>
         <el-form-item label="添加时间">
           <el-date-picker
-            v-model="filter.date"
+            v-model="defalultDate"
             type="daterange"
             align="right"
             unlink-panels
@@ -36,7 +36,9 @@
             end-placeholder="结束日期"
             :clearable="true"
             value-format="yyyy-MM-dd"
-            :picker-options="pickerOptions">
+            :picker-options="pickerOptions"
+            @change="releaseTimeChange"
+            >
           </el-date-picker>
         </el-form-item>
         <el-form-item>
@@ -60,7 +62,7 @@
             min-width="180">
             <template slot-scope="scope">
               <div class="pavatar">
-                <img :src="scope.row.headImg" width="50" alt="">
+                <img :src="scope.row.headImg" width="50" alt="公众号头像">
                 <p class="name">{{scope.row.name}}</p>
                 <p class="en-name">{{scope.row.wechatAccount}}</p>
               </div>
@@ -93,13 +95,16 @@
             label="分类"
             width="100">
             <template slot-scope="scope">
-              {{ pclassify[scope.row.classify] }}
+              {{ pclassify[scope.row.classify] || '-' }}
             </template>
           </el-table-column>
           <el-table-column
             prop="typeName"
             label="类型"
             width="120">
+            <template slot-scope="scope">
+              {{ scope.row.typeName || "-"}} 
+            </template>
           </el-table-column>
           <el-table-column
             prop="createTime"
@@ -121,6 +126,9 @@
             prop="articleNum"
             label="收录文章数量"
             width="110">
+            <template slot-scope="scope">
+              {{ scope.row.articleNum || "-"}} 
+            </template>
           </el-table-column>
           <el-table-column
             fixed="right"
@@ -165,8 +173,10 @@ export default {
         wechatStatus: '',
         status: '',
         typeId: [],
-        date: ''
-      }
+        beginDate: '',
+        endDate: ''
+      },
+      defalultDate: ''
     }
   },
   computed: {
@@ -183,27 +193,34 @@ export default {
   },
   created() {
     this.fetchData()
+    this.getTypeDict()
     // console.log('this', this)
   },
   methods: {
     fetchData() {
-      console.log('this.filter', this.filter)
-      // 获取公众号类型列表
-      this.$store.dispatch('getTypeDict', {
-        cityId: this.cityId,
-        code: 1
-      })
+      console.log('this.filter,', this.filter)
       const params = {
-        startTime: this.filter.date[0] || '',
-        endTime: this.filter.date[1] || '',
-        typeId: this.filter.typeId[this.filter.typeId.length - 1]
+        typeId: this.filter.typeId ? this.filter.typeId.pop() : ''
       }
+      console.log('-----', params)
       this.loading = true
       this.$store.dispatch('getPaccountList', Object.assign({}, this.filter, params, this.page)).then(() => {
         this.loading = false
       }).catch(() => {
         this.loading = false
       })
+    },
+    getTypeDict() {
+      // 获取公众号类型列表
+      this.$store.dispatch('getTypeDict', {
+        cityId: this.cityId,
+        code: 1
+      })
+    },
+    releaseTimeChange(value) {
+      const date = value || ['', '']
+      this.filter.beginDate = date[0]
+      this.filter.endDate = date[1]
     },
     submitFilter() {
       this.page.curPage = 1

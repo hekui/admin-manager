@@ -188,7 +188,7 @@ export default {
       })
     },
     statusFilter(status) {
-      return status === 0 ? '删除' : status === 1 ? '启用' : status === 1 ? '锁定' : ''
+      return status === 0 ? '删除' : status === 1 ? '启用' : status === 2 ? '锁定' : ''
     },
     // 文章类型改变触发
     contentTypeChange(value) {
@@ -255,10 +255,6 @@ export default {
           })
         }).catch(() => {
           this.loading = false
-          this.$message({
-            message: '操作失败！',
-            type: 'error'
-          })
         })
       }).catch(() => {
         this.$message({

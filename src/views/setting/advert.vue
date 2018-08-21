@@ -114,19 +114,15 @@
         <el-form-item label="广告头图：" prop="headUrl">
           <el-input v-model="form.headUrl" style="display: none;"></el-input>
           <el-upload
-            class="upload-demo"
+            class="avatar-uploader"
             ref="upload"
             action=""
             :http-request="handleUpload"
-            :file-list="fileList"
-            list-type="picture"
-            :auto-upload="false"
-            :on-change="fileChange"
-            :before-remove="beforeFileRemove"
-            :limit="1">
-            <el-button slot="trigger" size="small" type="primary" :class="{disabled: uploadFiles.length > 0}">选取文件</el-button>
-            <el-button style="margin-left: 10px;" size="small" type="success" :disabled="uploadFiles.length < 1 || fileList.length > 0" @click="submitUpload">上传到服务器</el-button>
-            <div slot="tip" class="el-upload__tip">必须为图片格式，且文件大小不能超过5Mb，建议不超过2Mb</div>
+            :show-file-list="false"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="form.headUrl" :src="form.headUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <div slot="tip" class="el-upload__tip">格式必须为png/jpg/jpeg，且文件大小不能超过2Mb</div>
           </el-upload>
         </el-form-item>
         <el-form-item label="启用时间：" prop="onlineTime">
@@ -178,8 +174,6 @@ export default {
         pageSize: 10
       },
       pickerOptions,
-      uploadFiles: [], // 已选中的图片（不区分是否已上传）
-      fileList: [], // 已上传的图片
       uploadSuccess: false,
       form: {
         id: '',
@@ -195,7 +189,7 @@ export default {
           { required: true, message: '请输入广告名称', trigger: ['change', 'blur'] }
         ],
         headUrl: [
-          { required: true, message: '请上传广告头图', trigger: 'change' }
+          { required: true, message: '请上传广告头图', trigger: ['change', 'blur'] }
         ],
         onlineTime: [{
           validator: function(rule, value, callback) {
@@ -283,10 +277,6 @@ export default {
           this.fetchData()
         }).catch(() => {
           this.loading = false
-          this.$message({
-            message: '操作失败！',
-            type: 'error'
-          })
         })
       }).catch(() => {
         this.$message({
@@ -305,8 +295,6 @@ export default {
         expireTime: '',
         destinationUrl: ''
       }
-      this.fileList = []
-      this.uploadFiles = this.fileList
       this.dialogType = 'add'
       this.showDialog = true
     },
@@ -322,45 +310,36 @@ export default {
           expireTime: this.releaseTimeFilter(res.data.expireTime),
           destinationUrl: res.data.destinationUrl
         }
-        this.fileList = [{ url: res.data.headUrl }]
-        this.uploadFiles = this.fileList
         this.dialogType = 'edit'
         this.showDialog = true
-      }).catch(() => {
-        this.$message({
-          message: '获取广告信息失败！',
-          type: 'error'
-        })
       })
     },
-    // 文件状态改变时的钩子，添加文件、上传成功和上传失败时都会被调用
-    fileChange(file, fileList) {
-      this.uploadFiles = fileList
-    },
-    // 删除文件之前的钩子
-    beforeFileRemove(file, fileList) {
-      this.fileList = []
-      this.uploadFiles = []
-      this.form.headUrl = ''
+    // 上传文件之前的钩子
+    beforeAvatarUpload(file) {
+      const isType = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isType) {
+        this.$message.error('上传头像图片只能是 PNG/JPG/JPEG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isType && isLt2M
     },
     // 提交上传图片到服务器
     submitUpload() {
-      if (this.uploadFiles.length < 1) return
       this.$refs.upload.submit()
     },
     // 上传图片到服务器真实行为
     handleUpload(node) {
-      this.$store.dispatch('uploadAdertImage', { file: node.file }).then((res) => {
+      const params = new FormData()
+      params.append('file', node.file)
+      this.$store.dispatch('uploadAdertImage', params).then((res) => {
         this.form.headUrl = res.data.url
-        this.fileList = [{ url: res.data.url }]
         this.$message({
           type: 'success',
           message: '上传成功!'
-        })
-      }).catch(() => {
-        this.$message({
-          message: '上传失败！',
-          type: 'error'
         })
       })
     },
@@ -390,10 +369,6 @@ export default {
               this.fetchData()
             }).catch(() => {
               this.loading = false
-              this.$message({
-                message: '操作失败！',
-                type: 'error'
-              })
             })
           }).catch(() => {
             this.$message({
@@ -471,6 +446,29 @@ export default {
     .el-upload-list__item-name {
       display: none;
     }
+  }
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 400px;
+    height: 117px;
+    line-height: 117px;
+    text-align: center;
+  }
+  .avatar {
+    width: 400px;
+    height: 117px;
+    display: block;
   }
 }
 </style>

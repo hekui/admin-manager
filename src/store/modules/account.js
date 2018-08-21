@@ -25,13 +25,16 @@ const user = {
   actions: {
     // 用户名登录
     login({ commit }, params) {
-      return api.post('/account/login', params).then(res => {
-        console.log('login res', res)
+      return api.post('/login', params).then(res => {
         commit('accountSet', {
           target: 'account',
-          data: res.data
+          data: {
+            roles: res.data.roles || [],
+            token: res.data.ticketId,
+            name: res.data.account
+          }
         })
-        setToken(res.data.token)
+        setToken(res.data.ticketId)
         return res
       }, res => {
         return Promise.resolve(res)

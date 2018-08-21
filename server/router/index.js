@@ -1,6 +1,8 @@
 const router = require('express').Router()
-const log = require('./../log')('api')
+const multer = require('multer')
+// const log = require('./../log')('api')
 const api = require('./../api')
+const uploadApi = require('./../api/upload')
 
 // RAP2 mock - 已弃用
 // const mock = require('./../mock')
@@ -13,7 +15,6 @@ const api = require('./../api')
 //   }
 //   console.log(req.session)
 //   console.log('req.sessionID', req.sessionID)
-  
 //   mock(req).then(result => {
 //     // req.session.user = {
 //     //   name: 'hekui',
@@ -29,13 +30,30 @@ const api = require('./../api')
 //   })
 // })
 
+// 文件上传
+router.all('/upload/image', multer().single('file'), function(req, res, next) {
+  uploadApi.fetchJava(req, req.file).then(result => {
+    res.json(result)
+  }, result => {
+    res.json({ code: result.code, msg: result.message || result.msg })
+  })
+})
 
-router.all('*', function(req, res, next){
-  console.log('req.headers', req.headers.cityid)
+// 登录
+router.all('/login', function(req, res, next) {
+  api.fetchPassport(req, req.body).then(result => {
+    res.json(result)
+  }, result => {
+    res.json({ code: result.code, msg: result.message || result.msg })
+  })
+})
+
+// 其他
+router.all('*', function(req, res, next) {
   api.fetchJava(req, req.body).then(result => {
     res.json(result)
   }, result => {
-    res.json(result)
+    res.json({ code: result.code, msg: result.message || result.msg })
   })
 })
 

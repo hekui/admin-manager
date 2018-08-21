@@ -177,10 +177,6 @@ export default {
         this.fetchData()
       }).catch(() => {
         this.loading = false
-        this.$message({
-          type: 'error',
-          message: '操作失败!'
-        })
       })
     },
     // 编辑标签
@@ -235,10 +231,6 @@ export default {
               this.fetchData()
             }).catch(() => {
               this.dialogLoading = false
-              this.$message({
-                message: '操作失败！',
-                type: 'error'
-              })
             })
           }).catch(() => {
             this.$message({

@@ -22,7 +22,7 @@ export default {
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
 
       function formatType(list) {
@@ -40,7 +40,7 @@ export default {
       return api.post('/typedict/delete', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 改变激活/锁定状态
@@ -48,14 +48,14 @@ export default {
       return api.post('/typedict/editstatus', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     getCategoryById({ commit }, params) {
       return api.post('/typedict/querybyid', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     // 改变激活/锁定状态
@@ -63,7 +63,7 @@ export default {
       return api.post('/typedict/saveoredit', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     }
   }

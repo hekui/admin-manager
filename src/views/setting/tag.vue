@@ -254,11 +254,6 @@ export default {
           type: 'success',
           message: '修改成功!'
         })
-      }).catch(() => {
-        this.$message({
-          type: 'error',
-          message: '修改失败!'
-        })
       })
     },
     // ESC取消修改
@@ -280,10 +275,6 @@ export default {
         this.fetchData()
       }).catch(() => {
         this.loading = false
-        this.$message({
-          type: 'error',
-          message: '操作失败!'
-        })
       })
     },
     // 编辑标签
@@ -342,10 +333,6 @@ export default {
               this.fetchData()
             }).catch(() => {
               this.dialogLoading = false
-              this.$message({
-                message: '操作失败！',
-                type: 'error'
-              })
             })
           }).catch(() => {
             this.$message({

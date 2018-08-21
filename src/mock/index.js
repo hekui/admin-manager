@@ -7,14 +7,14 @@ import topic from './topic'
 // import feedback from './feedback'
 // import advert from './advert'
 // import tag from './tag'
-import category from './category'
+// import category from './category'
 
 Mock.setup({
   timeout: '350-600'
 })
 
 // 登录相关
-Mock.mock(/\/account\/login/, account.login)
+// Mock.mock(/\/account\/login/, account.login)
 Mock.mock(/\/account\/logout/, account.logout)
 Mock.mock(/\/account\/userinfo/, account.getUserInfo)
 
@@ -55,6 +55,6 @@ Mock.mock(/\/topic\/articlesearch/, topic.articlelist)
 // Mock.mock(/\/typedict\/querybyid/, category.querybyid)
 // Mock.mock(/\/typedict\/saveoredit/, category.save)
 // Mock.mock(/\/typedict\/editstatus/, category.status)
-Mock.mock(/\/typedict\/delete/, category.delete)
+// Mock.mock(/\/typedict\/delete/, category.delete)
 
 export default Mock
