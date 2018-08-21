@@ -158,8 +158,8 @@
         </el-form-item>
         <el-form-item label="是否授权">
           <el-radio-group v-model="editInfo.wechatStatus">
-            <el-radio :label="1">授权</el-radio>
-            <el-radio :label="2">未授权</el-radio>
+            <el-radio :label="1">是</el-radio>
+            <el-radio :label="2">否</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="所属分类" prop="classify">
@@ -196,8 +196,8 @@
         </el-form-item>
         <el-form-item label="是否授权">
           <el-radio-group v-model="form.wechatStatus">
-            <el-radio :label="1">授权</el-radio>
-            <el-radio :label="2">未授权</el-radio>
+            <el-radio :label="1">是</el-radio>
+            <el-radio :label="2">否</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="所属分类" prop="classify">
