@@ -31,6 +31,13 @@ export default {
       1: '启用',
       2: '禁用'
     },
+    syncStatus: {
+      0: '未同步',
+      1: '同步中',
+      2: '同步完成',
+      3: '同步失败',
+      4: '数据未收录'
+    }
   },
   mutations: {
     paccountSet(state, data) {

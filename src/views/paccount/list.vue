@@ -13,8 +13,8 @@
         </el-form-item>
         <el-form-item label="是否授权">
           <el-select v-model="filter.wechatStatus" :clearable="true" placeholder="请选择">
-            <el-option label="授权" value="1"></el-option>
-            <el-option label="未授权" value="2"></el-option>
+            <el-option label="是" value="1"></el-option>
+            <el-option label="否" value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="类型">
@@ -131,6 +131,15 @@
             </template>
           </el-table-column>
           <el-table-column
+            prop="dataStatus"
+            label="同步状态"
+            width="110">
+            <template slot-scope="scope">
+              {{ syncStatus[scope.row.dataStatus] || "-"}} 
+            </template>
+          </el-table-column>
+          
+          <el-table-column
             fixed="right"
             label="操作"
             width="170">
@@ -189,6 +198,7 @@ export default {
       wechatStatus: state => state.wechatStatus,
       pclassify: state => state.pclassify,
       pickerOptions: state => state.pickerOptions,
+      syncStatus: state => state.paccount.syncStatus,
       listData: state => state.paccount.listData
     })
   },
