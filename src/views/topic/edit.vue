@@ -1,13 +1,13 @@
 <template>
   <div class="app-container topic-edit">
-    <el-form ref="form" :model="form" label-width="100px">
-      <el-form-item label="专题名称">
+    <el-form ref="form" :rules="rules" :model="form" label-width="100px">
+      <el-form-item label="专题名称" prop="name">
         <el-input v-model="form.name" clearable></el-input>
       </el-form-item>
-      <el-form-item label="专题副标题">
+      <el-form-item label="专题副标题" prop="subtitle">
         <el-input v-model="form.subtitle" clearable></el-input>
       </el-form-item>
-      <el-form-item label="专题模板">
+      <el-form-item label="专题模板" prop="template">
         <el-select v-model="form.template">
           <el-option
             v-for="item in topicTemplate"
@@ -17,7 +17,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="专题生效时间">
+      <el-form-item label="专题生效时间" prop="effectTime">
         <el-date-picker
           v-model="date"
           type="datetimerange"
@@ -28,7 +28,7 @@
           end-placeholder="结束日期">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="首页推荐">
+      <el-form-item label="首页推荐" prop="recommend">
         <el-switch
           v-model="homeRecommend"
           active-color="#13ce66"
@@ -46,7 +46,7 @@
           </el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-      <el-form-item label="专题头图">
+      <el-form-item label="专题头图" prop="headUrl">
         <el-upload
           class="avatar-uploader"
           action=""
@@ -61,7 +61,7 @@
       <el-form-item label="指向地址">
         <el-radio v-model="isAddress" label="0">链接</el-radio>
       </el-form-item>
-      <el-form-item label="链接">
+      <el-form-item label="链接" prop="destinationUrl">
         <div class="url-wrapper">
           <el-input v-model="form.destinationUrl" clearable></el-input>
           <el-button class="btn" @click="choosearticle">选择文件链接</el-button>
@@ -71,7 +71,7 @@
         <el-button
           type="primary"
           class="savebtn"
-          @click="saveClick">
+          @click="submit">
           保存
         </el-button>
       </el-form-item>
@@ -147,6 +147,29 @@
               picker.$emit('pick', [start, end])
             }
           }]
+        },
+        rules: {
+          name: [
+            { required: true, message: '请输入专题名称', trigger: 'change' }
+          ],
+          subtitle: [
+            { required: true, message: '请输入专题副标题', trigger: 'change' }
+          ],
+          template: [
+            { required: true, message: '请选择专题模板', trigger: 'blur' }
+          ],
+          effectTime: [
+            { required: true, message: '请选择日期', trigger: 'change' }
+          ],
+          recommend: [
+            { required: true, message: '请选择首页推荐', trigger: 'change' }
+          ],
+          headUrl: [
+            { required: true, message: '请上传专题头图', trigger: 'change' }
+          ],
+          destinationUrl: [
+            { required: true, message: '请输入链接', trigger: 'change' }
+          ]
         }
       }
     },
@@ -224,7 +247,14 @@
           })
         })
       },
-      saveClick() {
+      submit() {
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            this.save()
+          }
+        })
+      },
+      save() {
         if (this.id.length) {
           this.form.id = this.id
         }

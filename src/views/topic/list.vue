@@ -15,7 +15,7 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             :clearable="true"
-            value-format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd HH:mm:ss"
             :picker-options="pickerOptions">
           </el-date-picker>
         </el-form-item>
@@ -172,8 +172,8 @@
       serverFilter: function() {
         return {
           name: this.filter.name,
-          beginDate: this.filter.date[0],
-          endDate: this.filter.date[1]
+          beginDate: this.filter.data ? this.filter.date[0] : '',
+          endDate: this.filter.date ? this.filter.date[1] : ''
         }
       }
     },
