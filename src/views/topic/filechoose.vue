@@ -31,9 +31,11 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="id"
           label="序号"
           width="100">
+          <template slot-scope="scope">
+            <span>{{scope.$index + (page.curPage - 1) * page.pageSize + 1 }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="wechatName"
@@ -73,7 +75,7 @@
     <div class="pages" v-if="listData.pageSize < listData.totalRecords">
       <el-pagination
         background
-        layout="prev, pager, next"
+        layout="total, prev, pager, next, jumper"
         @current-change="changePage"
         :current-page="page.pageNo"
         :page-size="listData.pageSize"
@@ -118,7 +120,6 @@
       fetchData() {
         this.loading = true
         this.$store.dispatch('getContentList', Object.assign({}, this.filter, this.page)).then(() => {
-          this.$refs.sigletable.scrollTop
           this.loading = false
         }).catch(() => {
           this.loading = false

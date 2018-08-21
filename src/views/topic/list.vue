@@ -35,9 +35,11 @@
           border
           style="width: 100%">
           <el-table-column
-            prop="id"
             label="序号"
             width="100">
+            <template slot-scope="scope">
+              <span>{{scope.$index + (page.curPage - 1) * page.pageSize + 1 }}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="name"
@@ -105,7 +107,7 @@
       <div class="pages" v-if="listData.pageSize < listData.totalRecords">
         <el-pagination
           background
-          layout="prev, pager, next"
+          layout="total, prev, pager, next, jumper"
           @current-change="changePage"
           :current-page="page.curPage"
           :page-size="listData.pageSize"
