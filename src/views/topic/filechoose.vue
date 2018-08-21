@@ -20,7 +20,7 @@
         highlight-current-row
         @current-change="tableCurrentChange"
         v-loading="loading"
-        fit="true"
+        fit
         border
         style="width: 100%">
         <el-table-column
@@ -55,7 +55,7 @@
           label="发布时间"
           width="120">
           <template slot-scope="scope">
-            <pan>{{scope.row.releaseTime | formatDate('YYYY-MM-DD HH:mm')}}</pan>
+            <span>{{scope.row.releaseTime | formatDate('YYYY-MM-DD HH:mm')}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -70,7 +70,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="pages">
+    <div class="pages" v-if="listData.pageSize < listData.totalRecords">
       <el-pagination
         background
         layout="prev, pager, next"
@@ -87,7 +87,7 @@
   import { mapState } from 'vuex'
 
   export default {
-    name: 'topicList',
+    name: 'fileChoose',
     data() {
       return {
         currentRow: '',
@@ -118,6 +118,7 @@
       fetchData() {
         this.loading = true
         this.$store.dispatch('getContentList', Object.assign({}, this.filter, this.page)).then(() => {
+          this.$refs.sigletable.scrollTop
           this.loading = false
         }).catch(() => {
           this.loading = false

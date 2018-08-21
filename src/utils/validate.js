@@ -32,6 +32,12 @@ export function validateAlphabets(str) {
   return reg.test(str)
 }
 
+/* 数字*/
+export function validateNumber(str) {
+  const reg = /^[\d]+$/
+  return reg.test(str)
+}
+
 /**
  * validate email
  * @param email
