@@ -31,7 +31,7 @@ export default {
     },
     // 切换城市状态
     changeCityStatus({ commit }, params) {
-      return api.post('', params).then(res => {
+      return api.post('/city/updatestatus', params).then(res => {
         return res
       }, res => {
         return Promise.reject(res)
