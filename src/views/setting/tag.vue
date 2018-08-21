@@ -95,7 +95,7 @@
           :page-sizes="[10, 20, 30, 50]"
           :page-size="page.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="listData.totalPage">
+          :total="listData.totalRecords">
         </el-pagination>
       </section>
     </div>
@@ -370,16 +370,20 @@ input[type='number']{
       padding: 1px;
       .editable_value {
         display: none;
+        border: 1px solid #dcdfe6;
       }
       .editable_copy {
         padding: 5px;
         display: none;
         width: 100%;
-        border: none;
-        outline: 1px solid aquamarine;
+        line-height: 23px;
+        border: 1px solid #409eff;
+        outline: none;
       }
       .visible {
         display: block;
+        border-radius: 4px;
+        padding: 0 15px;
       }
     }
     .form {
