@@ -556,7 +556,7 @@ export default{
   }
   .add-paccount{
     width: 480px;
-    margin-left: 200px;
+    // margin-left: 200px;
     .el-form{
       padding-top: 20px;
     }

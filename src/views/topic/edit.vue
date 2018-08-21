@@ -40,7 +40,8 @@
           class="topic-tags"
           v-model="form.labelIdList">
           <el-checkbox
-            v-for="item in allTags"
+            v-for="(item, index) in allTags"
+            :key="index"
             :label="item.id">
             {{item.name}}
           </el-checkbox>
