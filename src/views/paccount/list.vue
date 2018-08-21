@@ -13,8 +13,8 @@
         </el-form-item>
         <el-form-item label="是否授权">
           <el-select v-model="filter.wechatStatus" :clearable="true" placeholder="请选择">
-            <el-option label="授权" value="1"></el-option>
-            <el-option label="未授权" value="2"></el-option>
+            <el-option label="是" value="1"></el-option>
+            <el-option label="否" value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="类型">
@@ -131,12 +131,22 @@
             </template>
           </el-table-column>
           <el-table-column
+            prop="dataStatus"
+            label="同步状态"
+            width="110">
+            <template slot-scope="scope">
+              {{ syncStatus[scope.row.dataStatus] || "-"}} 
+            </template>
+          </el-table-column>
+          
+          <el-table-column
             fixed="right"
             label="操作"
-            width="150">
+            width="170">
             <template slot-scope="scope">
               <el-button type="text" @click="showDetail(scope.row.id)">详情</el-button>
               <el-button type="text" @click="addHandle(scope.row.id)">编辑</el-button>
+              <el-button type="text" @click="syncHandle(scope.$index, listData.list, scope.row.wechatAccount)">同步数据</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -188,6 +198,7 @@ export default {
       wechatStatus: state => state.wechatStatus,
       pclassify: state => state.pclassify,
       pickerOptions: state => state.pickerOptions,
+      syncStatus: state => state.paccount.syncStatus,
       listData: state => state.paccount.listData
     })
   },
@@ -243,6 +254,24 @@ export default {
           path: '/paccount/add'
         })
       }
+    },
+    syncHandle(index, data, wechatAccount) {
+      // 同步公众号数据
+      this.$store.dispatch('syncPaccount', {
+        wechatAccount
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '同步成功'
+        })
+        // data[index].lastRecordTime = '1533878998639'
+        // data[index].articleNum = '45'
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '同步失败，请稍后重试'
+        })
+      })
     },
     showDetail(id) {
       this.$router.push({

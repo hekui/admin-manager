@@ -38,15 +38,15 @@
               <span>{{scope.row.status === 1 ? '激活' : scope.row.status === 2 ? '锁定' : ''}}</span>
             </template>
           </el-table-column>
-          <!-- <el-table-column
+          <el-table-column
             fixed="right"
             label="操作"
             width="100">
             <template slot-scope="scope">
               <el-button v-if="scope.row.status === 1 || scope.row.status === 2" @click="handleStatus(scope.row)" type="text" size="small">{{ scope.row.status === 1 ? '锁定' : scope.row.status === 2 ? '激活' : '' }}</el-button>
-              <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+              <!-- <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button> -->
             </template>
-          </el-table-column> -->
+          </el-table-column>
         </el-table>
       </section>
       <!-- <section class="pagination">
@@ -167,8 +167,12 @@ export default {
       this.showDialog = true
     },
     handleStatus(data) {
+      if (data.status !== 1 && data.status !== 2) return
       this.loading = true
-      this.$store.dispatch('changeCityStatus', data).then((res) => {
+      this.$store.dispatch('changeCityStatus', {
+        id: data.id,
+        status: data.status === 1 ? 2 : 1
+      }).then((res) => {
         this.loading = false
         this.$message({
           type: 'success',

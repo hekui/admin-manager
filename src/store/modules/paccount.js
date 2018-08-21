@@ -31,6 +31,13 @@ export default {
       1: '启用',
       2: '禁用'
     },
+    syncStatus: {
+      0: '未同步',
+      1: '同步中',
+      2: '同步完成',
+      3: '同步失败',
+      4: '数据未收录'
+    }
   },
   mutations: {
     paccountSet(state, data) {
@@ -105,6 +112,14 @@ export default {
     updateArticleStatus({ commit }, params) {
       // 更新公众号文单内容状态
       return api.post('/content/updatestatus', params).then(res => {
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
+    syncPaccount({ commit }, params) {
+      // 同步公众号数据
+      return api.post('/subscription/sync', params).then(res => {
         return res
       }, res => {
         return Promise.resolve(res)

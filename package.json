@@ -2,7 +2,12 @@
   "name": "FGC-MANAGER",
   "version": "1.0.0",
   "description": "房观察新版后台，基于Vue全家桶/Element-ui/node服务端。",
-  "keywords": ["房观察", "vue", "element-ui", "node"],
+  "keywords": [
+    "房观察",
+    "vue",
+    "element-ui",
+    "node"
+  ],
   "author": "ChuangJia Web Team",
   "license": "MIT",
   "scripts": {
