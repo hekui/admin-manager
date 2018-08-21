@@ -5,7 +5,7 @@
  */
 <template>
   <div class="content-container">
-    <section class="form">
+    <section class="form-filter">
       <el-form ref="form" :inline="true" :model="filter">
         <el-form-item label="文章标题：">
           <el-input v-model="filter.title" placeholder="请输入文章标题" :clearable="true"></el-input>
@@ -45,7 +45,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button icon="el-icon-search" @click="submitFilter">搜索</el-button>
+          <el-button type="primary" plain @click="submitFilter">搜索</el-button>
         </el-form-item>
       </el-form>
     </section>
@@ -63,7 +63,8 @@
         </el-table-column>
         <el-table-column
           prop="wechatName"
-          label="公众号名称">
+          label="公众号名称"
+          width="160">
         </el-table-column>
         <el-table-column
           prop="city"
@@ -73,7 +74,7 @@
         <el-table-column
           prop="title"
           label="文章标题"
-          width="180">
+          min-width="180">
         </el-table-column>
         <el-table-column
           label="状态"
@@ -83,7 +84,8 @@
           </template>
         </el-table-column>
         <el-table-column
-          label="发布时间">
+          label="发布时间"
+          width="160">
           <template slot-scope="scope">
             <span>{{releaseTimeFilter(scope.row.releaseTime)}}</span>
           </template>

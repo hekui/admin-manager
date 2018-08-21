@@ -8,7 +8,7 @@
     <div class="content-container" v-loading="loading">
       <el-tabs v-model="activeName" @tab-click="handleTabClick">
         <div class="add">
-          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd()">新增类型</el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="handleAdd()">新增类型</el-button>
         </div>
         <div class="table">
           <div class="head">
@@ -157,8 +157,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleCancel">取 消</el-button>
-          <el-button type="primary" size="mini" @click="handleConfirm('form')">确 定</el-button>
+        <el-button @click="handleCancel">取 消</el-button>
+          <el-button type="primary" @click="handleConfirm('form')">确 定</el-button>
       </div>
     </el-dialog>
   </div>

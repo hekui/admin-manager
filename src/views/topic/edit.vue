@@ -40,7 +40,8 @@
           class="topic-tags"
           v-model="form.labelIdList">
           <el-checkbox
-            v-for="item in allTags"
+            v-for="(item, index) in allTags"
+            :key="index"
             :label="item.id">
             {{item.name}}
           </el-checkbox>
@@ -93,7 +94,7 @@
 
 <script>
   import { mapState } from 'vuex'
-  import fileChoose from './fileChoose'
+  import fileChoose from './filechoose'
   import api from '@/api'
   import { formatDate } from '@/filters'
 

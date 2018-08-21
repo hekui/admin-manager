@@ -25,15 +25,15 @@ const user = {
   actions: {
     // 用户名登录
     login({ commit }, params) {
-      return api.post('/login', params).then(res => {
-        commit('accountSet', {
-          target: 'account',
-          data: {
-            roles: res.data.roles || [],
-            token: res.data.ticketId,
-            name: res.data.account
-          }
-        })
+      return api.post('/account/login', params).then(res => {
+        // commit('accountSet', {
+        //   target: 'account',
+        //   data: {
+        //     roles: res.data.roles || [],
+        //     token: res.data.ticketId,
+        //     name: res.data.account
+        //   }
+        // })
         setToken(res.data.ticketId)
         return res
       }, res => {
@@ -43,12 +43,11 @@ const user = {
 
     // 获取用户信息
     GetUserInfo({ commit }) {
-      return api.post('/account/userinfo').then(res => {
+      return api.post('/sysuser/userdata').then(res => {
         commit('accountSet', {
           target: 'account',
           data: res.data
         })
-        setToken(res.data.token)
         return res
       }, res => {
         return Promise.resolve(res)
