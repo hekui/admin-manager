@@ -11,7 +11,7 @@
   <div class="app-wrapper" :class="classObj">
     <div class="app-header">
       <div class="app-logo">
-        <img src="./../../assets/images/logo.jpg" width="120" alt="">
+        <img src="./../../assets/images/logo.png" width="120" alt="">
       </div>
       <navbar></navbar>
     </div>
