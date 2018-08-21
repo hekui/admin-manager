@@ -5,21 +5,21 @@
             <el-form-item label="昵称">
               <el-input
                 placeholder="请输入昵称"
-                v-model="form.userName"
+                v-model="form.nickname"
                 clearable>
               </el-input>
             </el-form-item>
             <el-form-item label="注册时间">
               <el-date-picker
                 v-model="form.dateTime"
-                type="daterange"
+                type="datetimerange"
                 unlink-panels
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 align="left"
                 :clearable="true"
-                value-format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd HH:mm"
                 :picker-options="dateoptions">
               </el-date-picker>
             </el-form-item>
@@ -43,14 +43,14 @@
             </el-table-column>
             <el-table-column
               label="昵称"
-              prop="userName">
+              prop="nickname">
             </el-table-column>
             <el-table-column
               label="注册时间"
               prop="createTime"
               type="date">
               <template slot-scope="scope">
-                <span>{{scope.row.createTime | formatDate('YYYY-MM-DD')}}</span>
+                <span>{{scope.row.createTime | formatDate('YYYY-MM-DD HH:mm')}}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -88,7 +88,7 @@
         <el-pagination
           class="pages"
           background
-          layout="prev, pager, next"
+          layout="total,prev, pager, next,jumper"
           :total="listData.totalRecords"
           :page-size="listData.pageSize"
           :current-page="listData.curPage"
@@ -137,7 +137,7 @@ export default {
         pageSize: 20,
       },
       form: {
-        userName: '',
+        nickname: '',
         dateTime: '',
         // openid: '',
       },
@@ -150,8 +150,8 @@ export default {
     loadData() {
       this.loading = true
       const tempForm = {
-        userName: this.form.userName,
-        startTime: this.form.dateTime === null ? '' : this.form.dateTime[0],
+        nickname: this.form.nickname,
+        beginTime: this.form.dateTime === null ? '' : this.form.dateTime[0],
         endTime: this.form.dateTime === null ? '' : this.form.dateTime[1]
       }
       this.$store.dispatch('getUserList', Object.assign({}, tempForm, this.page)).then(() => {

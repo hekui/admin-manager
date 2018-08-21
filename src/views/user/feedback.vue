@@ -5,14 +5,14 @@
             <el-form-item label="反馈时间">
               <el-date-picker
                 v-model="form.dateTime"
-                type="daterange"
+                type="datetimerange"
                 unlink-panels
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 align="left"
                 :clearable="true"
-                value-format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd HH:mm"
                 :picker-options="dateoptions">
               </el-date-picker>
             </el-form-item>
@@ -45,7 +45,7 @@
               type="date"
               width="150">
               <template slot-scope="scope">
-                <span>{{scope.row.createTime | formatDate('YYYY-MM-DD')}}</span>
+                <span>{{scope.row.createTime | formatDate('YYYY-MM-DD HH:mm')}}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -65,7 +65,7 @@
         <el-pagination
           class="pages"
           background
-          layout="prev, pager, next"
+          layout="total,prev, pager, next,jumper"
           :total="listData.totalRecords"
           :page-size="listData.pageSize"
           :current-page="listData.curPage"
