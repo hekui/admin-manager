@@ -2,6 +2,7 @@
   "name": "FGC-MANAGER",
   "version": "1.0.0",
   "description": "房观察新版后台，基于Vue全家桶/Element-ui/node服务端。",
+  "keywords": ["房观察", "vue", "element-ui", "node"],
   "author": "ChuangJia Web Team",
   "license": "MIT",
   "scripts": {
@@ -18,13 +19,6 @@
       "git add"
     ]
   },
-  "keywords": [
-    "vue",
-    "element-ui",
-    "admin",
-    "management-system",
-    "admin-template"
-  ],
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.maifangma.com/web/fgc-manager.git"

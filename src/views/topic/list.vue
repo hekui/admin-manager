@@ -48,7 +48,7 @@
             label="专题状态"
             width="80">
             <template slot-scope="scope">
-              <pan>{{mapStatus[scope.row.topicStatus]}}</pan>
+              <span>{{mapStatus[scope.row.topicStatus]}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -56,7 +56,7 @@
             label="专题绑定标签"
             min-width="140">
             <template slot-scope="scope">
-              <pan>{{scope.row.labels.map(obj => obj.name).join(',  ')}}</pan>
+              <span>{{scope.row.labels.map(obj => obj.name).join(',  ')}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -65,7 +65,7 @@
             <template slot-scope="scope">
               <el-input
                 v-model="scope.row.sort"
-                :ref="'input_sort_'+scope.row.id"
+                :id="'input_sort_'+scope.row.id"
                 @blur="recoverSort(scope)"
                 @keyup.enter.native="submitSort(scope)">
               </el-input>
@@ -76,14 +76,14 @@
             label="发布时间"
             width="140">
             <template slot-scope="scope">
-              <pan>{{scope.row.createTime | formatDate('YYYY-MM-DD HH:mm')}}</pan>
+              <span>{{scope.row.createTime | formatDate('YYYY-MM-DD HH:mm')}}</span>
             </template>
           </el-table-column>
           <el-table-column
             label="启用时间"
             min-width="120">
             <template slot-scope="scope">
-              <pan>{{scope.row.effectTime | formatDate('YYYY-MM-DD HH:mm')}} ~ {{scope.row.expireTime | formatDate('YYYY-MM-DD HH:mm')}}</pan>
+              <span>{{scope.row.effectTime | formatDate('YYYY-MM-DD HH:mm')}} ~ {{scope.row.expireTime | formatDate('YYYY-MM-DD HH:mm')}}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -102,7 +102,7 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="pages">
+      <div class="pages" v-if="listData.pageSize < listData.totalRecords">
         <el-pagination
           background
           layout="prev, pager, next"
@@ -119,6 +119,7 @@
 <script>
   import { mapState } from 'vuex'
   import api from '@/api'
+  import { validateNumber } from '@/utils/validate'
 
   export default {
     name: 'topicList',
@@ -181,9 +182,9 @@
 
       this.fetchData()
     },
+
     methods: {
       reverseTopicStatus(status) {
-        console.log(status)
         switch (status) {
           case 0: return 0
           case 1: return 2
@@ -191,27 +192,48 @@
         }
       },
       recoverSort(scope) {
-        scope.row.sort = this.originalsort[scope.$index]
+        if (scope.row.modified !== true) {
+          scope.row.sort = this.originalsort[scope.$index]
+        }
       },
       submitSort(scope) {
-        this.$refs.topic.click()
-        const element = this.$refs['input_sort_' + scope.row.id]
-        element.blur()
-        const originalValue = this.originalsort[scope.$index]
+        scope.row.modified = true
 
-        console.log(originalValue, scope.row.sort)
+        const element = document.getElementById('input_sort_' + scope.row.id)
+        element.blur()
+
+        const originalValue = this.originalsort[scope.$index]
+        const currentValue = scope.row.sort
+
+        if (!this.checkSort(currentValue)) {
+          scope.row.sort = originalValue
+          scope.row.modified = false
+          return
+        }
+
         this.loading = true
-        api.post('/topic/updateSort', { 'id': scope.row.id, 'sort': scope.row.sort }).then(res => {
+        api.post('/topic/updatesort', { 'id': scope.row.id, 'sort': currentValue }).then(res => {
           this.loading = false
-          this.originalsort[scope.$index] = scope.row.sort
+          this.originalsort[scope.$index] = currentValue
+          this.$message({
+            type: 'success',
+            message: '更改成功!'
+          })
+          scope.row.modified = false
         }, res => {
           scope.row.sort = originalValue
           this.loading = false
+          this.$message({
+            type: 'error',
+            message: '更改失败，请稍后重试'
+          })
+          scope.row.modified = false
         })
       },
       fetchData() {
         this.loading = true
         this.$store.dispatch('getTopicList', Object.assign({}, this.serverFilter, this.page)).then(() => {
+          this.originalsort = this.listData.list.map(item => item.sort)
           this.loading = false
         }).catch(() => {
           this.loading = false
@@ -231,9 +253,8 @@
         this.fetchData()
       },
       showDetail(id) {
-        console.log('id', id)
         this.$router.push({
-          path: '/topic/edit/123',
+          path: '/topic/edit/' + id,
           params: {
             topicId: id
           }
@@ -245,12 +266,39 @@
         row.topicStatus = topicStatus
 
         this.loading = true
-        api.post('/topic/updateStatus', { 'id': row.id, 'topicStatus': status }).then(res => {
+        api.post('/topic/updatestatus', { 'id': row.id, 'topicStatus': topicStatus }).then(res => {
           this.loading = false
+          this.$message({
+            type: 'success',
+            message: '更改成功!'
+          })
         }, res => {
           row.topicStatus = before
           this.loading = false
+          this.$message({
+            type: 'error',
+            message: '更改失败，请稍后重试'
+          })
         })
+      },
+      checkSort(str) {
+        if (str.length === 0) {
+          this.$message({
+            type: 'error',
+            message: '排序不可为空'
+          })
+          return false
+        }
+
+        if (!validateNumber(str)) {
+          this.$message({
+            type: 'error',
+            message: '排序只能为数字'
+          })
+          return false
+        }
+
+        return true
       }
     }
   }

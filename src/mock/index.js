@@ -2,7 +2,7 @@ import Mock from 'mockjs'
 import account from './account'
 // import paccount from './paccount'
 // import content from './content'
-import topic from './topic'
+// import topic from './topic'
 // import user from './user'
 // import feedback from './feedback'
 // import advert from './advert'
@@ -14,7 +14,7 @@ Mock.setup({
 })
 
 // 登录相关
-Mock.mock(/\/account\/login/, account.login)
+// Mock.mock(/\/account\/login/, account.login)
 Mock.mock(/\/account\/logout/, account.logout)
 Mock.mock(/\/account\/userinfo/, account.getUserInfo)
 
@@ -30,7 +30,7 @@ Mock.mock(/\/account\/userinfo/, account.getUserInfo)
 
 // 专题相关
 // Mock.mock(/\/topic\/list/, topic.topiclist)
-Mock.mock(/\/topic\/articlesearch/, topic.articlelist)
+// Mock.mock(/\/topic\/articlesearch/, topic.articlelist)
 // Mock.mock(/\/tag\/list/, topic.taglist)
 // Mock.mock(/\/topic\/find/, topic.topicinfo)
 

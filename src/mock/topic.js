@@ -62,7 +62,7 @@ const topicinfo = {
   'template': 0,
   'labels|4': [1],
   headUrl: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1534473554&di=b220b5620157bebd6d2adf3f47a93c28&imgtype=jpg&er=1&src=http%3A%2F%2Fimg2.everychina.com%2Fimg%2Fab%2Fff%2Fce987d754b9898c8a4cd09c1f269-600x600c0-0dd4%2F138_inch_pin_header_customized_volume_requirements_are_welcome.jpg',
-  isRecommend: false,
+  recommend: 0,
   effectTime: '2018-08-08 08:08',
   expireTime: '2018-08-08 08:08',
   destinationUrl: 'https://image.baidu.com/'

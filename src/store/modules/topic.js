@@ -22,7 +22,7 @@ export default {
   actions: {
     getTopicList({ commit }, params) {
       // 获取公众号列表代码
-      return api.post('/topic/list?page=true', params).then(res => {
+      return api.post('/topic/list', params).then(res => {
         console.log(res.data)
         commit('topicSet', {
           target: 'listData',

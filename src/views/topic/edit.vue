@@ -30,7 +30,7 @@
       </el-form-item>
       <el-form-item label="首页推荐">
         <el-switch
-          v-model="form.isRecommend"
+          v-model="homeRecommend"
           active-color="#13ce66"
           inactive-color="#606266">
         </el-switch>
@@ -38,7 +38,7 @@
       <el-form-item label="专题标签">
         <el-checkbox-group
           class="topic-tags"
-          v-model="form.labels">
+          v-model="form.labelIdList">
           <el-checkbox
             v-for="item in allTags"
             :label="item.id">
@@ -49,7 +49,8 @@
       <el-form-item label="专题头图">
         <el-upload
           class="avatar-uploader"
-          action="http://rap2s.maifangma.com/app/mock/16/POST/uploadimage"
+          action=""
+          :http-request="handleUpload"
           :show-file-list="false"
           :on-success="uploadAvatarSuccess"
           :before-upload="beforeAvatarUpload">
@@ -80,7 +81,7 @@
       width="80%"
       :visible.sync="showselectarticle">
       <div class="dialog-content">
-        <filechoose ref="filechoose"></filechoose>
+        <file-choose ref="fileChoose"></file-choose>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="showselectarticle = false">取 消</el-button>
@@ -92,8 +93,9 @@
 
 <script>
   import { mapState } from 'vuex'
-  import filechoose from './filechoose'
+  import fileChoose from './fileChoose'
   import api from '@/api'
+  import { formatDate } from '@/filters'
 
   export default {
     name: 'topicEdit',
@@ -106,16 +108,16 @@
           id: '',
           name: '',
           subtitle: '',
-          template: 0,
+          template: 1,
           effectTime: '',
           expireTime: '',
-          isRecommend: '0',
-          labels: [],
+          recommend: 0,
+          labelIdList: [],
           headUrl: '',
           destinationUrl: ''
         },
         topicTemplate: [{
-          value: 0,
+          value: 1,
           label: '指向类'
         }],
         showselectarticle: false,
@@ -152,9 +154,16 @@
       ...mapState({
         listData: state => state.topic.listData
       }),
+      homeRecommend: {
+        set: function(newVal) {
+          this.form.recommend = newVal ? 1 : 0
+        },
+        get: function() {
+          return this.form.recommend !== 0
+        }
+      },
       date: {
         set: function(newVal) {
-          console.log(newVal)
           this.form.effectTime = newVal[0]
           this.form.expireTime = newVal[1]
         },
@@ -163,21 +172,8 @@
         }
       }
     },
-    watch: {
-      id: function(newVal, oldVal) {
-        console.log('----------')
-        console.log(newVal, oldVal)
-        console.log('----------')
-      },
-      'form.effectTime': function(newVal, oldVal) {
-        console.log(newVal)
-      },
-      'form.labels': function(newVal, oldVal) {
-        console.log(newVal)
-      }
-    },
     created() {
-      this.id = this.$route.params.topicId
+      this.id = this.$route.params.topicId || ''
 
       api.post('/label/list', { cityID: this.$store.state.cityId }).then(res => {
         this.allTags = res.data.list
@@ -188,6 +184,10 @@
       if (this.id.length) {
         api.post('/topic/find', { id: this.id }).then(res => {
           this.form = res.data
+          this.form.effectTime = formatDate(res.data.effectTime, 'YYYY-MM-DD HH:mm:ss')
+          this.form.expireTime = formatDate(res.data.expireTime, 'YYYY-MM-DD HH:mm:ss')
+
+          console.log(this.form.effectTime, this.form.expireTime)
         }, res => {
           console.log('error')
         })
@@ -199,7 +199,6 @@
       },
 
       uploadAvatarSuccess(res, file) {
-        console.log(res, file)
         this.form.headUrl = res.url
       },
       beforeAvatarUpload(file) {
@@ -214,22 +213,52 @@
         }
         return isJPG && isLt2M
       },
+      handleUpload(node) {
+        const params = new FormData()
+        params.append('file', node.file)
+        this.$store.dispatch('uploadAdertImage', params).then((res) => {
+          this.form.headUrl = res.data.url
+          this.$message({
+            type: 'success',
+            message: '上传成功!'
+          })
+        })
+      },
       saveClick() {
-        this.form.id = this.id
-        api.post('/topic/edit', Object.assign({}, this.form)).then(res => {
-          console.log(res)
+        if (this.id.length) {
+          this.form.id = this.id
+        }
+
+        api.post(this.id.length !== 0 ? '/topic/edit' : '/topic/add', Object.assign({}, this.form)).then(res => {
+          this.$message({
+            type: 'success',
+            message: '保存成功!'
+          })
+          this.closeCurrentTab()
         }, res => {
-          console.log('error')
+          this.$message({
+            type: 'error',
+            message: '保存失败，请稍后重试'
+          })
+        })
+      },
+      closeCurrentTab() {
+        this.$store.dispatch('delVisitedViews', this.$route).then((views) => {
+          const latestView = views.slice(-1)[0]
+          if (latestView) {
+            this.$router.push(latestView)
+          } else {
+            this.$router.push('/')
+          }
         })
       },
       selectCurrentArticle() {
         this.showselectarticle = false
-        this.form.destinationUrl = this.$refs.filechoose.currentArticle.contentUrl
-        console.log(this.$refs.filechoose.currentArticle)
+        this.form.destinationUrl = this.$refs.fileChoose.currentArticle.contentUrl
       }
     },
     components: {
-      filechoose
+      fileChoose
     }
   }
 </script>
@@ -267,7 +296,7 @@
           text-align: center;
         }
         .avatar {
-          min-width: 178px;
+          /*min-width: 178px;*/
           height: 178px;
           display: block;
         }
