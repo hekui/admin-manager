@@ -85,10 +85,10 @@
             width="80">
             <template slot-scope="scope">
               <div>
-                <el-button v-if="scope.row.adStatus === 1" @click="handleOffline(scope.row)" type="text" size="small">下线</el-button>
+                <el-button v-if="scope.row.advertStatus === 1" @click="handleOffline(scope.row)" type="text" size="small">下线</el-button>
               </div>
               <div>
-                <el-button v-if="scope.row.adStatus !== 2" @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+                <el-button v-if="scope.row.advertStatus !== 2" @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
               </div>
             </template>
           </el-table-column>
@@ -268,7 +268,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        this.$store.dispatch('updateAdvertStatus', data).then(() => {
+        this.$store.dispatch('updateAdvertStatus', {
+          id: data.id,
+          advertStatus: 2
+        }).then(() => {
           this.loading = false
           this.$message({
             type: 'success',
