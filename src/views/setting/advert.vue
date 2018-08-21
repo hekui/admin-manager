@@ -190,6 +190,7 @@ export default {
           { required: true, message: '请上传广告头图', trigger: ['change', 'blur'] }
         ],
         onlineTime: [{
+          required: true,
           validator: function(rule, value, callback) {
             if (!value || value.length === 0) {
               callback(new Error('请选择启用时间'))

@@ -342,7 +342,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss">
 .detail-container {
   .el-dialog {
-    width: 400px;
+    width: 500px;
     border-radius: 5px;
     .el-dialog__title {
       font-size: 14px;
@@ -358,9 +358,20 @@ export default {
           width: 100%;
         }
       }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        .el-button {
+          margin: 0 10px 10px 0;
+          max-width: 100%;
+          min-width: 30%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
     }
     .el-input {
-      width: 250px;
+      width: 400px;
       font-size: 12px;
     }
     .el-form-item__label {
