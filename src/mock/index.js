@@ -1,5 +1,5 @@
 import Mock from 'mockjs'
-import account from './account'
+// import account from './account'
 // import paccount from './paccount'
 // import content from './content'
 // import topic from './topic'
@@ -16,7 +16,7 @@ Mock.setup({
 // 登录相关
 // Mock.mock(/\/account\/login/, account.login)
 // Mock.mock(/\/account\/logout/, account.logout)
-Mock.mock(/\/sysuser\/userdata/, account.getUserInfo)
+// Mock.mock(/\/sysuser\/userdata/, account.getUserInfo)
 
 // 公众号相关
 // Mock.mock(/\/paccount\/list/, paccount.index)
