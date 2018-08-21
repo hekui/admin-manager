@@ -79,7 +79,7 @@ export default {
       loginForm: {
         type: 1,
         account: 'admin',
-        password: 'admin'
+        password: '123456'
       },
       loginRules: {
         account: [{ required: true, trigger: 'blur', validator: validateUsername }],

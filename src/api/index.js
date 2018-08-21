@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
-import cookie from 'js-cookie'
+import { removeToken, getCity } from '@/utils/auth'
 const apiContext = '/api'
 const methods = ['get', 'post']
 
@@ -21,11 +21,10 @@ class Api {
             // 'X-Requested-With': 'XMLHttpRequest',
             // 'Content-Type': 'application/x-www-form-urlencoded',
             // 'Accept': '*/*',
-            'cityid': cookie.get('CITYID') || 51010000, // 默认成都
+            'cityid': getCity('CITYID') || 51010000, // 默认成都
             'Content-Type': 'application/json'
           }, headers)
         }
-        data.ticketId = ''
         method === 'get' ? options.params = data : options.data = data
         axios(options).then(res => {
           console.log(`[${method}] - ${url} - ${JSON.stringify(options)}`, res)
@@ -38,6 +37,11 @@ class Api {
                 message: res.data.msg,
                 type: 'error'
               })
+              // 跳转登录
+              if (res.data.code === 1014) {
+                removeToken()
+                location.href = '/login'
+              }
             }
           }
         }).catch(error => {

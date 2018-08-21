@@ -10,6 +10,7 @@ class Api {
         console.log('data', data)
         const url = baseUrl + req.url
         console.log('url', url)
+        console.log('req.session', req.session)
         const options = {
           method: method,
           url: url,

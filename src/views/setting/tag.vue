@@ -6,19 +6,19 @@
 <template>
   <div class="tag-container">
     <div class="content-container">
-      <section class="form">
+      <section class="form-filter">
         <el-form :inline="true" :model="filter">
           <el-form-item label="标签名称：">
             <el-input v-model="filter.name" placeholder="请输入名称" :clearable="true"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button icon="el-icon-search" @click="submitFilter">搜索</el-button>
+            <el-button type="primary" plain @click="submitFilter">搜索</el-button>
           </el-form-item>
-          <div class="add">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增标签</el-button>
-          </div>
         </el-form>
       </section>
+      <div class="table-top">
+        <el-button type="primary" icon="el-icon-plus" @click="handleAdd">新增标签</el-button>
+      </div>
       <section class="table">
         <el-table
           :data="listData.list"
@@ -126,8 +126,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleCancel">取 消</el-button>
-          <el-button type="primary" size="mini" @click="handleConfirm('form')">确 定</el-button>
+        <el-button @click="handleCancel">取 消</el-button>
+          <el-button type="primary" @click="handleConfirm('form')">确 定</el-button>
       </div>
     </el-dialog>
   </div>

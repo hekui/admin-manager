@@ -9,7 +9,7 @@
             clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button icon="el-icon-search" @click="submitFilter">查询</el-button>
+          <el-button type="primary" plain @click="submitFilter">查询</el-button>
         </el-form-item>
       </el-form>
     </div>
