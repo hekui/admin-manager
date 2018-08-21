@@ -15,12 +15,12 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             :clearable="true"
-            value-format="yyyy-MM-dd"
+            value-format="yyyy-MM-dd HH:mm:ss"
             :picker-options="pickerOptions">
           </el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button icon="el-icon-search" @click="submitFilter">查询</el-button>
+          <el-button type="primary" plain @click="submitFilter">查询</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -35,9 +35,11 @@
           border
           style="width: 100%">
           <el-table-column
-            prop="id"
             label="序号"
             width="100">
+            <template slot-scope="scope">
+              <span>{{scope.$index + (page.curPage - 1) * page.pageSize + 1 }}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="name"
@@ -105,7 +107,7 @@
       <div class="pages" v-if="listData.pageSize < listData.totalRecords">
         <el-pagination
           background
-          layout="prev, pager, next"
+          layout="total, prev, pager, next, jumper"
           @current-change="changePage"
           :current-page="page.curPage"
           :page-size="listData.pageSize"
@@ -172,8 +174,8 @@
       serverFilter: function() {
         return {
           name: this.filter.name,
-          beginDate: this.filter.date[0],
-          endDate: this.filter.date[1]
+          beginDate: this.filter.data ? this.filter.date[0] : '',
+          endDate: this.filter.date ? this.filter.date[1] : ''
         }
       }
     },

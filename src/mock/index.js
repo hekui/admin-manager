@@ -15,8 +15,8 @@ Mock.setup({
 
 // 登录相关
 // Mock.mock(/\/account\/login/, account.login)
-Mock.mock(/\/account\/logout/, account.logout)
-Mock.mock(/\/account\/userinfo/, account.getUserInfo)
+// Mock.mock(/\/account\/logout/, account.logout)
+Mock.mock(/\/sysuser\/userdata/, account.getUserInfo)
 
 // 公众号相关
 // Mock.mock(/\/paccount\/list/, paccount.index)

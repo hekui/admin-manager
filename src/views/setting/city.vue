@@ -8,7 +8,7 @@
     <div class="content-container">
       <!-- <section class="form">
         <div class="add">
-          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增城市</el-button>
+          <el-button type="primary" icon="el-icon-plus" @click="handleAdd">新增城市</el-button>
         </div>
       </section> -->
       <section class="table">
@@ -38,27 +38,25 @@
               <span>{{scope.row.status === 1 ? '激活' : scope.row.status === 2 ? '锁定' : ''}}</span>
             </template>
           </el-table-column>
-          <!-- <el-table-column
+          <el-table-column
             fixed="right"
             label="操作"
             width="100">
             <template slot-scope="scope">
               <el-button v-if="scope.row.status === 1 || scope.row.status === 2" @click="handleStatus(scope.row)" type="text" size="small">{{ scope.row.status === 1 ? '锁定' : scope.row.status === 2 ? '激活' : '' }}</el-button>
-              <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+              <!-- <el-button @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button> -->
             </template>
-          </el-table-column> -->
+          </el-table-column>
         </el-table>
       </section>
       <!-- <section class="pagination">
         <el-pagination
           background
-          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="page.curPage"
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size="page.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="listData.totalPage">
+          :page-size="listData.pageSize"
+          layout="total, prev, pager, next, jumper"
+          :total="listData.totalRecords">
         </el-pagination>
       </section> -->
     </div>
@@ -75,8 +73,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleCancel">取 消</el-button>
-          <el-button type="primary" size="mini" @click="handleConfirm('form')">确 定</el-button>
+        <el-button @click="handleCancel">取 消</el-button>
+          <el-button type="primary" @click="handleConfirm('form')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -95,8 +93,7 @@ export default {
       showDialog: false,
       dialogType: '',
       page: {
-        // curPage: 1,
-        // pageSize: 20
+        // curPage: 1
       },
       form: {
         id: '',
@@ -140,14 +137,8 @@ export default {
     },
     // 获取序号
     getIndex(index) {
-      // return (this.page.curPage - 1) * this.page.pageSize + index + 1
+      // return (this.page.curPage - 1) * this.listData.pageSize + index + 1
       return index + 1
-    },
-    // 改变每页条数
-    handleSizeChange(val) {
-      this.page.curPage = 1
-      this.page.pageSize = val
-      this.fetchData()
     },
     // 改变当前页
     handleCurrentChange(val) {
@@ -167,16 +158,31 @@ export default {
       this.showDialog = true
     },
     handleStatus(data) {
-      this.loading = true
-      this.$store.dispatch('changeCityStatus', data).then((res) => {
-        this.loading = false
-        this.$message({
-          type: 'success',
-          message: '操作成功!'
+      const tips = data.labelStatus === 1 ? '是否要锁定' : '是否要激活'
+      this.$confirm(tips, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        this.$store.dispatch('changeCityStatus', {
+          id: data.id,
+          status: data.status === 1 ? 2 : 1
+        }).then((res) => {
+          this.loading = false
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.fetchData()
+        }).catch(() => {
+          this.loading = false
         })
-        this.fetchData()
       }).catch(() => {
-        this.loading = false
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
       })
     },
     // 编辑标签

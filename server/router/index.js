@@ -3,6 +3,7 @@ const multer = require('multer')
 // const log = require('./../log')('api')
 const api = require('./../api')
 const uploadApi = require('./../api/upload')
+const passportRouter = require('./passport')
 
 // RAP2 mock - 已弃用
 // const mock = require('./../mock')
@@ -39,14 +40,8 @@ router.all('/upload/image', multer().single('file'), function(req, res, next) {
   })
 })
 
-// 登录
-router.all('/login', function(req, res, next) {
-  api.fetchPassport(req, req.body).then(result => {
-    res.json(result)
-  }, result => {
-    res.json({ code: result.code, msg: result.message || result.msg })
-  })
-})
+// passport
+router.use('/account', passportRouter);
 
 // 其他
 router.all('*', function(req, res, next) {

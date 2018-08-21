@@ -6,7 +6,7 @@
 <template>
   <div class="advert-container">
     <div class="content-container">
-      <section class="form">
+      <section class="form-filter">
         <el-form :inline="true" :model="filter">
           <el-form-item label="广告名称：">
             <el-input v-model="filter.name" placeholder="请输入名称orID" :clearable="true"></el-input>
@@ -27,13 +27,14 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button icon="el-icon-search" @click="submitFilter">搜索</el-button>
+            <el-button type="primary" plain @click="submitFilter">搜索</el-button>
           </el-form-item>
-          <div class="add">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增广告</el-button>
-          </div>
         </el-form>
       </section>
+      
+      <div class="table-top">
+        <el-button type="primary" icon="el-icon-plus" @click="handleAdd">新增广告</el-button>
+      </div>
       <section class="table">
         <el-table
           :data="listData.list"
@@ -84,10 +85,10 @@
             width="80">
             <template slot-scope="scope">
               <div>
-                <el-button v-if="scope.row.adStatus === 1" @click="handleOffline(scope.row)" type="text" size="small">下线</el-button>
+                <el-button v-if="scope.row.advertStatus === 1" @click="handleOffline(scope.row)" type="text" size="small">下线</el-button>
               </div>
               <div>
-                <el-button v-if="scope.row.adStatus !== 2" @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+                <el-button v-if="scope.row.advertStatus !== 2" @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
               </div>
             </template>
           </el-table-column>
@@ -96,13 +97,11 @@
       <section class="pagination">
         <el-pagination
           background
-          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="page.pageNo"
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size="page.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="listData.totalPage">
+          :current-page="page.curPage"
+          :page-size="listData.pageSize"
+          layout="total, prev, pager, next, jumper"
+          :total="listData.totalRecords">
         </el-pagination>
       </section>
     </div>
@@ -145,8 +144,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleCancel">取 消</el-button>
-        <el-button type="primary" size="mini" @click="handleConfirm('form')">确 定</el-button>
+        <el-button @click="handleCancel">取 消</el-button>
+        <el-button type="primary" @click="handleConfirm('form')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -170,8 +169,7 @@ export default {
       },
       releaseTime: [],
       page: {
-        pageNo: 1,
-        pageSize: 10
+        curPage: 1
       },
       pickerOptions,
       uploadSuccess: false,
@@ -226,20 +224,15 @@ export default {
     },
     // 获取序号
     getIndex(index) {
-      return (this.page.pageNo - 1) * this.page.pageSize + index + 1
+      return (this.page.curPage - 1) * this.listData.pageSize + index + 1
     },
     // 格式化时间
     releaseTimeFilter(time) {
       return parseTime(Number(time))
     },
-    // 改变每页条数
-    handleSizeChange(val) {
-      this.page.pageSize = val
-      this.fetchData()
-    },
     // 改变当前页
     handleCurrentChange(val) {
-      this.page.pageNo = val
+      this.page.curPage = val
       this.fetchData()
     },
     // 发布时间改变触发
@@ -256,7 +249,7 @@ export default {
     },
     // 条件查询
     submitFilter() {
-      this.page.pageNo = 1
+      this.page.curPage = 1
       this.fetchData()
     },
     // 下线
@@ -267,7 +260,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        this.$store.dispatch('updateAdvertStatus', data).then(() => {
+        this.$store.dispatch('updateAdvertStatus', {
+          id: data.id,
+          advertStatus: 2
+        }).then(() => {
           this.loading = false
           this.$message({
             type: 'success',
@@ -396,11 +392,6 @@ export default {
     .form {
       position: relative;
       padding: 20px 0 30px;
-      .add {
-        position: absolute;
-        left: 0;
-        bottom: 5px;
-      }
     }
     .pagination {
       margin-top: 12px;

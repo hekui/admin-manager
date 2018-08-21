@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'Admin-Token'
+const TokenKey = 'ticketId'
 const CityKey = 'CITYID'
 const DefaultCityId = '51010000' // 默认城市编码：51010000(成都)
 
@@ -24,4 +24,8 @@ export function initCity(store) {
 export function setCity(store, cityId) {
   Cookies.set(CityKey, cityId, { expires: 30 })
   store.commit('SET_CITYID', cityId)
+}
+
+export function getCity() {
+  return Cookies.get(CityKey)
 }

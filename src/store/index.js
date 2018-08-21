@@ -39,8 +39,8 @@ const store = new Vuex.Store({
       2: '禁用'
     },
     wechatStatus: {
-      1: '授权',
-      2: '未授权'
+      1: '是',
+      2: '否'
     },
     pclassify: {
       1: '房企',

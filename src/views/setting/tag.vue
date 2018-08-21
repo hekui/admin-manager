@@ -6,19 +6,19 @@
 <template>
   <div class="tag-container">
     <div class="content-container">
-      <section class="form">
+      <section class="form-filter">
         <el-form :inline="true" :model="filter">
           <el-form-item label="标签名称：">
             <el-input v-model="filter.name" placeholder="请输入名称" :clearable="true"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button icon="el-icon-search" @click="submitFilter">搜索</el-button>
+            <el-button type="primary" plain @click="submitFilter">搜索</el-button>
           </el-form-item>
-          <div class="add">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd">新增标签</el-button>
-          </div>
         </el-form>
       </section>
+      <div class="table-top">
+        <el-button type="primary" icon="el-icon-plus" @click="handleAdd">新增标签</el-button>
+      </div>
       <section class="table">
         <el-table
           :data="listData.list"
@@ -89,18 +89,16 @@
       <section class="pagination">
         <el-pagination
           background
-          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="page.curPage"
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size="page.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="listData.totalPage">
+          :page-size="listData.pageSize"
+          layout="total, prev, pager, next, jumper"
+          :total="listData.totalRecords">
         </el-pagination>
       </section>
     </div>
     <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
-      <el-form v-loading="dialogLoading" ref="form" :model="form" :rules="rules">
+      <el-form v-if="showDialog" v-loading="dialogLoading" ref="form" :model="form" :rules="rules">
         <el-form-item label="标签名称：" prop="name">
           <el-input v-model="form.name" placeholder="请输入名称" :clearable="true"></el-input>
         </el-form-item>
@@ -126,8 +124,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleCancel">取 消</el-button>
-          <el-button type="primary" size="mini" @click="handleConfirm('form')">确 定</el-button>
+        <el-button @click="handleCancel">取 消</el-button>
+          <el-button type="primary" @click="handleConfirm('form')">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -150,8 +148,7 @@ export default {
         name: '' // 标签名称
       },
       page: {
-        curPage: 1,
-        pageSize: 20
+        curPage: 1
       },
       form: {
         id: '',
@@ -203,13 +200,7 @@ export default {
     },
     // 获取序号
     getIndex(index) {
-      return (this.page.curPage - 1) * this.page.pageSize + index + 1
-    },
-    // 改变每页条数
-    handleSizeChange(val) {
-      this.page.curPage = 1
-      this.page.pageSize = val
-      this.fetchData()
+      return (this.page.curPage - 1) * this.listData.pageSize + index + 1
     },
     // 改变当前页
     handleCurrentChange(val) {
@@ -241,10 +232,6 @@ export default {
       const prevElement = document.getElementById('editable_value_' + scope.$index)
       event.target.className = 'editable_copy'
       prevElement.className = 'editable_value visible'
-      this.$message({
-        type: 'info',
-        message: '已取消修改!'
-      })
     },
     // 回车确认修改排序
     sequenceNumConfirm(event, scope) {
@@ -259,22 +246,38 @@ export default {
     // ESC取消修改
     sequenceNumCancel(event, scope) {
       this.sequenceNumBlur(event, scope)
+      this.$message({
+        type: 'info',
+        message: '已取消修改!'
+      })
     },
     handleStatus(data) {
-      const param = Object.assign({}, {
-        id: data.id,
-        labelStatus: data.labelStatus === 0 ? 1 : 0,
-      })
-      this.loading = true
-      this.$store.dispatch('changeTagStatus', param).then((res) => {
-        this.loading = false
-        this.$message({
-          type: 'success',
-          message: '操作成功!'
+      const tips = data.labelStatus === 0 ? '是否要锁定' : '是否要激活'
+      this.$confirm(tips, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const param = Object.assign({}, {
+          id: data.id,
+          labelStatus: data.labelStatus === 0 ? 1 : 0,
         })
-        this.fetchData()
+        this.loading = true
+        this.$store.dispatch('changeTagStatus', param).then((res) => {
+          this.loading = false
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.fetchData()
+        }).catch(() => {
+          this.loading = false
+        })
       }).catch(() => {
-        this.loading = false
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
       })
     },
     // 编辑标签
@@ -369,17 +372,24 @@ input[type='number']{
     .sequenceNum {
       padding: 1px;
       .editable_value {
+        cursor: text;
         display: none;
+        border: 1px solid #dcdfe6;
       }
       .editable_copy {
         padding: 5px;
         display: none;
         width: 100%;
-        border: none;
-        outline: 1px solid aquamarine;
+        line-height: 23px;
+        border: 1px solid #409eff;
+        outline: none;
+        color: #606266;
+        font-family: Microsoft YaHei, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Arial, sans-serif;
       }
       .visible {
         display: block;
+        border-radius: 4px;
+        padding: 0 15px;
       }
     }
     .form {

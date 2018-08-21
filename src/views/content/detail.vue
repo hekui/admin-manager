@@ -63,8 +63,8 @@
         </div>
       </template>
       <div slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="handleCancel">取 消</el-button>
-          <el-button type="primary" size="mini" @click="handleConfirm">确 定</el-button>
+        <el-button @click="handleCancel">取 消</el-button>
+          <el-button type="primary" @click="handleConfirm">确 定</el-button>
       </div>
     </el-dialog>
   </div>

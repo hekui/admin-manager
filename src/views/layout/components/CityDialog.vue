@@ -1,11 +1,11 @@
 <template>
-  <el-dialog v-loading="loading" title="切换城市" :visible="cityDialog" :close-on-click-modal="false" @close="close">
+  <el-dialog v-loading="loading" width="400px" title="切换城市" :visible="cityDialog" :close-on-click-modal="false" @close="close">
     <div class="citys">
       <el-button v-for="item in cityOptions" :key="item.code" :type="item.code === cityId ? 'primary' : ''" @click="cityId = item.code">{{item.name}}</el-button>
     </div>
     <div slot="footer" class="dialog-footer">
-      <el-button size="mini" @click="handleCancel">取 消</el-button>
-        <el-button type="primary" size="mini" @click="handleConfirm('form')">确 定</el-button>
+      <el-button @click="handleCancel">取 消</el-button>
+        <el-button type="primary" @click="handleConfirm('form')">确 定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -74,7 +74,7 @@ export default {
   display: flex;
   flex-direction: column;
   .el-button {
-    margin: 0 0 5px;
+    margin: 0 0 22px;
   }
 }
 </style>
