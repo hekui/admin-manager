@@ -94,7 +94,7 @@
 
 <script>
   import { mapState } from 'vuex'
-  import fileChoose from './fileChoose'
+  import fileChoose from './filechoose'
   import api from '@/api'
   import { formatDate } from '@/filters'
 
