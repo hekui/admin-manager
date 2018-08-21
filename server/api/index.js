@@ -70,8 +70,8 @@ class Api {
       ticketId,
       encryMode: 2, // 加密方式
       version: "1.0.0", //接口版本
-      userver: 2,
-      utype: 2,
+      userver: 10,
+      utype: 1,
       deviceType: 2, //设备类型
     }
   }
