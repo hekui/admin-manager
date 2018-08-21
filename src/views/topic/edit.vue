@@ -29,11 +29,8 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item label="首页推荐" prop="recommend">
-        <el-switch
-          v-model="homeRecommend"
-          active-color="#13ce66"
-          inactive-color="#606266">
-        </el-switch>
+        <el-radio v-model="form.recommend" :label="1">是</el-radio>
+        <el-radio v-model="form.recommend" :label="0">否</el-radio>
       </el-form-item>
       <el-form-item label="专题标签">
         <el-checkbox-group
@@ -178,14 +175,6 @@
       ...mapState({
         listData: state => state.topic.listData
       }),
-      homeRecommend: {
-        set: function(newVal) {
-          this.form.recommend = newVal ? 1 : 0
-        },
-        get: function() {
-          return this.form.recommend !== 0
-        }
-      },
       date: {
         set: function(newVal) {
           this.form.effectTime = newVal[0]
