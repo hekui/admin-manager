@@ -167,20 +167,31 @@ export default {
       this.showDialog = true
     },
     handleStatus(data) {
-      if (data.status !== 1 && data.status !== 2) return
-      this.loading = true
-      this.$store.dispatch('changeCityStatus', {
-        id: data.id,
-        status: data.status === 1 ? 2 : 1
-      }).then((res) => {
-        this.loading = false
-        this.$message({
-          type: 'success',
-          message: '操作成功!'
+      const tips = data.labelStatus === 1 ? '是否要锁定' : '是否要激活'
+      this.$confirm(tips, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.loading = true
+        this.$store.dispatch('changeCityStatus', {
+          id: data.id,
+          status: data.status === 1 ? 2 : 1
+        }).then((res) => {
+          this.loading = false
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.fetchData()
+        }).catch(() => {
+          this.loading = false
         })
-        this.fetchData()
       }).catch(() => {
-        this.loading = false
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
       })
     },
     // 编辑标签

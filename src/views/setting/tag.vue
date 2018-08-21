@@ -261,20 +261,32 @@ export default {
       this.sequenceNumBlur(event, scope)
     },
     handleStatus(data) {
-      const param = Object.assign({}, {
-        id: data.id,
-        labelStatus: data.labelStatus === 0 ? 1 : 0,
-      })
-      this.loading = true
-      this.$store.dispatch('changeTagStatus', param).then((res) => {
-        this.loading = false
-        this.$message({
-          type: 'success',
-          message: '操作成功!'
+      const tips = data.labelStatus === 0 ? '是否要锁定' : '是否要激活'
+      this.$confirm(tips, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const param = Object.assign({}, {
+          id: data.id,
+          labelStatus: data.labelStatus === 0 ? 1 : 0,
         })
-        this.fetchData()
+        this.loading = true
+        this.$store.dispatch('changeTagStatus', param).then((res) => {
+          this.loading = false
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.fetchData()
+        }).catch(() => {
+          this.loading = false
+        })
       }).catch(() => {
-        this.loading = false
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
       })
     },
     // 编辑标签
