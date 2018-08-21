@@ -453,13 +453,20 @@ input[type='number']{
       border-top: 1px solid #eee;
       border-bottom: 1px solid #eee;
     }
-    .el-input {
-      width: 380px;
-      font-size: 12px;
-    }
-    .el-form-item__label {
-      width: 110px;
-      font-size: 12px;
+    .el-form-item {
+      position: relative;
+      .el-form-item__label {
+        position: absolute;
+        width: 110px;
+        font-size: 12px;
+      }
+      .el-form-item__content {
+        padding-left: 110px;
+        .el-input, .el-cascader {
+          width: 100%;
+          font-size: 12px;
+        }
+      }
     }
     .el-form-item__error {
       margin-left: 110px;

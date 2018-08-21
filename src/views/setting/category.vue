@@ -142,7 +142,7 @@
       </el-tabs>
     </div>
     <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
-      <el-form v-loading="dialogLoading" ref="form" :model="form" :rules="rules">
+      <el-form v-if="showDialog" v-loading="dialogLoading" ref="form" :model="form" :rules="rules">
         <el-form-item label="类型名称：" prop="name">
           <el-input v-model="form.name" placeholder="请输入名称" :clearable="true"></el-input>
         </el-form-item>
@@ -480,13 +480,20 @@ export default {
       border-top: 1px solid #eee;
       border-bottom: 1px solid #eee;
     }
-    .el-input {
-      width: 380px;
-      font-size: 12px;
-    }
-    .el-form-item__label {
-      width: 110px;
-      font-size: 12px;
+    .el-form-item {
+      position: relative;
+      .el-form-item__label {
+        position: absolute;
+        width: 110px;
+        font-size: 12px;
+      }
+      .el-form-item__content {
+        padding-left: 110px;
+        .el-input, .el-cascader {
+          width: 100%;
+          font-size: 12px;
+        }
+      }
     }
     .el-form-item__error {
       margin-left: 110px;
