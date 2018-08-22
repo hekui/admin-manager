@@ -63,9 +63,9 @@
             </el-table-column>
             <el-table-column
               label="状态"
-              prop="userStatus">
+              prop="status">
               <template slot-scope="scope">
-                <span>{{scope.row.userStatus ===0 ? '激活' : '-'}}</span>
+                <span>{{scope.row.status === 1 ? '激活' : scope.row.status === 2 ? '锁定':''}}</span>
               </template>
             </el-table-column>
             <el-table-column
