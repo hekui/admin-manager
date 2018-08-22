@@ -7,10 +7,10 @@ class Api {
   constructor() {
     methods.forEach(method => {
       this[method] = (baseUrl = '', req, data = {}) => new Promise((resolve, reject) => {
-        console.log('data', data)
+        log.trace('data', data)
         const url = baseUrl + req.url
-        console.log('url', url)
-        console.log('req.session', req.session)
+        log.trace('url', url)
+        log.trace('req.session', req.session)
         const options = {
           method: method,
           url: url,
@@ -26,7 +26,7 @@ class Api {
         // let rquestData = querystring.stringify(this.getData(req, data))
         const rquestData = this.getData(req, data)
         options.data = rquestData
-        console.log('options', options.data)
+        log.trace('options', options.data)
         axios(options).then(res => {
           if (res.status === 200) {
             const result = res.data
