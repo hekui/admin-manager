@@ -6,6 +6,7 @@ const api = require('./../api')
 router.all('/login', function(req, res, next) {
   api.fetchPassport(req, req.body).then(result => {
     req.session.ticketId = result.data.ticketId
+    console.log('req.session', req.session)
     res.json(result)
   }, result => {
     res.json({ code: result.code, msg: result.message || result.msg })
