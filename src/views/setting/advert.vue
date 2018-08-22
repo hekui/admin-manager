@@ -140,7 +140,8 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item class="link" label="链接：">
-          <el-input v-model="form.destinationUrl" placeholder="URL" :clearable="true"></el-input>
+          <el-input v-model="form.destinationUrl" placeholder="" :clearable="true"></el-input>
+          <div class="el-upload__tip">链接示例：/pages/detail/detail?id=[文章id]</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
