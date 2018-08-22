@@ -91,17 +91,6 @@ export default{
       status: '',
       changeStatus: '',
       loading: false,
-      page: {
-        curPage: 1,
-        pageSize: 20
-      },
-      filter: {
-        typeId: [],
-        title: '',
-        endDate: '',
-        beginDate: '',
-        id: ''
-      },
       defaultDate: '',
       form: {
         wechatAccount: '',
@@ -165,29 +154,26 @@ export default{
         code: 1
       })
       // 查询公众号基本信息
-      this.$store.dispatch('getPaccountInfo', {
-        id: this.id
-      }).then((res) => {
-        this.status = res.data.status
-        this.changeStatus = res.data.status
-        const typeid = res.data.typeDictList
-        if (typeid) {
-          this.formatTypeId(typeid)
-        }
-        this.editInfo = {
-          id: res.data.id,
-          wechatAccount: res.data.wechatAccount,
-          wechatStatus: res.data.wechatStatus,
-          classify: '' + res.data.classify,
-          typeId: this.typeDictList,
-          status: res.data.status
-        }
-      })
-    },
-    releaseTimeChange(value) {
-      const date = value || ['', '']
-      this.filter.beginDate = date[0]
-      this.filter.endDate = date[1]
+      if (this.id) {
+        this.$store.dispatch('getPaccountInfo', {
+          id: this.id
+        }).then((res) => {
+          this.status = res.data.status
+          this.changeStatus = res.data.status
+          const typeid = res.data.typeDictList
+          if (typeid) {
+            this.formatTypeId(typeid)
+          }
+          this.editInfo = {
+            id: res.data.id,
+            wechatAccount: res.data.wechatAccount,
+            wechatStatus: res.data.wechatStatus,
+            classify: '' + res.data.classify,
+            typeId: this.typeDictList,
+            status: res.data.status
+          }
+        })
+      }
     },
     submitFilter() {
       this.page.curPage = 1
@@ -207,7 +193,7 @@ export default{
                 showClose: false,
                 confirmButtonText: '知道了'
               }).then(() => {
-                this.$router.replace({ path: '/paccount/list' })
+                this.closeSelectedTag()
               })
             }).catch(() => {
               this.loading = false
@@ -224,24 +210,20 @@ export default{
               typeId: this.form.typeId[this.form.typeId.length - 1]
             }
             this.loading = true
-            this.$store.dispatch('addPaccountInfo', Object.assign({}, this.form, params)).then(() => {
+            this.$store.dispatch('addPaccountInfo', Object.assign({}, this.form, params)).then((res) => {
               this.loading = false
-              this.$alert('<strong>添加成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
-                type: 'success',
-                dangerouslyUseHTMLString: true,
-                showClose: false,
-                confirmButtonText: '知道了'
-              }).then(() => {
-                this.$router.replace({ path: '/paccount/list' })
-              })
-            }).catch(() => {
-              this.loading = false
-              this.$alert('<strong>添加失败</strong><p>请稍后重试，或者联系技术解决</p>', {
-                type: 'error',
-                dangerouslyUseHTMLString: true,
-                showClose: false,
-                confirmButtonText: '知道了'
-              })
+              if (res.code !== 0) {
+                this.loading = false
+              } else {
+                this.$alert('<strong>添加成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
+                  type: 'success',
+                  dangerouslyUseHTMLString: true,
+                  showClose: false,
+                  confirmButtonText: '知道了'
+                }).then(() => {
+                  this.closeSelectedTag()
+                })
+              }
             })
           }
         } else {
@@ -249,59 +231,17 @@ export default{
         }
       })
     },
+    closeSelectedTag(view) {
+      this.$store.dispatch('delVisitedViews', this.$route).then((views) => {
+        this.$router.replace({ path: '/paccount/list' })
+      })
+    },
     changePage(curPage) {
       this.page.curPage = curPage
       this.fetchData()
     },
-    changeRefresh() {
-      this.page.curPage = 1
-      this.fetchData()
-    },
-    updateArticle(index, data, id, s) {
-      const status = s === 1 ? 2 : 1
-      const params = {
-        id,
-        status
-      }
-      this.$confirm('你确定切换状态吗？', '提示', {
-        type: 'warning',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      }).then(() => {
-        this.$store.dispatch('updateArticleStatus', params).then(() => {
-          this.$message({
-            type: 'success',
-            message: '成功切换'
-          })
-          data[index].status = status
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '切换失败，请稍后重试'
-          })
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '切换失败，请稍后重试'
-        })
-      })
-    },
-    showDetail(id) {
-      this.$router.push({
-        path: '/content/detail',
-        query: {
-          id
-        }
-      })
-    },
-    showEdit(id) {
-      this.$router.push({
-        path: '/content/edit',
-        query: {
-          id
-        }
-      })
+    getIndex(index) { // 获取序号
+      return (this.page.curPage - 1) * this.page.pageSize + index + 1
     },
     formatTypeId(data) {
       data.map((item) => {
