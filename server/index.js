@@ -29,7 +29,7 @@ app.use(session({
   saveUninitialized: true,
   cookie: { 
     // secure: true,
-    // domain: isProd ? '.fangguancha.com' : 'localhost',
+    domain: isProd ? '.fangguancha.com' : '',
     // maxAge: 10 * 1000, // 单位：ms  10秒（测试用）
     maxAge: 30 * 60 * 1000, // 单位：ms  30分钟
   }
