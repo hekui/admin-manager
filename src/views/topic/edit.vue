@@ -181,6 +181,9 @@
           this.form.expireTime = newVal[1]
         },
         get: function() {
+          if (!this.form.effectTime.length) {
+            return []
+          }
           return [this.form.effectTime, this.form.expireTime]
         }
       }
@@ -258,7 +261,7 @@
         }, res => {
           this.$message({
             type: 'error',
-            message: '保存失败，请稍后重试'
+            message: res.data.msg || '保存失败，请稍后重试'
           })
         })
       },
