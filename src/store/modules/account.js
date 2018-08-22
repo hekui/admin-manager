@@ -29,7 +29,7 @@ const user = {
         setToken(res.data.ticketId)
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
 
@@ -49,7 +49,7 @@ const user = {
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
 
@@ -63,7 +63,7 @@ const user = {
         removeToken()
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     }
   }
