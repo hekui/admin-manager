@@ -3,7 +3,8 @@
     <div class="edit-paccount">
       <div class="gzh-top clearfix">
         <div class="pavatar">
-          <img :src="infoData.headImg" width="50" alt="">
+          <img v-if="infoData.headImg" :src="infoData.headImg" width="50" alt="公众号头像" >
+          <img v-else src="./../../../public/images/wchat-ddefault.jpg" width="50" alt="公众号头像">
           <p class="name">{{ infoData.name }}</p>
           <p class="en-name">{{ infoData.wechatAccount }}</p>
         </div>
@@ -171,30 +172,6 @@ export default{
         id: ''
       },
       defaultDate: '',
-      form: {
-        wechatAccount: '',
-        wechatStatus: 1,
-        classify: [],
-        typeId: [],
-        status: 1
-      },
-      typeDictList: [], // 编辑的时候获取状态 this.formatTypeId
-      editInfo: {
-        id: '',
-        wechatAccount: '',
-        wechatStatus: '',
-        classify: [],
-        typeId: [],
-        status: '',
-      },
-      rules: {
-        wechatAccount: [
-          { required: true, message: '请输入微信号，注意大小写', trigger: 'blur' }
-        ],
-        classify: [
-          { required: true, message: '请选择公众号类型', trigger: 'change' }
-        ],
-      }
     }
   },
   computed: {
@@ -244,14 +221,6 @@ export default{
         if (typeid) {
           this.formatTypeId(typeid)
         }
-        this.editInfo = {
-          id: res.data.id,
-          wechatAccount: res.data.wechatAccount,
-          wechatStatus: res.data.wechatStatus,
-          classify: '' + res.data.classify,
-          typeId: this.typeDictList,
-          status: res.data.status
-        }
       })
     },
     releaseTimeChange(value) {
@@ -276,62 +245,6 @@ export default{
     submitFilter() {
       this.page.curPage = 1
       this.fetchData()
-    },
-    onSubmit(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          if (this.wxid) {
-            const params = { typeId: this.editInfo.typeId[this.editInfo.typeId.length - 1] }
-            this.loading = true
-            this.$store.dispatch('editPaccountInfo', Object.assign({}, this.editInfo, params)).then(() => {
-              this.loading = false
-              this.$alert('<strong>编辑成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
-                type: 'success',
-                dangerouslyUseHTMLString: true,
-                showClose: false,
-                confirmButtonText: '知道了'
-              }).then(() => {
-                this.$router.replace({ path: '/paccount/list' })
-              })
-            }).catch(() => {
-              this.loading = false
-              this.$alert('<strong>编辑失败</strong><p>请稍后重试，或者联系技术解决</p>', {
-                type: 'error',
-                dangerouslyUseHTMLString: true,
-                showClose: false,
-                confirmButtonText: '知道了'
-              })
-            })
-          } else {
-            const params = {
-              classify: this.form.classify[this.form.classify.length - 1],
-              typeId: this.form.typeId[this.form.typeId.length - 1]
-            }
-            this.loading = true
-            this.$store.dispatch('addPaccountInfo', Object.assign({}, this.form, params)).then(() => {
-              this.loading = false
-              this.$alert('<strong>添加成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
-                type: 'success',
-                dangerouslyUseHTMLString: true,
-                showClose: false,
-                confirmButtonText: '知道了'
-              }).then(() => {
-                this.$router.replace({ path: '/paccount/list' })
-              })
-            }).catch(() => {
-              this.loading = false
-              this.$alert('<strong>添加失败</strong><p>请稍后重试，或者联系技术解决</p>', {
-                type: 'error',
-                dangerouslyUseHTMLString: true,
-                showClose: false,
-                confirmButtonText: '知道了'
-              })
-            })
-          }
-        } else {
-          return false
-        }
-      })
     },
     changState() {
       const type = this.status
@@ -358,10 +271,6 @@ export default{
           this.status = this.changeStatus
         })
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '切换失败，请稍后重试'
-        })
         this.status = this.changeStatus
       })
     },
@@ -395,11 +304,6 @@ export default{
             type: 'info',
             message: '切换失败，请稍后重试'
           })
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '切换失败，请稍后重试'
         })
       })
     },

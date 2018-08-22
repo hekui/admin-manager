@@ -62,7 +62,8 @@
             min-width="180">
             <template slot-scope="scope">
               <div class="pavatar">
-                <img :src="scope.row.headImg" width="50" alt="公众号头像">
+                <img v-if="scope.row.headImg" :src="scope.row.headImg" width="50" alt="公众号头像" >
+                <img v-else src="./../../../public/images/wchat-ddefault.jpg" width="50" alt="公众号头像">
                 <p class="name">{{scope.row.name}}</p>
                 <p class="en-name">{{scope.row.wechatAccount}}</p>
               </div>
@@ -154,12 +155,12 @@
       <div class="pages clearfix">
         <span class="demonstration">合计统计公众号<b class="number"> {{listData.totalRecords || '-'}}</b> 个。</span>
         <el-pagination
-          background
-          layout="prev, pager, next"
-          @current-change="changePage"
-          :current-page="page.curPage"
-          :page-size="listData.pageSize"
-          :total="listData.totalRecords">
+            background
+            layout="total, prev, pager, next, jumper"
+            @current-change="changePage"
+            :current-page="page.curPage"
+            :page-size="listData.pageSize"
+            :total="listData.totalRecords">
         </el-pagination>
       </div>
     </div>
@@ -206,6 +207,10 @@ export default {
     this.fetchData()
     this.getTypeDict()
     // console.log('this', this)
+  },
+  activated() {
+    this.fetchData()
+    this.getTypeDict()
   },
   methods: {
     fetchData() {
@@ -268,8 +273,6 @@ export default {
           type: 'success',
           message: '同步成功'
         })
-        // data[index].lastRecordTime = '1533878998639'
-        // data[index].articleNum = '45'
       }).catch(() => {
         this.$message({
           type: 'info',
