@@ -52,7 +52,7 @@
       </div>
       <div class="form-wrapper">
         <div class="table-top">
-          <el-button icon="el-icon-refresh" type="primary" @click="changeRefresh" class="refresh-button">手动更新</el-button>
+          <el-button icon="el-icon-refresh" type="primary" @click="syncHandle" class="refresh-button">手动更新</el-button>
           <p class="tips">最后收录时间：<span class="date">{{ infoData.lastRecordTime | formatDate('YYYY-MM-DD HH:mm') }}</span></p>
         </div>
         <div class="table-main">
@@ -125,10 +125,10 @@
             <el-table-column
               fixed="right"
               label="操作"
-              width="200">
+              width="120">
               <template slot-scope="scope">
                 <el-button type="text" @click="showDetail(scope.row.id)">详情</el-button>
-                <el-button type="text" @click="showEdit(scope.row.id)">二次编辑</el-button>
+                <!-- <el-button type="text" @click="showEdit(scope.row.id)">二次编辑</el-button> -->
                 <el-button type="text" @click="updateArticle(scope.$index,articleData.list, scope.row.id, scope.row.status)"> {{ scope.row.status === 1 ? '停用' : '启用' }} </el-button>
               </template>
             </el-table-column>
@@ -172,6 +172,8 @@ export default{
         id: ''
       },
       defaultDate: '',
+      typeDictList: [], // 编辑的时候获取状态 this.formatTypeId
+      wechatAccount: '', // 公从号
     }
   },
   computed: {
@@ -217,6 +219,7 @@ export default{
       }).then((res) => {
         this.status = res.data.status
         this.changeStatus = res.data.status
+        this.wechatAccount = res.data.wechatAccount
         const typeid = res.data.typeDictList
         if (typeid) {
           this.formatTypeId(typeid)
@@ -278,9 +281,21 @@ export default{
       this.page.curPage = curPage
       this.fetchData()
     },
-    changeRefresh() {
-      this.page.curPage = 1
-      this.fetchData()
+    syncHandle() {
+      // 同步公众号数据
+      this.$store.dispatch('syncPaccount', {
+        wechatAccount: this.wechatAccount
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '同步成功'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '同步失败，请稍后重试'
+        })
+      })
     },
     updateArticle(index, data, id, s) {
       const status = s === 1 ? 2 : 1

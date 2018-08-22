@@ -36,7 +36,7 @@
           ></el-cascader>
         </el-form-item>
         <el-form-item v-if="editInfo.wechatAccount">
-          <el-button type="primary" @click="onSubmit('editInfo')">立即添加</el-button>
+          <el-button type="primary" @click="onSubmit('editInfo')">立即编辑</el-button>
         </el-form-item>
       </el-form>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-else>
