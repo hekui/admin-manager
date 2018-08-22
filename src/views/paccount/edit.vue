@@ -3,7 +3,8 @@
     <div class="edit-paccount" v-if="id">
       <div class="gzh-top clearfix">
         <div class="pavatar">
-          <img :src="infoData.headImg" width="50" alt="">
+          <img v-if="infoData.headImg" :src="infoData.headImg" width="50" alt="公众号头像" >
+          <img v-else src="./../../../public/images/wchat-ddefault.jpg" width="50" alt="公众号头像">
           <p class="name">{{ infoData.name }}</p>
           <p class="en-name">{{ infoData.wechatAccount }}</p>
         </div>
@@ -51,7 +52,7 @@
       </div>
       <div class="form-wrapper">
         <div class="table-top">
-          <el-button icon="el-icon-refresh" type="primary" @click="changeRefresh" class="refresh-button">手动更新</el-button>
+          <el-button icon="el-icon-refresh" type="primary" @click="syncHandle" class="refresh-button">手动更新</el-button>
           <p class="tips">最后收录时间：<span class="date">{{ infoData.lastRecordTime | formatDate('YYYY-MM-DD HH:mm') }}</span></p>
         </div>
         <div class="table-main">
@@ -64,7 +65,8 @@
               type="index"
               label="序号"
               align="center"
-              width="60">
+              width="60"
+              :index="getIndex">
             </el-table-column>
             <el-table-column
               prop="title"
@@ -136,7 +138,7 @@
         <div class="pages clearfix">
           <el-pagination
             background
-            layout="prev, pager, next"
+            layout="total, prev, pager, next, jumper"
             @current-change="changePage"
             :current-page="page.curPage"
             :page-size="articleData.pageSize"
@@ -361,7 +363,7 @@ export default{
                 showClose: false,
                 confirmButtonText: '知道了'
               }).then(() => {
-                this.$router.replace({ path: '/paccount/list' })
+                this.closeSelectedTag()
               })
             }).catch(() => {
               this.loading = false
@@ -378,29 +380,30 @@ export default{
               typeId: this.form.typeId[this.form.typeId.length - 1]
             }
             this.loading = true
-            this.$store.dispatch('addPaccountInfo', Object.assign({}, this.form, params)).then(() => {
+            this.$store.dispatch('addPaccountInfo', Object.assign({}, this.form, params)).then((res) => {
               this.loading = false
-              this.$alert('<strong>添加成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
-                type: 'success',
-                dangerouslyUseHTMLString: true,
-                showClose: false,
-                confirmButtonText: '知道了'
-              }).then(() => {
-                this.$router.replace({ path: '/paccount/list' })
-              })
-            }).catch(() => {
-              this.loading = false
-              this.$alert('<strong>添加失败</strong><p>请稍后重试，或者联系技术解决</p>', {
-                type: 'error',
-                dangerouslyUseHTMLString: true,
-                showClose: false,
-                confirmButtonText: '知道了'
-              })
+              if (res.code !== 0) {
+                this.loading = false
+              } else {
+                this.$alert('<strong>添加成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
+                  type: 'success',
+                  dangerouslyUseHTMLString: true,
+                  showClose: false,
+                  confirmButtonText: '知道了'
+                }).then(() => {
+                  this.closeSelectedTag()
+                })
+              }
             })
           }
         } else {
           return false
         }
+      })
+    },
+    closeSelectedTag(view) {
+      this.$store.dispatch('delVisitedViews', this.$route).then((views) => {
+        this.$router.replace({ path: '/paccount/list' })
       })
     },
     changState() {
@@ -428,10 +431,6 @@ export default{
           this.status = this.changeStatus
         })
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '切换失败，请稍后重试'
-        })
         this.status = this.changeStatus
       })
     },
@@ -439,9 +438,12 @@ export default{
       this.page.curPage = curPage
       this.fetchData()
     },
-    changeRefresh() {
-      this.page.curPage = 1
-      this.fetchData()
+    // changeRefresh() { 刷新
+    //   this.page.curPage = 1
+    //   this.fetchData()
+    // },
+    getIndex(index) { // 获取序号
+      return (this.page.curPage - 1) * this.page.pageSize + index + 1
     },
     updateArticle(index, data, id, s) {
       const status = s === 1 ? 2 : 1
@@ -470,6 +472,22 @@ export default{
         this.$message({
           type: 'info',
           message: '切换失败，请稍后重试'
+        })
+      })
+    },
+    syncHandle(wechatAccount) {
+      // 同步公众号数据
+      this.$store.dispatch('syncPaccount', {
+        wechatAccount
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '同步成功'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '同步失败，请稍后重试'
         })
       })
     },
