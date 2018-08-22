@@ -9,7 +9,7 @@
       <section class="form-filter">
         <el-form :inline="true" :model="filter">
           <el-form-item label="广告名称：">
-            <el-input v-model="filter.name" placeholder="请输入名称orID" :clearable="true"></el-input>
+            <el-input v-model="filter.name" placeholder="请输入名称" :clearable="true"></el-input>
           </el-form-item>
           <el-form-item label="发布时间：">
             <el-date-picker
@@ -106,7 +106,7 @@
       </section>
     </div>
     <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
-      <el-form ref="form" :model="form" :rules="rules">
+      <el-form v-if="showDialog" ref="form" :model="form" :rules="rules">
         <el-form-item label="广告名称：" prop="name">
           <el-input v-model="form.name" placeholder="请输入名称" :clearable="true"></el-input>
         </el-form-item>
@@ -191,6 +191,7 @@ export default {
           { required: true, message: '请上传广告头图', trigger: ['change', 'blur'] }
         ],
         onlineTime: [{
+          required: true,
           validator: function(rule, value, callback) {
             if (!value || value.length === 0) {
               callback(new Error('请选择启用时间'))
@@ -421,46 +422,48 @@ export default {
       border-top: 1px solid #eee;
       border-bottom: 1px solid #eee;
     }
-    .el-input {
-      width: 400px;
-      font-size: 12px;
+    .el-form-item {
+      position: relative;
+      .el-form-item__label {
+        position: absolute;
+        width: 90px;
+        font-size: 12px;
+      }
+      .el-form-item__content {
+        padding-left: 90px;
+        .el-input, .el-date-editor {
+          width: 100%;
+          font-size: 12px;
+        }
+        .avatar-uploader .el-upload {
+          width: 100%;
+          border: 1px dashed #d9d9d9;
+          border-radius: 6px;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          &:hover {
+            border-color: #409EFF;
+          }
+          .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 100%;
+            height: 120px;
+            line-height: 120px;
+            text-align: center;
+          }
+          .avatar {
+            width: 100%;
+            height: 120px;
+            display: block;
+          }
+        }
+      }
     }
-    .el-form-item__label {
-      width: 90px;
-      font-size: 12px;
-    }
-    .el-form-item__error, .el-upload__tip, .el-upload-list {
+    .el-form-item__error {
       margin-left: 90px;
     }
-  }
-  .el-upload-list {
-    display: inline-block;
-    .el-upload-list__item-name {
-      display: none;
-    }
-  }
-  .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 400px;
-    height: 117px;
-    line-height: 117px;
-    text-align: center;
-  }
-  .avatar {
-    width: 400px;
-    height: 117px;
-    display: block;
   }
 }
 </style>

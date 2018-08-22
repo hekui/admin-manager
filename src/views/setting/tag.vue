@@ -39,7 +39,11 @@
             label="排序"
             width="80">
             <template slot-scope="scope">
-              <div class="sequenceNum">
+              <el-input v-model="scope.row.sequenceNum"
+              @blur="sequenceBlur($event, scope)"
+              @keyup.enter.native="sequenceConfirm($event, scope)"
+              @keyup.esc.native="sequenceCancel($event, scope)"></el-input>
+              <!-- <div class="sequenceNum">
                 <div :id="'editable_value_' + scope.$index"
                   class="editable_value visible"
                   @click="sequenceNumFocus($event, scope)">
@@ -52,7 +56,7 @@
                   @blur="sequenceNumBlur($event, scope)"
                   @keyup.enter="sequenceNumConfirm($event, scope)"
                   @keyup.esc="sequenceNumCancel($event, scope)" />
-              </div>
+              </div> -->
             </template>
           </el-table-column>
           <el-table-column
@@ -144,6 +148,7 @@ export default {
       showDialog: false,
       dialogType: '',
       beforeEditableValue: '',
+      originalSequence: [],
       filter: {
         name: '' // 标签名称
       },
@@ -192,8 +197,9 @@ export default {
     // 查询标签
     fetchData() {
       this.loading = true
-      this.$store.dispatch('getTagList', Object.assign({}, this.filter, this.page)).then(() => {
+      this.$store.dispatch('getTagList', Object.assign({}, this.filter, this.page)).then((res) => {
         this.loading = false
+        this.originalSequence = res.data.list.map(item => item.sequenceNum)
       }).catch(() => {
         this.loading = false
       })
@@ -219,24 +225,19 @@ export default {
       this.dialogType = 'add'
       this.showDialog = true
     },
-    // 获取焦点
-    sequenceNumFocus(event, scope) {
-      this.beforeEditableValue = scope.row.sequenceNum
-      const nextElement = document.getElementById('editable_copy_' + scope.$index)
-      event.target.className = 'editable_value'
-      nextElement.className = 'editable_copy visible'
-      nextElement.focus()
-    },
     // 失去焦点
-    sequenceNumBlur(event, scope) {
-      const prevElement = document.getElementById('editable_value_' + scope.$index)
-      event.target.className = 'editable_copy'
-      prevElement.className = 'editable_value visible'
+    sequenceBlur(event, scope) {
+      this.$store.commit('sequenceNum', { index: scope.$index, sequenceNum: this.originalSequence[scope.$index] })
+      this.$message({
+        type: 'info',
+        message: '已取消修改!'
+      })
     },
     // 回车确认修改排序
-    sequenceNumConfirm(event, scope) {
-      this.$store.dispatch('updateSequenceNum', { id: scope.row.id, index: scope.$index, sequenceNum: this.beforeEditableValue }).then((res) => {
-        this.sequenceNumBlur(event, scope)
+    sequenceConfirm(event, scope) {
+      this.$store.dispatch('updateSequenceNum', { id: scope.row.id, sequenceNum: scope.row.sequenceNum }).then((res) => {
+        event.target.blur()
+        this.fetchData()
         this.$message({
           type: 'success',
           message: '修改成功!'
@@ -244,13 +245,41 @@ export default {
       })
     },
     // ESC取消修改
-    sequenceNumCancel(event, scope) {
-      this.sequenceNumBlur(event, scope)
-      this.$message({
-        type: 'info',
-        message: '已取消修改!'
-      })
+    sequenceCancel(event, scope) {
+      event.target.blur()
     },
+    // // 获取焦点
+    // sequenceNumFocus(event, scope) {
+    //   this.beforeEditableValue = scope.row.sequenceNum
+    //   const nextElement = document.getElementById('editable_copy_' + scope.$index)
+    //   event.target.className = 'editable_value'
+    //   nextElement.className = 'editable_copy visible'
+    //   nextElement.focus()
+    // },
+    // // 失去焦点
+    // sequenceNumBlur(event, scope) {
+    //   const prevElement = document.getElementById('editable_value_' + scope.$index)
+    //   event.target.className = 'editable_copy'
+    //   prevElement.className = 'editable_value visible'
+    // },
+    // // 回车确认修改排序
+    // sequenceNumConfirm(event, scope) {
+    //   this.$store.dispatch('updateSequenceNum', { id: scope.row.id, index: scope.$index, sequenceNum: this.beforeEditableValue }).then((res) => {
+    //     this.sequenceNumBlur(event, scope)
+    //     this.$message({
+    //       type: 'success',
+    //       message: '修改成功!'
+    //     })
+    //   })
+    // },
+    // // ESC取消修改
+    // sequenceNumCancel(event, scope) {
+    //   this.sequenceNumBlur(event, scope)
+    //   this.$message({
+    //     type: 'info',
+    //     message: '已取消修改!'
+    //   })
+    // },
     handleStatus(data) {
       const tips = data.labelStatus === 0 ? '是否要锁定' : '是否要激活'
       this.$confirm(tips, '提示', {
@@ -424,13 +453,20 @@ input[type='number']{
       border-top: 1px solid #eee;
       border-bottom: 1px solid #eee;
     }
-    .el-input {
-      width: 380px;
-      font-size: 12px;
-    }
-    .el-form-item__label {
-      width: 110px;
-      font-size: 12px;
+    .el-form-item {
+      position: relative;
+      .el-form-item__label {
+        position: absolute;
+        width: 110px;
+        font-size: 12px;
+      }
+      .el-form-item__content {
+        padding-left: 110px;
+        .el-input, .el-cascader {
+          width: 100%;
+          font-size: 12px;
+        }
+      }
     }
     .el-form-item__error {
       margin-left: 110px;
