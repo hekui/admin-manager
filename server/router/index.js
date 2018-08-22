@@ -46,6 +46,9 @@ router.use('/account', passportRouter);
 // 其他
 router.all('*', function(req, res, next) {
   api.fetchJava(req, req.body).then(result => {
+    if(result.code === 1014){ // session过期，清除ticketId
+      req.session.ticketId = null
+    }
     res.json(result)
   }, result => {
     res.json({ code: result.code, msg: result.message || result.msg })
