@@ -81,7 +81,7 @@ export const asyncRouterMap = [
     }, {
       path: 'detail',
       hidden: true,
-      component: () => import('@/views/paccount/edit'),
+      component: () => import('@/views/paccount/detail'),
       name: 'paccountDetail',
       meta: {
         title: 'paccountDetail'
