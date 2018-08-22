@@ -181,10 +181,10 @@
     },
     created() {
       this.mapStatus = { 0: '待上线', 1: '上线', 2: '下线' }
-
+    },
+    activated() {
       this.fetchData()
     },
-
     methods: {
       reverseTopicStatus(status) {
         switch (status) {
@@ -227,7 +227,7 @@
           this.loading = false
           this.$message({
             type: 'error',
-            message: '更改失败，请稍后重试'
+            message: res.data.msg || '更改失败，请稍后重试'
           })
           scope.row.modified = false
         })
@@ -279,7 +279,7 @@
           this.loading = false
           this.$message({
             type: 'error',
-            message: '更改失败，请稍后重试'
+            message: res.data.msg || '更改失败，请稍后重试'
           })
         })
       },

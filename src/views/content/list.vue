@@ -116,15 +116,8 @@
           label="操作"
           width="100">
           <template slot-scope="scope">
-            <div>
               <el-button @click="handleDetail(scope.row)" type="text" size="small">详情</el-button>
-            </div>
-            <div>
-              <el-button @click="handleEdit(scope.row)" type="text" size="small">二次编辑</el-button>
-            </div>
-            <div>
               <el-button v-if="scope.row.status === 1 || scope.row.status === 2" style="color: red;" @click="handleStatus(scope.row)" type="text" size="small">{{scope.row.status === 1 ? '锁定' : scope.row.status === 2 ? '启用' : '' }}</el-button>
-            </div>
           </template>
         </el-table-column>
       </el-table>

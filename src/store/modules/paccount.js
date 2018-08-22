@@ -37,7 +37,9 @@ export default {
       2: '同步完成',
       3: '同步失败',
       4: '数据未收录'
-    }
+    },
+    editId: '',
+    detailId: '',
   },
   mutations: {
     paccountSet(state, data) {
