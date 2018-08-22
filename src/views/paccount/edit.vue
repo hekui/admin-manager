@@ -91,17 +91,6 @@ export default{
       status: '',
       changeStatus: '',
       loading: false,
-      page: {
-        curPage: 1,
-        pageSize: 20
-      },
-      filter: {
-        typeId: [],
-        title: '',
-        endDate: '',
-        beginDate: '',
-        id: ''
-      },
       defaultDate: '',
       form: {
         wechatAccount: '',
@@ -165,29 +154,26 @@ export default{
         code: 1
       })
       // 查询公众号基本信息
-      this.$store.dispatch('getPaccountInfo', {
-        id: this.id
-      }).then((res) => {
-        this.status = res.data.status
-        this.changeStatus = res.data.status
-        const typeid = res.data.typeDictList
-        if (typeid) {
-          this.formatTypeId(typeid)
-        }
-        this.editInfo = {
-          id: res.data.id,
-          wechatAccount: res.data.wechatAccount,
-          wechatStatus: res.data.wechatStatus,
-          classify: '' + res.data.classify,
-          typeId: this.typeDictList,
-          status: res.data.status
-        }
-      })
-    },
-    releaseTimeChange(value) {
-      const date = value || ['', '']
-      this.filter.beginDate = date[0]
-      this.filter.endDate = date[1]
+      if (this.id) {
+        this.$store.dispatch('getPaccountInfo', {
+          id: this.id
+        }).then((res) => {
+          this.status = res.data.status
+          this.changeStatus = res.data.status
+          const typeid = res.data.typeDictList
+          if (typeid) {
+            this.formatTypeId(typeid)
+          }
+          this.editInfo = {
+            id: res.data.id,
+            wechatAccount: res.data.wechatAccount,
+            wechatStatus: res.data.wechatStatus,
+            classify: '' + res.data.classify,
+            typeId: this.typeDictList,
+            status: res.data.status
+          }
+        })
+      }
     },
     submitFilter() {
       this.page.curPage = 1
@@ -245,78 +231,17 @@ export default{
         }
       })
     },
+    closeSelectedTag(view) {
+      this.$store.dispatch('delVisitedViews', this.$route).then((views) => {
+        this.$router.replace({ path: '/paccount/list' })
+      })
+    },
     changePage(curPage) {
       this.page.curPage = curPage
       this.fetchData()
     },
-    // changeRefresh() { 刷新
-    //   this.page.curPage = 1
-    //   this.fetchData()
-    // },
     getIndex(index) { // 获取序号
       return (this.page.curPage - 1) * this.page.pageSize + index + 1
-    },
-    updateArticle(index, data, id, s) {
-      const status = s === 1 ? 2 : 1
-      const params = {
-        id,
-        status
-      }
-      this.$confirm('你确定切换状态吗？', '提示', {
-        type: 'warning',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      }).then(() => {
-        this.$store.dispatch('updateArticleStatus', params).then(() => {
-          this.$message({
-            type: 'success',
-            message: '成功切换'
-          })
-          data[index].status = status
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '切换失败，请稍后重试'
-          })
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '切换失败，请稍后重试'
-        })
-      })
-    },
-    syncHandle(wechatAccount) {
-      // 同步公众号数据
-      this.$store.dispatch('syncPaccount', {
-        wechatAccount
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '同步成功'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '同步失败，请稍后重试'
-        })
-      })
-    },
-    showDetail(id) {
-      this.$router.push({
-        path: '/content/detail',
-        query: {
-          id
-        }
-      })
-    },
-    showEdit(id) {
-      this.$router.push({
-        path: '/content/edit',
-        query: {
-          id
-        }
-      })
     },
     formatTypeId(data) {
       data.map((item) => {
