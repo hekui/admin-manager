@@ -9,7 +9,7 @@
       <section class="form-filter">
         <el-form :inline="true" :model="filter">
           <el-form-item label="广告名称：">
-            <el-input v-model="filter.name" placeholder="请输入名称orID" :clearable="true"></el-input>
+            <el-input v-model="filter.name" placeholder="请输入名称" :clearable="true"></el-input>
           </el-form-item>
           <el-form-item label="发布时间：">
             <el-date-picker
@@ -85,10 +85,10 @@
             width="80">
             <template slot-scope="scope">
               <div>
-                <el-button v-if="scope.row.adStatus === 1" @click="handleOffline(scope.row)" type="text" size="small">下线</el-button>
+                <el-button v-if="scope.row.advertStatus === 1" @click="handleOffline(scope.row)" type="text" size="small">下线</el-button>
               </div>
               <div>
-                <el-button v-if="scope.row.adStatus !== 2" @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
+                <el-button v-if="scope.row.advertStatus !== 2" @click="handleEdit(scope.row)" type="text" size="small">编辑</el-button>
               </div>
             </template>
           </el-table-column>
@@ -97,18 +97,16 @@
       <section class="pagination">
         <el-pagination
           background
-          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="page.pageNo"
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size="page.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
+          :current-page="page.curPage"
+          :page-size="listData.pageSize"
+          layout="total, prev, pager, next, jumper"
           :total="listData.totalRecords">
         </el-pagination>
       </section>
     </div>
     <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
-      <el-form ref="form" :model="form" :rules="rules">
+      <el-form v-if="showDialog" ref="form" :model="form" :rules="rules">
         <el-form-item label="广告名称：" prop="name">
           <el-input v-model="form.name" placeholder="请输入名称" :clearable="true"></el-input>
         </el-form-item>
@@ -142,7 +140,8 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item class="link" label="链接：">
-          <el-input v-model="form.destinationUrl" placeholder="URL" :clearable="true"></el-input>
+          <el-input v-model="form.destinationUrl" placeholder="" :clearable="true"></el-input>
+          <div class="el-upload__tip">链接示例：/pages/detail/detail?id=[文章id]</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -171,8 +170,7 @@ export default {
       },
       releaseTime: [],
       page: {
-        pageNo: 1,
-        pageSize: 10
+        curPage: 1
       },
       pickerOptions,
       uploadSuccess: false,
@@ -193,6 +191,7 @@ export default {
           { required: true, message: '请上传广告头图', trigger: ['change', 'blur'] }
         ],
         onlineTime: [{
+          required: true,
           validator: function(rule, value, callback) {
             if (!value || value.length === 0) {
               callback(new Error('请选择启用时间'))
@@ -227,20 +226,15 @@ export default {
     },
     // 获取序号
     getIndex(index) {
-      return (this.page.pageNo - 1) * this.page.pageSize + index + 1
+      return (this.page.curPage - 1) * this.listData.pageSize + index + 1
     },
     // 格式化时间
     releaseTimeFilter(time) {
       return parseTime(Number(time))
     },
-    // 改变每页条数
-    handleSizeChange(val) {
-      this.page.pageSize = val
-      this.fetchData()
-    },
     // 改变当前页
     handleCurrentChange(val) {
-      this.page.pageNo = val
+      this.page.curPage = val
       this.fetchData()
     },
     // 发布时间改变触发
@@ -257,7 +251,7 @@ export default {
     },
     // 条件查询
     submitFilter() {
-      this.page.pageNo = 1
+      this.page.curPage = 1
       this.fetchData()
     },
     // 下线
@@ -268,7 +262,10 @@ export default {
         type: 'warning'
       }).then(() => {
         this.loading = true
-        this.$store.dispatch('updateAdvertStatus', data).then(() => {
+        this.$store.dispatch('updateAdvertStatus', {
+          id: data.id,
+          advertStatus: 2
+        }).then(() => {
           this.loading = false
           this.$message({
             type: 'success',
@@ -425,46 +422,48 @@ export default {
       border-top: 1px solid #eee;
       border-bottom: 1px solid #eee;
     }
-    .el-input {
-      width: 400px;
-      font-size: 12px;
+    .el-form-item {
+      position: relative;
+      .el-form-item__label {
+        position: absolute;
+        width: 90px;
+        font-size: 12px;
+      }
+      .el-form-item__content {
+        padding-left: 90px;
+        .el-input, .el-date-editor {
+          width: 100%;
+          font-size: 12px;
+        }
+        .avatar-uploader .el-upload {
+          width: 100%;
+          border: 1px dashed #d9d9d9;
+          border-radius: 6px;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          &:hover {
+            border-color: #409EFF;
+          }
+          .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 100%;
+            height: 120px;
+            line-height: 120px;
+            text-align: center;
+          }
+          .avatar {
+            width: 100%;
+            height: 120px;
+            display: block;
+          }
+        }
+      }
     }
-    .el-form-item__label {
-      width: 90px;
-      font-size: 12px;
-    }
-    .el-form-item__error, .el-upload__tip, .el-upload-list {
+    .el-form-item__error {
       margin-left: 90px;
     }
-  }
-  .el-upload-list {
-    display: inline-block;
-    .el-upload-list__item-name {
-      display: none;
-    }
-  }
-  .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-  .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
-  }
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 400px;
-    height: 117px;
-    line-height: 117px;
-    text-align: center;
-  }
-  .avatar {
-    width: 400px;
-    height: 117px;
-    display: block;
   }
 }
 </style>

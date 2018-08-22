@@ -26,14 +26,14 @@ export default {
      */
     getUserList({ commit }, params) {
       // 获取用户列表代码
-      return api.post('/wechatuser/list?page=true', params).then(res => {
+      return api.post('/wechatuser/list', params).then(res => {
         commit('userSet', {
           target: 'listData',
           data: res.data
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     }
   }

@@ -35,9 +35,11 @@
           border
           style="width: 100%">
           <el-table-column
-            prop="id"
             label="序号"
             width="100">
+            <template slot-scope="scope">
+              <span>{{scope.$index + (page.curPage - 1) * page.pageSize + 1 }}</span>
+            </template>
           </el-table-column>
           <el-table-column
             prop="name"
@@ -105,7 +107,7 @@
       <div class="pages" v-if="listData.pageSize < listData.totalRecords">
         <el-pagination
           background
-          layout="prev, pager, next"
+          layout="total, prev, pager, next, jumper"
           @current-change="changePage"
           :current-page="page.curPage"
           :page-size="listData.pageSize"
@@ -179,10 +181,10 @@
     },
     created() {
       this.mapStatus = { 0: '待上线', 1: '上线', 2: '下线' }
-
+    },
+    activated() {
       this.fetchData()
     },
-
     methods: {
       reverseTopicStatus(status) {
         switch (status) {
@@ -225,7 +227,7 @@
           this.loading = false
           this.$message({
             type: 'error',
-            message: '更改失败，请稍后重试'
+            message: res.data.msg || '更改失败，请稍后重试'
           })
           scope.row.modified = false
         })
@@ -277,7 +279,7 @@
           this.loading = false
           this.$message({
             type: 'error',
-            message: '更改失败，请稍后重试'
+            message: res.data.msg || '更改失败，请稍后重试'
           })
         })
       },

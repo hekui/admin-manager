@@ -1,154 +1,7 @@
 <template>
   <div class="app-container paccount-edit-page">
-    <div class="edit-paccount" v-if="id">
-      <div class="gzh-top clearfix">
-        <div class="pavatar">
-          <img v-if="infoData.headImg" :src="infoData.headImg" width="50" alt="公众号头像" >
-          <img v-else src="./../../../public/images/wchat-ddefault.jpg" width="50" alt="公众号头像">
-          <p class="name">{{ infoData.name }}</p>
-          <p class="en-name">{{ infoData.wechatAccount }}</p>
-        </div>
-        <div class="status-choice">
-          <span class="text">状态：</span>
-          <el-radio-group v-model="status">
-            <el-radio :label="1" @change="changState">启用</el-radio>
-            <el-radio :label="2" @change="changState">禁用</el-radio>
-          </el-radio-group>
-        </div>
-      </div>
-      <div class="form-filter">
-        <el-form ref="filter" :inline="true" :model="filter">
-          <el-form-item label="文章标题">
-            <el-input v-model="filter.title" :clearable="true" placeholder="请输入名称"></el-input>
-          </el-form-item>
-          <el-form-item label="类型">
-            <el-cascader
-              v-model="filter.typeId"
-              :options="paccountTypeDict"
-              :clearable="true"
-              change-on-select
-            ></el-cascader>
-          </el-form-item>
-          <el-form-item label="添加时间">
-            <el-date-picker
-              v-model="defaultDate"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :clearable="true"
-              value-format="yyyy-MM-dd HH:mm"
-              :picker-options="pickerOptions"
-              @change="releaseTimeChange"
-            >
-            </el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" plain @click="submitFilter">查询</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="form-wrapper">
-        <div class="table-top">
-          <el-button icon="el-icon-refresh" type="primary" @click="syncHandle" class="refresh-button">手动更新</el-button>
-          <p class="tips">最后收录时间：<span class="date">{{ infoData.lastRecordTime | formatDate('YYYY-MM-DD HH:mm') }}</span></p>
-        </div>
-        <div class="table-main">
-          <el-table v-if="articleData.list"
-            :data="articleData.list"
-            v-loading="loading"
-            border
-            style="width: 100%">
-            <el-table-column
-              type="index"
-              label="序号"
-              align="center"
-              width="60"
-              :index="getIndex">
-            </el-table-column>
-            <el-table-column
-              prop="title"
-              label="文章标题"
-              min-width="300">
-            </el-table-column>
-            <el-table-column
-              prop="city"
-              label="所在城市"
-              width="80">
-            </el-table-column>
-            <el-table-column
-              prop="status"
-              label="状态"
-              width="60">
-              <template slot-scope="scope">
-                {{ detailsStatus[scope.row.status]  }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="releaseTime"
-              label="发布时间"
-              width="140">
-              <template slot-scope="scope">
-                {{ scope.row.releaseTime | formatDate('YYYY-MM-DD HH:mm')  }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="typeName"
-              label="类型"
-              width="120">
-              <template slot-scope="scope">
-                {{ scope.row.typeName || "-"}} 
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="readNum"
-              label="阅读量"
-              width="80">
-              <template slot-scope="scope">
-                {{ scope.row.readNum || "-"}} 
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="likeNum"
-              label="点赞量"
-              width="80">
-                <template slot-scope="scope">
-                {{ scope.row.likeNum || "-"}} 
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="wordsNum"
-              label="字数"
-              width="80">
-            </el-table-column>
-            <el-table-column
-              fixed="right"
-              label="操作"
-              width="200">
-              <template slot-scope="scope">
-                <el-button type="text" @click="showDetail(scope.row.id)">详情</el-button>
-                <el-button type="text" @click="showEdit(scope.row.id)">二次编辑</el-button>
-                <el-button type="text" @click="updateArticle(scope.$index,articleData.list, scope.row.id, scope.row.status)"> {{ scope.row.status === 1 ? '停用' : '启用' }} </el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-        <div class="pages clearfix">
-          <el-pagination
-            background
-            layout="total, prev, pager, next, jumper"
-            @current-change="changePage"
-            :current-page="page.curPage"
-            :page-size="articleData.pageSize"
-            :total="articleData.totalRecords">
-          </el-pagination>
-        </div>
-      </div>
-    </div>
-    <div class="add-paccount" v-else>
-      <el-form ref="editInfo" :model="editInfo" :rules="rules" label-width="80px" v-if="wxid" >
+    <div class="add-paccount">
+      <el-form ref="editInfo" :model="editInfo" :rules="rules" label-width="80px" v-if="id" >
         <el-form-item label="微信号" prop="wechatAccount">
           <el-input v-model="editInfo.wechatAccount" :disabled="true"></el-input>
         </el-form-item>
@@ -235,7 +88,6 @@ export default{
   data() {
     return {
       id: '',
-      wxid: '',
       status: '',
       changeStatus: '',
       loading: false,
@@ -280,6 +132,7 @@ export default{
   computed: {
     ...mapGetters(['paccountTypeDict', 'pclassifyTypeDict']),
     ...mapState({
+      editId: state => state.paccount.editId,
       cityId: state => state.cityId,
       pclassify: state => state.pclassify,
       options: state => state.paccountTypeDict,
@@ -290,11 +143,18 @@ export default{
     })
   },
   created() {
-    this.id = this.$route.query.id
-    this.wxid = this.$route.query.wxid
+    console.log('created')
+    // this.id = this.$route.query.id
+    // this.wxid = this.$route.query.wxid
+    if (this.$route.query.id) {
+      this.id = this.$route.query.id
+    }
     this.fetchDict()
-    if (this.id) { // 查看和编辑分开接口调用
-      this.fetchData()
+  },
+  watch: {
+    editId: function(newVal) {
+      this.id = newVal
+      this.fetchDict()
     }
   },
   methods: {
@@ -305,45 +165,29 @@ export default{
         code: 1
       })
       // 查询公众号基本信息
-      if (this.id || this.wxid) {
-        this.$store.dispatch('getPaccountInfo', {
-          id: this.id ? this.id : this.wxid
-        }).then((res) => {
-          this.status = res.data.status
-          this.changeStatus = res.data.status
-          const typeid = res.data.typeDictList
-          if (typeid) {
-            this.formatTypeId(typeid)
-          }
-          this.editInfo = {
-            id: res.data.id,
-            wechatAccount: res.data.wechatAccount,
-            wechatStatus: res.data.wechatStatus,
-            classify: '' + res.data.classify,
-            typeId: this.typeDictList,
-            status: res.data.status
-          }
-        })
-      }
+      this.$store.dispatch('getPaccountInfo', {
+        id: this.id
+      }).then((res) => {
+        this.status = res.data.status
+        this.changeStatus = res.data.status
+        const typeid = res.data.typeDictList
+        if (typeid) {
+          this.formatTypeId(typeid)
+        }
+        this.editInfo = {
+          id: res.data.id,
+          wechatAccount: res.data.wechatAccount,
+          wechatStatus: res.data.wechatStatus,
+          classify: '' + res.data.classify,
+          typeId: this.typeDictList,
+          status: res.data.status
+        }
+      })
     },
     releaseTimeChange(value) {
       const date = value || ['', '']
       this.filter.beginDate = date[0]
       this.filter.endDate = date[1]
-    },
-    fetchData() {
-      // 公众号详情-分页
-      const params = {
-        id: this.id,
-        typeId: this.filter.typeId ? this.filter.typeId.pop() : ''
-      }
-      console.log('this.filter', this.filter)
-      this.loading = true
-      this.$store.dispatch('getArticleList', Object.assign({}, this.filter, params, this.page)).then(() => {
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
-      })
     },
     submitFilter() {
       this.page.curPage = 1
@@ -352,7 +196,7 @@ export default{
     onSubmit(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.wxid) {
+          if (this.id) {
             const params = { typeId: this.editInfo.typeId[this.editInfo.typeId.length - 1] }
             this.loading = true
             this.$store.dispatch('editPaccountInfo', Object.assign({}, this.editInfo, params)).then(() => {
@@ -399,39 +243,6 @@ export default{
         } else {
           return false
         }
-      })
-    },
-    closeSelectedTag(view) {
-      this.$store.dispatch('delVisitedViews', this.$route).then((views) => {
-        this.$router.replace({ path: '/paccount/list' })
-      })
-    },
-    changState() {
-      const type = this.status
-      const params = {
-        id: this.id,
-        status: type
-      }
-      this.$confirm('你确定切换状态吗？', '提示', {
-        type: 'warning',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      }).then(() => {
-        this.$store.dispatch('updatestatusStateInfo', params).then(() => {
-          this.$message({
-            type: 'success',
-            message: '成功切换'
-          })
-          this.changeStatus = type
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '切换失败，请稍后重试'
-          })
-          this.status = this.changeStatus
-        })
-      }).catch(() => {
-        this.status = this.changeStatus
       })
     },
     changePage(curPage) {

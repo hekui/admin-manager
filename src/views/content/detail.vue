@@ -38,9 +38,11 @@
     </div>
     <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
       <template v-if="dialogType==='lonlat'">
-        <div class="origin">数据来源：高德地图</div>
-        <div class="map">
-          <el-input v-model="binding.lonlat" placeholder="请输入经纬度" :clearable="true"></el-input>
+        <div class="lonlat">
+          <div class="origin">数据来源：高德地图</div>
+          <div class="map">
+            <el-input v-model="binding.lonlat" placeholder="请输入经纬度" :clearable="true"></el-input>
+          </div>
         </div>
       </template>
       <template v-if="dialogType==='articleType'">
@@ -342,7 +344,7 @@ export default {
 <style rel="stylesheet/scss" lang="scss">
 .detail-container {
   .el-dialog {
-    width: 400px;
+    width: 500px;
     border-radius: 5px;
     .el-dialog__title {
       font-size: 14px;
@@ -350,21 +352,44 @@ export default {
     .el-dialog__body {
       border-top: 1px solid #eee;
       border-bottom: 1px solid #eee;
-      .origin {
-        margin-bottom: 20px;
-      }
-      .map {
-        .el-input {
-          width: 100%;
+      .lonlat {
+        .origin {
+          margin-bottom: 20px;
+        }
+        .map {
+          .el-input {
+            width: 100%;
+          }
         }
       }
-    }
-    .el-input {
-      width: 250px;
-      font-size: 12px;
-    }
-    .el-form-item__label {
-      font-size: 12px;
+      .el-form-item {
+        width: 100%;
+        position: relative;
+        .el-form-item__label {
+          position: absolute;
+          width: 50px;
+          font-size: 12px;
+        }
+        .el-form-item__content {
+          width: 100%;
+          padding-left: 50px;
+          .el-cascader {
+            width: 100%;
+            font-size: 12px;
+          }
+        }
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        .el-button {
+          margin: 0 10px 10px 0;
+          max-width: 100%;
+          min-width: 30%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
     }
   }
 }

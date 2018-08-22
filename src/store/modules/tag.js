@@ -65,13 +65,8 @@ export default {
       })
     },
     // 修改排序
-    updateSequenceNum({ commit }, data) {
-      const params = {
-        id: data.id,
-        sequenceNum: data.sequenceNum
-      }
+    updateSequenceNum({ commit }, params) {
       return api.post('/label/updatelabel', params).then(res => {
-        commit('sequenceNum', { index: data.index, sequenceNum: data.sequenceNum })
         return res
       }, res => {
         return Promise.reject(res)

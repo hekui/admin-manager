@@ -116,15 +116,8 @@
           label="操作"
           width="100">
           <template slot-scope="scope">
-            <div>
               <el-button @click="handleDetail(scope.row)" type="text" size="small">详情</el-button>
-            </div>
-            <div>
-              <el-button @click="handleEdit(scope.row)" type="text" size="small">二次编辑</el-button>
-            </div>
-            <div>
               <el-button v-if="scope.row.status === 1 || scope.row.status === 2" style="color: red;" @click="handleStatus(scope.row)" type="text" size="small">{{scope.row.status === 1 ? '锁定' : scope.row.status === 2 ? '启用' : '' }}</el-button>
-            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -132,12 +125,10 @@
     <section class="pagination">
       <el-pagination
         background
-        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="page.pageNo"
-        :page-sizes="[10, 20, 30, 50]"
-        :page-size="page.pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
+        :current-page="page.curPage"
+        :page-size="listData.pageSize"
+        layout="total, prev, pager, next, jumper"
         :total="listData.totalRecords">
       </el-pagination>
     </section>
@@ -164,8 +155,7 @@ export default {
       releaseTime: [],
       pickerOptions,
       page: {
-        pageNo: 1,
-        pageSize: 20
+        curPage: 1
       }
     }
   },
@@ -213,21 +203,16 @@ export default {
     },
     // 获取序号
     getIndex(index) {
-      return (this.page.pageNo - 1) * this.page.pageSize + index + 1
-    },
-    // 改变每页条数
-    handleSizeChange(val) {
-      this.page.pageSize = val
-      this.fetchData()
+      return (this.page.curPage - 1) * this.listData.pageSize + index + 1
     },
     // 改变当前页
     handleCurrentChange(val) {
-      this.page.pageNo = val
+      this.page.curPage = val
       this.fetchData()
     },
     // 条件查询
     submitFilter() {
-      this.page.pageNo = 1
+      this.page.curPage = 1
       this.fetchData()
     },
     // 查看详情

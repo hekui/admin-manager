@@ -39,7 +39,11 @@
             label="排序"
             width="80">
             <template slot-scope="scope">
-              <div class="sequenceNum">
+              <el-input v-model="scope.row.sequenceNum"
+              @blur="sequenceBlur($event, scope)"
+              @keyup.enter.native="sequenceConfirm($event, scope)"
+              @keyup.esc.native="sequenceCancel($event, scope)"></el-input>
+              <!-- <div class="sequenceNum">
                 <div :id="'editable_value_' + scope.$index"
                   class="editable_value visible"
                   @click="sequenceNumFocus($event, scope)">
@@ -52,7 +56,7 @@
                   @blur="sequenceNumBlur($event, scope)"
                   @keyup.enter="sequenceNumConfirm($event, scope)"
                   @keyup.esc="sequenceNumCancel($event, scope)" />
-              </div>
+              </div> -->
             </template>
           </el-table-column>
           <el-table-column
@@ -89,18 +93,16 @@
       <section class="pagination">
         <el-pagination
           background
-          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="page.curPage"
-          :page-sizes="[10, 20, 30, 50]"
-          :page-size="page.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
+          :page-size="listData.pageSize"
+          layout="total, prev, pager, next, jumper"
           :total="listData.totalRecords">
         </el-pagination>
       </section>
     </div>
     <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
-      <el-form v-loading="dialogLoading" ref="form" :model="form" :rules="rules">
+      <el-form v-if="showDialog" v-loading="dialogLoading" ref="form" :model="form" :rules="rules">
         <el-form-item label="标签名称：" prop="name">
           <el-input v-model="form.name" placeholder="请输入名称" :clearable="true"></el-input>
         </el-form-item>
@@ -146,12 +148,12 @@ export default {
       showDialog: false,
       dialogType: '',
       beforeEditableValue: '',
+      originalSequence: [],
       filter: {
         name: '' // 标签名称
       },
       page: {
-        curPage: 1,
-        pageSize: 20
+        curPage: 1
       },
       form: {
         id: '',
@@ -195,21 +197,16 @@ export default {
     // 查询标签
     fetchData() {
       this.loading = true
-      this.$store.dispatch('getTagList', Object.assign({}, this.filter, this.page)).then(() => {
+      this.$store.dispatch('getTagList', Object.assign({}, this.filter, this.page)).then((res) => {
         this.loading = false
+        this.originalSequence = res.data.list.map(item => item.sequenceNum)
       }).catch(() => {
         this.loading = false
       })
     },
     // 获取序号
     getIndex(index) {
-      return (this.page.curPage - 1) * this.page.pageSize + index + 1
-    },
-    // 改变每页条数
-    handleSizeChange(val) {
-      this.page.curPage = 1
-      this.page.pageSize = val
-      this.fetchData()
+      return (this.page.curPage - 1) * this.listData.pageSize + index + 1
     },
     // 改变当前页
     handleCurrentChange(val) {
@@ -228,28 +225,19 @@ export default {
       this.dialogType = 'add'
       this.showDialog = true
     },
-    // 获取焦点
-    sequenceNumFocus(event, scope) {
-      this.beforeEditableValue = scope.row.sequenceNum
-      const nextElement = document.getElementById('editable_copy_' + scope.$index)
-      event.target.className = 'editable_value'
-      nextElement.className = 'editable_copy visible'
-      nextElement.focus()
-    },
     // 失去焦点
-    sequenceNumBlur(event, scope) {
-      const prevElement = document.getElementById('editable_value_' + scope.$index)
-      event.target.className = 'editable_copy'
-      prevElement.className = 'editable_value visible'
+    sequenceBlur(event, scope) {
+      this.$store.commit('sequenceNum', { index: scope.$index, sequenceNum: this.originalSequence[scope.$index] })
       this.$message({
         type: 'info',
         message: '已取消修改!'
       })
     },
     // 回车确认修改排序
-    sequenceNumConfirm(event, scope) {
-      this.$store.dispatch('updateSequenceNum', { id: scope.row.id, index: scope.$index, sequenceNum: this.beforeEditableValue }).then((res) => {
-        this.sequenceNumBlur(event, scope)
+    sequenceConfirm(event, scope) {
+      this.$store.dispatch('updateSequenceNum', { id: scope.row.id, sequenceNum: scope.row.sequenceNum }).then((res) => {
+        event.target.blur()
+        this.fetchData()
         this.$message({
           type: 'success',
           message: '修改成功!'
@@ -257,24 +245,68 @@ export default {
       })
     },
     // ESC取消修改
-    sequenceNumCancel(event, scope) {
-      this.sequenceNumBlur(event, scope)
+    sequenceCancel(event, scope) {
+      event.target.blur()
     },
+    // // 获取焦点
+    // sequenceNumFocus(event, scope) {
+    //   this.beforeEditableValue = scope.row.sequenceNum
+    //   const nextElement = document.getElementById('editable_copy_' + scope.$index)
+    //   event.target.className = 'editable_value'
+    //   nextElement.className = 'editable_copy visible'
+    //   nextElement.focus()
+    // },
+    // // 失去焦点
+    // sequenceNumBlur(event, scope) {
+    //   const prevElement = document.getElementById('editable_value_' + scope.$index)
+    //   event.target.className = 'editable_copy'
+    //   prevElement.className = 'editable_value visible'
+    // },
+    // // 回车确认修改排序
+    // sequenceNumConfirm(event, scope) {
+    //   this.$store.dispatch('updateSequenceNum', { id: scope.row.id, index: scope.$index, sequenceNum: this.beforeEditableValue }).then((res) => {
+    //     this.sequenceNumBlur(event, scope)
+    //     this.$message({
+    //       type: 'success',
+    //       message: '修改成功!'
+    //     })
+    //   })
+    // },
+    // // ESC取消修改
+    // sequenceNumCancel(event, scope) {
+    //   this.sequenceNumBlur(event, scope)
+    //   this.$message({
+    //     type: 'info',
+    //     message: '已取消修改!'
+    //   })
+    // },
     handleStatus(data) {
-      const param = Object.assign({}, {
-        id: data.id,
-        labelStatus: data.labelStatus === 0 ? 1 : 0,
-      })
-      this.loading = true
-      this.$store.dispatch('changeTagStatus', param).then((res) => {
-        this.loading = false
-        this.$message({
-          type: 'success',
-          message: '操作成功!'
+      const tips = data.labelStatus === 0 ? '是否要锁定' : '是否要激活'
+      this.$confirm(tips, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const param = Object.assign({}, {
+          id: data.id,
+          labelStatus: data.labelStatus === 0 ? 1 : 0,
         })
-        this.fetchData()
+        this.loading = true
+        this.$store.dispatch('changeTagStatus', param).then((res) => {
+          this.loading = false
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+          this.fetchData()
+        }).catch(() => {
+          this.loading = false
+        })
       }).catch(() => {
-        this.loading = false
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
       })
     },
     // 编辑标签
@@ -369,6 +401,7 @@ input[type='number']{
     .sequenceNum {
       padding: 1px;
       .editable_value {
+        cursor: text;
         display: none;
         border: 1px solid #dcdfe6;
       }
@@ -379,6 +412,8 @@ input[type='number']{
         line-height: 23px;
         border: 1px solid #409eff;
         outline: none;
+        color: #606266;
+        font-family: Microsoft YaHei, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Arial, sans-serif;
       }
       .visible {
         display: block;
@@ -418,13 +453,20 @@ input[type='number']{
       border-top: 1px solid #eee;
       border-bottom: 1px solid #eee;
     }
-    .el-input {
-      width: 380px;
-      font-size: 12px;
-    }
-    .el-form-item__label {
-      width: 110px;
-      font-size: 12px;
+    .el-form-item {
+      position: relative;
+      .el-form-item__label {
+        position: absolute;
+        width: 110px;
+        font-size: 12px;
+      }
+      .el-form-item__content {
+        padding-left: 110px;
+        .el-input, .el-cascader {
+          width: 100%;
+          font-size: 12px;
+        }
+      }
     }
     .el-form-item__error {
       margin-left: 110px;

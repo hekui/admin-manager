@@ -246,12 +246,16 @@ export default {
       this.page.curPage = curPage
       this.fetchData()
     },
-    addHandle(wxid) {
-      if (wxid) {
+    addHandle(id) {
+      this.$store.commit('paccountSet', {
+        target: 'editId',
+        data: id
+      })
+      if (id) {
         this.$router.push({
           path: '/paccount/edit',
           query: {
-            wxid
+            id
           }
         })
       } else {
@@ -277,6 +281,10 @@ export default {
       })
     },
     showDetail(id) {
+      this.$store.commit('paccountSet', {
+        target: 'detailId',
+        data: id
+      })
       this.$router.push({
         path: '/paccount/detail',
         query: {

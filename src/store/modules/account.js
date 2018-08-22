@@ -26,31 +26,30 @@ const user = {
     // 用户名登录
     login({ commit }, params) {
       return api.post('/account/login', params).then(res => {
-        // commit('accountSet', {
-        //   target: 'account',
-        //   data: {
-        //     roles: res.data.roles || [],
-        //     token: res.data.ticketId,
-        //     name: res.data.account
-        //   }
-        // })
         setToken(res.data.ticketId)
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
 
     // 获取用户信息
     GetUserInfo({ commit }) {
       return api.post('/sysuser/userdata').then(res => {
+        res.data.roles = res.data.roles || ['admin'] // 角色配置后删除此行
         commit('accountSet', {
           target: 'account',
-          data: res.data
+          data: {
+            roles: res.data.roles || [],
+            token: res.data.ticketId || '',
+            introduction: res.data.introduction || '',
+            avatar: res.data.avatar || '',
+            name: res.data.account || ''
+          }
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
 
@@ -64,7 +63,7 @@ const user = {
         removeToken()
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     }
   }
