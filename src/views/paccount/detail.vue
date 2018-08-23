@@ -12,7 +12,7 @@
           <span class="text">状态：</span>
           <el-radio-group v-model="status">
             <el-radio :label="1" @change="changState">启用</el-radio>
-            <el-radio :label="2" @change="changState">禁用</el-radio>
+            <el-radio :label="2" @change="changState">停用</el-radio>
           </el-radio-group>
         </div>
       </div>
