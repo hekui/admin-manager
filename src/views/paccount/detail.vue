@@ -21,7 +21,7 @@
           <el-form-item label="文章标题">
             <el-input v-model="filter.title" :clearable="true" placeholder="请输入名称"></el-input>
           </el-form-item>
-          <el-form-item label="类型">
+          <el-form-item label="文章类型">
             <el-cascader
               v-model="filter.typeId"
               :options="paccountTypeDict"
@@ -29,7 +29,7 @@
               change-on-select
             ></el-cascader>
           </el-form-item>
-          <el-form-item label="添加时间">
+          <el-form-item label="发布时间">
             <el-date-picker
               v-model="defaultDate"
               type="daterange"
@@ -65,7 +65,8 @@
               type="index"
               label="序号"
               align="center"
-              width="60">
+              width="60"
+              :index="getIndex">
             </el-table-column>
             <el-table-column
               prop="title"
@@ -106,7 +107,7 @@
               label="阅读量"
               width="80">
               <template slot-scope="scope">
-                {{ scope.row.readNum || "-"}} 
+                {{ scope.row.readNum || 0}} 
               </template>
             </el-table-column>
             <el-table-column
@@ -114,7 +115,7 @@
               label="点赞量"
               width="80">
                 <template slot-scope="scope">
-                {{ scope.row.likeNum || "-"}} 
+                {{ scope.row.likeNum || 0}} 
               </template>
             </el-table-column>
             <el-table-column
@@ -161,8 +162,7 @@ export default{
       changeStatus: '',
       loading: false,
       page: {
-        curPage: 1,
-        pageSize: 20
+        curPage: 1
       },
       filter: {
         typeId: [],
@@ -225,6 +225,10 @@ export default{
           this.formatTypeId(typeid)
         }
       })
+    },
+    // 获取序号
+    getIndex(index) {
+      return (this.page.curPage - 1) * this.articleData.pageSize + index + 1
     },
     releaseTimeChange(value) {
       const date = value || ['', '']

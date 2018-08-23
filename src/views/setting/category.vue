@@ -29,7 +29,7 @@
                 <span class="custom-left-text">
                   <span>{{ node.label }}</span>
                   <span>
-                    <span title="新增子类" @click="handleAdd(node)">
+                    <span v-if="node.level < 5" title="新增子类" @click="handleAdd(node)">
                       <SvgIcon :iconClass="'add'" :className="'icon-add'"></SvgIcon>
                     </span>
                     <!-- <span title="删除" @click="handleDelete(node)">
@@ -69,7 +69,7 @@
                 <span class="custom-left-text">
                   <span>{{ node.label }}</span>
                   <span>
-                    <span title="新增子类" @click="handleAdd(node)">
+                    <span v-if="node.level < 5" title="新增子类" @click="handleAdd(node)">
                       <SvgIcon :iconClass="'add'" :className="'icon-add'"></SvgIcon>
                     </span>
                     <!-- <span title="删除" @click="handleDelete(node)">
@@ -109,7 +109,7 @@
                 <span class="custom-left-text">
                   <span>{{ node.label }}</span>
                   <span>
-                    <span title="新增子类" @click="handleAdd(node)">
+                    <span v-if="node.level < 5" title="新增子类" @click="handleAdd(node)">
                       <SvgIcon :iconClass="'add'" :className="'icon-add'"></SvgIcon>
                     </span>
                     <!-- <span title="删除" @click="handleDelete(node)">
@@ -165,8 +165,25 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import SvgIcon from '@/components/SvgIcon'
+
+// 获取激活的类型tree前4级（父级类型不能超过4级）
+const getActivatedListByLevel = (list, targetList = [], level = 1) => {
+  for (let i = 0; i < list.length; i++) {
+    targetList[i] = {
+      value: list[i].id,
+      label: list[i].name
+    }
+    if (level < 4) {
+      if (Array.isArray(list[i].childList) && list[i].childList.length > 0) {
+        targetList[i].children = []
+        getActivatedListByLevel(list[i].childList, targetList[i].children, ++level)
+      }
+    }
+  }
+  return targetList
+}
 
 export default {
   name: 'category',
@@ -198,13 +215,17 @@ export default {
   computed: {
     ...mapState({
       paccountTypeDict: state => state.category.paccountTypeDict,
+      paccountTypeDictActivated: state => {
+        return getActivatedListByLevel(state.category.paccountTypeDict)
+      },
       tagTypeDict: state => state.category.tagTypeDict,
-      articleTypeDict: state => state.category.articleTypeDict
-    }),
-    ...mapGetters({
-      paccountTypeDictActivated: 'paccountTypeDict',
-      tagTypeDictActivated: 'tagTypeDict',
-      articleTypeDictActivated: 'articleTypeDict',
+      tagTypeDictActivated: state => {
+        return getActivatedListByLevel(state.category.tagTypeDict)
+      },
+      articleTypeDict: state => state.category.articleTypeDict,
+      articleTypeDictActivated: state => {
+        return getActivatedListByLevel(state.category.articleTypeDict)
+      }
     }),
     dialogTitle() {
       return this.dialogType === 'edit' ? '编辑类型' : '新增类型'
@@ -353,7 +374,7 @@ export default {
             type: 'warning'
           }).then(() => {
             this.loading = true
-            const param = Object.assign({}, this.form)
+            const param = Object.assign({}, this.form, { parentId: [...this.form.parentId] })
             if (this.activeName === 'publicNo') param.code = 1
             if (this.activeName === 'tag') param.code = 2
             if (this.activeName === 'article') param.code = 3

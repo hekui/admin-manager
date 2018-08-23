@@ -1,8 +1,8 @@
 export default {
   route: {
     dashboard: '首页',
-    paccount: '微信公众号',
-    paccountList: '公众号管理',
+    paccount: '公众号管理',
+    paccountList: '公众号列表',
     paccountAdd: '新增公众号',
     paccountEdit: '编辑公众号',
     paccountDetail: '公众号详情',
