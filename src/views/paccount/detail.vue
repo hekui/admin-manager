@@ -107,7 +107,7 @@
               label="阅读量"
               width="80">
               <template slot-scope="scope">
-                {{ scope.row.readNum || "-"}} 
+                {{ scope.row.readNum || 0}} 
               </template>
             </el-table-column>
             <el-table-column
@@ -115,7 +115,7 @@
               label="点赞量"
               width="80">
                 <template slot-scope="scope">
-                {{ scope.row.likeNum || "-"}} 
+                {{ scope.row.likeNum || 0}} 
               </template>
             </el-table-column>
             <el-table-column
