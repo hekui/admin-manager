@@ -29,7 +29,7 @@
               change-on-select
             ></el-cascader>
           </el-form-item>
-          <el-form-item label="添加时间">
+          <el-form-item label="发布时间">
             <el-date-picker
               v-model="defaultDate"
               type="daterange"
