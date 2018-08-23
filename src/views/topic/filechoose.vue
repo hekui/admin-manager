@@ -119,7 +119,7 @@
       },
       fetchData() {
         this.loading = true
-        this.$store.dispatch('getContentList', Object.assign({}, this.filter, this.page)).then(() => {
+        this.$store.dispatch('getTopicContentList', Object.assign({}, this.filter, this.page)).then(() => {
           this.loading = false
         }).catch(() => {
           this.loading = false
