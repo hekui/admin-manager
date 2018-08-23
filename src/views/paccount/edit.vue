@@ -94,7 +94,7 @@ export default{
       defaultDate: '',
       form: {
         wechatAccount: '',
-        wechatStatus: 1,
+        wechatStatus: 2,
         classify: [],
         typeId: [],
         status: 1
