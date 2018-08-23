@@ -1,6 +1,6 @@
 <template>
   <div class="app-container topic-edit">
-    <el-form ref="form" :rules="rules" :model="form" label-width="100px">
+    <el-form ref="form" :rules="rules" :model="form" label-width="130px">
       <el-form-item label="专题名称" prop="name">
         <el-input v-model.trim="form.name" clearable></el-input>
       </el-form-item>
