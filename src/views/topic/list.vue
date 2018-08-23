@@ -3,7 +3,7 @@
     <div class="form-filter">
       <el-form ref="form" :inline="true" :model="filter">
         <el-form-item label="专题名称">
-          <el-input v-model="filter.name" placeholder="请输入名称orID" clearable></el-input>
+          <el-input v-model.trim="filter.name" placeholder="请输入名称orID" clearable></el-input>
         </el-form-item>
         <el-form-item label="添加时间">
           <el-date-picker
@@ -181,6 +181,7 @@
     },
     created() {
       this.mapStatus = { 0: '待上线', 1: '上线', 2: '下线' }
+      this.fetchData()
     },
     activated() {
       this.fetchData()

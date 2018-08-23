@@ -2,10 +2,10 @@
   <div class="app-container topic-edit">
     <el-form ref="form" :rules="rules" :model="form" label-width="100px">
       <el-form-item label="专题名称" prop="name">
-        <el-input v-model="form.name" clearable></el-input>
+        <el-input v-model.trim="form.name" clearable></el-input>
       </el-form-item>
       <el-form-item label="专题副标题" prop="subtitle">
-        <el-input v-model="form.subtitle" clearable></el-input>
+        <el-input v-model.trim="form.subtitle" clearable></el-input>
       </el-form-item>
       <el-form-item label="专题模板" prop="template">
         <el-select v-model="form.template">
@@ -61,7 +61,7 @@
       </el-form-item>
       <el-form-item label="链接" prop="destinationUrl">
         <div class="url-wrapper">
-          <el-input v-model="form.destinationUrl" clearable></el-input>
+          <el-input v-model.trim="form.destinationUrl" clearable></el-input>
           <el-button class="btn" @click="choosearticle">选择文件链接</el-button>
         </div>
       </el-form-item>
