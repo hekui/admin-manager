@@ -153,7 +153,7 @@
         </el-table>
       </div>
       <div class="pages clearfix">
-        <span class="demonstration">合计统计公众号<b class="number"> {{listData.totalRecords || '-'}}</b> 个。</span>
+        <span class="demonstration">合计统计公众号<b class="number"> {{listData.totalRecords || 0}}</b> 个。</span>
         <el-pagination
             background
             layout="total, prev, pager, next, jumper"
