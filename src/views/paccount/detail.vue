@@ -65,7 +65,8 @@
               type="index"
               label="序号"
               align="center"
-              width="60">
+              width="60"
+              :index="getIndex">
             </el-table-column>
             <el-table-column
               prop="title"
@@ -161,8 +162,7 @@ export default{
       changeStatus: '',
       loading: false,
       page: {
-        curPage: 1,
-        pageSize: 20
+        curPage: 1
       },
       filter: {
         typeId: [],
@@ -225,6 +225,10 @@ export default{
           this.formatTypeId(typeid)
         }
       })
+    },
+    // 获取序号
+    getIndex(index) {
+      return (this.page.curPage - 1) * this.articleData.pageSize + index + 1
     },
     releaseTimeChange(value) {
       const date = value || ['', '']
