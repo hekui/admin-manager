@@ -1,6 +1,6 @@
 <template>
   <div class="app-container topic-edit">
-    <el-form ref="form" :rules="rules" :model="form" label-width="100px">
+    <el-form ref="form" :rules="rules" :model="form" label-width="130px">
       <el-form-item label="专题名称" prop="name">
         <el-input v-model.trim="form.name" clearable></el-input>
       </el-form-item>
@@ -277,7 +277,7 @@
       },
       selectCurrentArticle() {
         this.showselectarticle = false
-        this.form.destinationUrl = this.$refs.fileChoose.currentArticle.contentUrl
+        this.form.destinationUrl = `/pages/detail/detail?id=${this.$refs.fileChoose.currentArticle.id}`
       }
     },
     components: {
