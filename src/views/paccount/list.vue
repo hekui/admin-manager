@@ -3,7 +3,7 @@
     <div class="form-filter">
       <el-form ref="form" :inline="true" :model="filter">
         <el-form-item label="公众号名称">
-          <el-input v-model.trim="filter.name" :clearable="true"></el-input>
+          <el-input v-model.trim="filter.name" :clearable="true" placeholder="请输入公众号名称"></el-input>
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="filter.status" :clearable="true" placeholder="请选择">
