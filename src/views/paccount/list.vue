@@ -3,7 +3,7 @@
     <div class="form-filter">
       <el-form ref="form" :inline="true" :model="filter">
         <el-form-item label="公众号名称">
-          <el-input v-model="filter.name" :clearable="true"></el-input>
+          <el-input v-model.trim="filter.name" :clearable="true"></el-input>
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="filter.status" :clearable="true" placeholder="请选择">
@@ -216,7 +216,7 @@ export default {
     fetchData() {
       console.log('this.filter,', this.filter)
       const params = {
-        typeId: this.filter.typeId ? this.filter.typeId.pop() : ''
+        typeId: Array.isArray(this.filter.typeId) ? [...this.filter.typeId].pop() : ''
       }
       console.log('-----', params)
       this.loading = true
