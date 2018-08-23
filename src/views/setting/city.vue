@@ -225,7 +225,7 @@ export default {
             type: 'warning'
           }).then(() => {
             this.dialogLoading = true
-            const param = Object.assign({}, this.form)
+            const param = Object.assign({}, this.form, { typeId: [...this.form.typeId] })
             param.typeId = param.typeId.pop() || '' // 取最后一个元素作为typeId保存到数据库
             this.$store.dispatch('saveOrEditCity', param).then(() => {
               this.dialogLoading = false
