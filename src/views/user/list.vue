@@ -5,7 +5,7 @@
             <el-form-item label="昵称">
               <el-input
                 placeholder="请输入昵称"
-                v-model="form.nickname"
+                v-model.trim="form.nickname"
                 clearable>
               </el-input>
             </el-form-item>
