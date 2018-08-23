@@ -149,7 +149,7 @@
     .table
       flex: 1 1
       border: solid #ebeef5
-      overflow: scroll
+      overflow-y: scroll
     .pages
       margin-top: 15px
 </style>

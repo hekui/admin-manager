@@ -277,7 +277,7 @@
       },
       selectCurrentArticle() {
         this.showselectarticle = false
-        this.form.destinationUrl = this.$refs.fileChoose.currentArticle.contentUrl
+        this.form.destinationUrl = `/pages/detail/detail?id=${this.$refs.fileChoose.currentArticle.id}`
       }
     },
     components: {
