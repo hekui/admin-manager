@@ -19,7 +19,7 @@
       <div class="form-filter">
         <el-form ref="filter" :inline="true" :model="filter">
           <el-form-item label="文章标题">
-            <el-input v-model="filter.title" :clearable="true" placeholder="请输入名称"></el-input>
+            <el-input v-model.trim="filter.title" :clearable="true" placeholder="请输入名称"></el-input>
           </el-form-item>
           <el-form-item label="文章类型">
             <el-cascader
@@ -239,7 +239,7 @@ export default{
       // 公众号详情-分页
       const params = {
         id: this.id,
-        typeId: this.filter.typeId ? this.filter.typeId.pop() : ''
+        typeId: Array.isArray(this.filter.typeId) ? [...this.filter.typeId].pop() : ''
       }
       console.log('this.filter', this.filter)
       this.loading = true

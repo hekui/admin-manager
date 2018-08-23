@@ -5,13 +5,13 @@
         <el-form-item label="微信号" prop="wechatAccount">
           <el-input v-model="editInfo.wechatAccount" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item label="状态" prop="status">
           <el-radio-group v-model="editInfo.status">
             <el-radio :label="1">启用</el-radio>
             <el-radio :label="2">停用</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="是否授权">
+        <el-form-item label="是否授权" prop="wechatStatus">
           <el-radio-group v-model="editInfo.wechatStatus">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="2">否</el-radio>
@@ -43,13 +43,13 @@
         <el-form-item label="微信号" prop="wechatAccount">
           <el-input v-model="form.wechatAccount" placeholder="请输入微信号，注意大小写" :clearable="true" ></el-input>
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
             <el-radio :label="1">启用</el-radio>
             <el-radio :label="2">停用</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="是否授权">
+        <el-form-item label="是否授权" prop="wechatStatus">
           <el-radio-group v-model="form.wechatStatus">
             <el-radio :label="1">是</el-radio>
             <el-radio :label="2">否</el-radio>
@@ -94,7 +94,7 @@ export default{
       defaultDate: '',
       form: {
         wechatAccount: '',
-        wechatStatus: 1,
+        wechatStatus: 2,
         classify: [],
         typeId: [],
         status: 1
@@ -112,9 +112,11 @@ export default{
         wechatAccount: [
           { required: true, message: '请输入微信号，注意大小写', trigger: 'blur' }
         ],
+        status: [{ required: true, message: '请选择状态', trigger: 'change' }],
+        wechatStatus: [{ required: true, message: '请选择是否授权', trigger: 'change' }],
         classify: [
           { required: true, message: '请选择公众号类型', trigger: 'change' }
-        ],
+        ]
       }
     }
   },

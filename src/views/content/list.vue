@@ -8,10 +8,10 @@
     <section class="form-filter">
       <el-form ref="form" :inline="true" :model="filter">
         <el-form-item label="文章标题：">
-          <el-input v-model="filter.title" placeholder="请输入文章标题" :clearable="true"></el-input>
+          <el-input v-model.trim="filter.title" placeholder="请输入文章标题" :clearable="true"></el-input>
         </el-form-item>
         <el-form-item label="公众号名称：">
-          <el-input v-model="filter.wechatName" placeholder="请输入公众号名称" :clearable="true"></el-input>
+          <el-input v-model.trim="filter.wechatName" placeholder="请输入公众号名称" :clearable="true"></el-input>
         </el-form-item>
         <el-form-item label="文章类型：" class="article-type-label">
           <el-cascader

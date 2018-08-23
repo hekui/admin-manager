@@ -9,9 +9,9 @@
       <section class="form-filter">
         <el-form :inline="true" :model="filter">
           <el-form-item label="广告名称：">
-            <el-input v-model="filter.name" placeholder="请输入名称" :clearable="true"></el-input>
+            <el-input v-model.trim="filter.name" placeholder="请输入名称" :clearable="true"></el-input>
           </el-form-item>
-          <el-form-item label="修改时间：">
+          <el-form-item label="最后修改时间：">
             <el-date-picker
               v-model="releaseTime"
               type="datetimerange"
@@ -67,7 +67,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="修改时间"
+            label="最后修改时间"
             width="180">
             <template slot-scope="scope">
               <span>{{releaseTimeFilter(scope.row.updateTime)}}</span>

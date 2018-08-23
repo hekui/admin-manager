@@ -32,6 +32,17 @@ export default {
       }, res => {
         return Promise.resolve(res)
       })
+    },
+    getTopicContentList({ commit }, params) {
+      return api.post('/topic/contentlist', params).then(res => {
+        commit('contentSet', {
+          target: 'listData',
+          data: res.data
+        })
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
     }
   }
 }

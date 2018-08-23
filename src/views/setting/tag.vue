@@ -9,7 +9,7 @@
       <section class="form-filter">
         <el-form :inline="true" :model="filter">
           <el-form-item label="标签名称：">
-            <el-input v-model="filter.name" placeholder="请输入名称" :clearable="true"></el-input>
+            <el-input v-model.trim="filter.name" placeholder="请输入名称" :clearable="true"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" plain @click="submitFilter">搜索</el-button>
