@@ -21,7 +21,7 @@
           <el-form-item label="文章标题">
             <el-input v-model="filter.title" :clearable="true" placeholder="请输入名称"></el-input>
           </el-form-item>
-          <el-form-item label="类型">
+          <el-form-item label="文章类型">
             <el-cascader
               v-model="filter.typeId"
               :options="paccountTypeDict"
