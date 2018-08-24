@@ -36,7 +36,7 @@ const store = new Vuex.Store({
     // 公众号相关
     status: {
       1: '启用',
-      2: '禁用'
+      2: '停用'
     },
     wechatStatus: {
       1: '是',

@@ -158,7 +158,7 @@ export default {
       this.showDialog = true
     },
     handleStatus(data) {
-      const tips = data.labelStatus === 1 ? '是否要锁定' : '是否要激活'
+      const tips = data.status === 1 ? '是否要锁定' : '是否要激活'
       this.$confirm(tips, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
