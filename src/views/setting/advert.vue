@@ -139,9 +139,24 @@
             @change="onlineTimeChange" >
           </el-date-picker>
         </el-form-item>
+        <el-form-item label="链接类型">
+          <el-radio v-model="form.linkType" :label="1">小程序文章详情</el-radio>
+          <el-radio v-model="form.linkType" :label="2">小程序Tab</el-radio>
+          <el-radio v-model="form.linkType" :label="3">H5链接</el-radio>
+          <div class="el-upload__tip" v-if="form.linkType === 1">
+            小程序文章详情，点击下方的“选择文章”按钮选择文章后可自动生成地址。
+          </div>
+          <div class="el-upload__tip" v-if="form.linkType === 2">
+            小程序Tab，仅支持首页(/pages/index/index)；榜单(/pages/rank/rank)；我的(/pages/user/user)。
+          </div>
+          <div class="el-upload__tip" v-if="form.linkType === 3">
+            H5链接，http开头的地址，需要确保链接对应的域名已经加入小程序业务域名。
+          </div>
+        </el-form-item>
         <el-form-item class="link" label="链接：">
           <el-input v-model="form.destinationUrl" placeholder="" :clearable="true"></el-input>
-          <div class="el-upload__tip">链接示例：/pages/detail/detail?id=[文章id]</div>
+          <!-- <el-button v-if="form.linkType === 1" class="btn" @click="choosearticle">选择文章</el-button> -->
+          <!-- <div class="el-upload__tip">链接示例：/pages/detail/detail?id=[文章id]</div> -->
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -181,6 +196,7 @@ export default {
         onlineTime: [],
         effectTime: '',
         expireTime: '',
+        linkType: 1,
         destinationUrl: ''
       },
       rules: {
@@ -291,6 +307,7 @@ export default {
         headUrl: '',
         effectTime: '',
         expireTime: '',
+        linkType: 1,
         destinationUrl: ''
       }
       this.dialogType = 'add'
@@ -306,6 +323,7 @@ export default {
           onlineTime: [new Date(Number(res.data.effectTime)), new Date(Number(res.data.expireTime))],
           effectTime: this.releaseTimeFilter(res.data.effectTime),
           expireTime: this.releaseTimeFilter(res.data.expireTime),
+          linkType: res.data.linkType,
           destinationUrl: res.data.destinationUrl
         }
         this.dialogType = 'edit'
