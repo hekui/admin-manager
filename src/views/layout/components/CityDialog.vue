@@ -52,12 +52,14 @@ export default {
         })
       } else {
         setCity(this.$store, this.cityId)
-        this.$router.push('/')
-        this.$store.dispatch('delOthersViews', this.$route)
-        this.$message({
-          type: 'success',
-          message: '切换城市成功！'
-        })
+        // 需要刷新页面，清空store缓存的数据
+        location.href = '/'
+        // this.$router.push('/')
+        // this.$store.dispatch('delOthersViews', this.$route)
+        // this.$message({
+        //   type: 'success',
+        //   message: '切换城市成功！'
+        // })
       }
       this.hideCityDialog()
     },
