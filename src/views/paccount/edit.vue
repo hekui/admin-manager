@@ -186,31 +186,31 @@ export default{
         if (valid) {
           if (this.id) {
             const typeId = this.editInfo.typeId
-            console.log('typeId', typeId)
+            // console.log('typeId', typeId)
             // 编辑类型 是否禁用  1 / 2 区别
             const params = { typeId: typeId ? typeId[typeId.length - 1] : '' }
 
-            console.log('params', params)
-            // this.loading = true
-            // this.$store.dispatch('editPaccountInfo', Object.assign({}, this.editInfo, params)).then(() => {
-            //   this.loading = false
-            //   this.$alert('<strong>编辑成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
-            //     type: 'success',
-            //     dangerouslyUseHTMLString: true,
-            //     showClose: false,
-            //     confirmButtonText: '知道了'
-            //   }).then(() => {
-            //     this.closeSelectedTag()
-            //   })
-            // }).catch(() => {
-            //   this.loading = false
-            //   this.$alert('<strong>编辑失败</strong><p>请稍后重试，或者联系技术解决</p>', {
-            //     type: 'error',
-            //     dangerouslyUseHTMLString: true,
-            //     showClose: false,
-            //     confirmButtonText: '知道了'
-            //   })
-            // })
+            // console.log('params', params)
+            this.loading = true
+            this.$store.dispatch('editPaccountInfo', Object.assign({}, this.editInfo, params)).then(() => {
+              this.loading = false
+              this.$alert('<strong>编辑成功</strong><p>如果N天后无数据更新，请联系技术查看</p>', {
+                type: 'success',
+                dangerouslyUseHTMLString: true,
+                showClose: false,
+                confirmButtonText: '知道了'
+              }).then(() => {
+                this.closeSelectedTag()
+              })
+            }).catch(() => {
+              this.loading = false
+              this.$alert('<strong>编辑失败</strong><p>请稍后重试，或者联系技术解决</p>', {
+                type: 'error',
+                dangerouslyUseHTMLString: true,
+                showClose: false,
+                confirmButtonText: '知道了'
+              })
+            })
           } else {
             const params = {
               classify: this.form.classify[this.form.classify.length - 1],
