@@ -56,14 +56,26 @@
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </el-form-item>
-      <el-form-item label="指向地址">
-        <el-radio v-model="isAddress" label="0">链接</el-radio>
+      <el-form-item label="链接类型">
+        <el-radio v-model="form.linkType" :label="1">小程序文章详情</el-radio>
+        <el-radio v-model="form.linkType" :label="2">小程序Tab</el-radio>
+        <el-radio v-model="form.linkType" :label="3">H5链接</el-radio>
+        <div class="el-upload__tip" v-if="form.linkType === 1">
+          小程序文章详情，点击下方的“选择文章”按钮选择文章后可自动生成地址。
+        </div>
+        <div class="el-upload__tip" v-if="form.linkType === 2">
+          小程序Tab，仅支持首页(/pages/index/index)；榜单(/pages/rank/rank)；我的(/pages/user/user)。
+        </div>
+        <div class="el-upload__tip" v-if="form.linkType === 3">
+          H5链接，http开头的网页地址，需要确保链接对应的域名已经加入小程序业务域名。
+        </div>
       </el-form-item>
       <el-form-item label="链接" prop="destinationUrl">
         <div class="url-wrapper">
           <el-input v-model.trim="form.destinationUrl" clearable></el-input>
-          <el-button class="btn" @click="choosearticle">选择文件链接</el-button>
+          <el-button v-if="form.linkType === 1" class="btn" @click="choosearticle">选择文章</el-button>
         </div>
+        
       </el-form-item>
       <el-form-item>
         <el-button
@@ -112,6 +124,7 @@
           recommend: 0,
           labelIdList: [],
           headUrl: '',
+          linkType: 1,
           destinationUrl: ''
         },
         topicTemplate: [{
