@@ -150,7 +150,7 @@
             小程序Tab，仅支持首页(/pages/index/index)；榜单(/pages/rank/rank)；我的(/pages/user/user)。
           </div>
           <div class="el-upload__tip" v-if="form.linkType === 3">
-            H5链接，http开头的地址，需要确保链接对应的域名已经加入小程序业务域名。
+            H5链接，http开头的网页地址，需要确保链接对应的域名已经加入小程序业务域名。
           </div>
         </el-form-item>
         <el-form-item class="link" label="链接：">
