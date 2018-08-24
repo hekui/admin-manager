@@ -273,6 +273,7 @@ export default {
           type: 'success',
           message: '同步成功'
         })
+        this.fetchData()
       }).catch(() => {
         this.$message({
           type: 'info',
