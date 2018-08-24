@@ -112,9 +112,9 @@ const store = new Vuex.Store({
         return Promise.resolve(res)
       })
     },
-    // 获取激活城市
+    // 获取全部城市
     getActivatedCitys({ commit }) {
-      return api.post('/city/list').then(res => {
+      return api.post('/city/listall').then(res => {
         commit('SET_CITY_OPTIONS', res.data.list)
         return res
       }, res => {

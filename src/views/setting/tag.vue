@@ -9,7 +9,7 @@
       <section class="form-filter">
         <el-form :inline="true" :model="filter">
           <el-form-item label="标签名称：">
-            <el-input v-model="filter.name" placeholder="请输入名称" :clearable="true"></el-input>
+            <el-input v-model.trim="filter.name" placeholder="请输入名称" :clearable="true"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" plain @click="submitFilter">搜索</el-button>
@@ -40,6 +40,7 @@
             width="80">
             <template slot-scope="scope">
               <el-input v-model="scope.row.sequenceNum"
+              type="number"
               @blur="sequenceBlur($event, scope)"
               @keyup.enter.native="sequenceConfirm($event, scope)"
               @keyup.esc.native="sequenceCancel($event, scope)"></el-input>
@@ -235,7 +236,15 @@ export default {
     },
     // 回车确认修改排序
     sequenceConfirm(event, scope) {
-      this.$store.dispatch('updateSequenceNum', { id: scope.row.id, sequenceNum: scope.row.sequenceNum }).then((res) => {
+      const sequenceNum = scope.row.sequenceNum
+      if (sequenceNum < 0) {
+        this.$message({
+          type: 'error',
+          message: '序号不能为负数'
+        })
+        return
+      }
+      this.$store.dispatch('updateSequenceNum', { id: scope.row.id, sequenceNum: sequenceNum }).then((res) => {
         event.target.blur()
         this.fetchData()
         this.$message({
@@ -382,13 +391,6 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-}
-input[type='number']{
-    -moz-appearance: textfield;
-}
 .tag-container {
   position: relative;
   height: 100%;
@@ -472,5 +474,14 @@ input[type='number']{
       margin-left: 110px;
     }
   }
+}
+</style>
+<style rel="stylesheet/scss" lang="scss">
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+input[type='number']{
+    -moz-appearance: textfield;
 }
 </style>

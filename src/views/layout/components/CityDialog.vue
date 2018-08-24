@@ -52,8 +52,8 @@ export default {
         })
       } else {
         setCity(this.$store, this.cityId)
-        this.$store.dispatch('delAllViews')
         this.$router.push('/')
+        this.$store.dispatch('delOthersViews', this.$route)
         this.$message({
           type: 'success',
           message: '切换城市成功！'

@@ -119,7 +119,7 @@
       },
       fetchData() {
         this.loading = true
-        this.$store.dispatch('getContentList', Object.assign({}, this.filter, this.page)).then(() => {
+        this.$store.dispatch('getTopicContentList', Object.assign({}, this.filter, this.page)).then(() => {
           this.loading = false
         }).catch(() => {
           this.loading = false
@@ -149,7 +149,7 @@
     .table
       flex: 1 1
       border: solid #ebeef5
-      overflow: scroll
+      overflow-y: scroll
     .pages
       margin-top: 15px
 </style>

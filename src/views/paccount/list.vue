@@ -3,7 +3,7 @@
     <div class="form-filter">
       <el-form ref="form" :inline="true" :model="filter">
         <el-form-item label="公众号名称">
-          <el-input v-model="filter.name" :clearable="true"></el-input>
+          <el-input v-model.trim="filter.name" :clearable="true" placeholder="请输入公众号名称"></el-input>
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="filter.status" :clearable="true" placeholder="请选择">
@@ -153,7 +153,7 @@
         </el-table>
       </div>
       <div class="pages clearfix">
-        <span class="demonstration">合计统计公众号<b class="number"> {{listData.totalRecords || '-'}}</b> 个。</span>
+        <span class="demonstration">合计统计公众号<b class="number"> {{listData.totalRecords || 0}}</b> 个。</span>
         <el-pagination
             background
             layout="total, prev, pager, next, jumper"
@@ -216,7 +216,7 @@ export default {
     fetchData() {
       console.log('this.filter,', this.filter)
       const params = {
-        typeId: this.filter.typeId ? this.filter.typeId.pop() : ''
+        typeId: Array.isArray(this.filter.typeId) ? [...this.filter.typeId].pop() : ''
       }
       console.log('-----', params)
       this.loading = true
@@ -273,6 +273,7 @@ export default {
           type: 'success',
           message: '同步成功'
         })
+        this.fetchData()
       }).catch(() => {
         this.$message({
           type: 'info',

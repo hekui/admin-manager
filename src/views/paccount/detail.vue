@@ -19,9 +19,9 @@
       <div class="form-filter">
         <el-form ref="filter" :inline="true" :model="filter">
           <el-form-item label="文章标题">
-            <el-input v-model="filter.title" :clearable="true" placeholder="请输入名称"></el-input>
+            <el-input v-model.trim="filter.title" :clearable="true" placeholder="请输入名称"></el-input>
           </el-form-item>
-          <el-form-item label="类型">
+          <el-form-item label="文章类型">
             <el-cascader
               v-model="filter.typeId"
               :options="paccountTypeDict"
@@ -29,7 +29,7 @@
               change-on-select
             ></el-cascader>
           </el-form-item>
-          <el-form-item label="添加时间">
+          <el-form-item label="发布时间">
             <el-date-picker
               v-model="defaultDate"
               type="daterange"
@@ -52,7 +52,7 @@
       </div>
       <div class="form-wrapper">
         <div class="table-top">
-          <el-button icon="el-icon-refresh" type="primary" @click="changeRefresh" class="refresh-button">手动更新</el-button>
+          <el-button icon="el-icon-refresh" type="primary" @click="syncHandle" class="refresh-button">手动更新</el-button>
           <p class="tips">最后收录时间：<span class="date">{{ infoData.lastRecordTime | formatDate('YYYY-MM-DD HH:mm') }}</span></p>
         </div>
         <div class="table-main">
@@ -65,7 +65,8 @@
               type="index"
               label="序号"
               align="center"
-              width="60">
+              width="60"
+              :index="getIndex">
             </el-table-column>
             <el-table-column
               prop="title"
@@ -106,7 +107,7 @@
               label="阅读量"
               width="80">
               <template slot-scope="scope">
-                {{ scope.row.readNum || "-"}} 
+                {{ scope.row.readNum || 0}} 
               </template>
             </el-table-column>
             <el-table-column
@@ -114,7 +115,7 @@
               label="点赞量"
               width="80">
                 <template slot-scope="scope">
-                {{ scope.row.likeNum || "-"}} 
+                {{ scope.row.likeNum || 0}} 
               </template>
             </el-table-column>
             <el-table-column
@@ -125,10 +126,10 @@
             <el-table-column
               fixed="right"
               label="操作"
-              width="200">
+              width="120">
               <template slot-scope="scope">
                 <el-button type="text" @click="showDetail(scope.row.id)">详情</el-button>
-                <el-button type="text" @click="showEdit(scope.row.id)">二次编辑</el-button>
+                <!-- <el-button type="text" @click="showEdit(scope.row.id)">二次编辑</el-button> -->
                 <el-button type="text" @click="updateArticle(scope.$index,articleData.list, scope.row.id, scope.row.status)"> {{ scope.row.status === 1 ? '停用' : '启用' }} </el-button>
               </template>
             </el-table-column>
@@ -161,8 +162,7 @@ export default{
       changeStatus: '',
       loading: false,
       page: {
-        curPage: 1,
-        pageSize: 20
+        curPage: 1
       },
       filter: {
         typeId: [],
@@ -172,6 +172,8 @@ export default{
         id: ''
       },
       defaultDate: '',
+      typeDictList: [], // 编辑的时候获取状态 this.formatTypeId
+      wechatAccount: '', // 公从号
     }
   },
   computed: {
@@ -217,11 +219,16 @@ export default{
       }).then((res) => {
         this.status = res.data.status
         this.changeStatus = res.data.status
+        this.wechatAccount = res.data.wechatAccount
         const typeid = res.data.typeDictList
         if (typeid) {
           this.formatTypeId(typeid)
         }
       })
+    },
+    // 获取序号
+    getIndex(index) {
+      return (this.page.curPage - 1) * this.articleData.pageSize + index + 1
     },
     releaseTimeChange(value) {
       const date = value || ['', '']
@@ -232,7 +239,7 @@ export default{
       // 公众号详情-分页
       const params = {
         id: this.id,
-        typeId: this.filter.typeId ? this.filter.typeId.pop() : ''
+        typeId: Array.isArray(this.filter.typeId) ? [...this.filter.typeId].pop() : ''
       }
       console.log('this.filter', this.filter)
       this.loading = true
@@ -278,9 +285,21 @@ export default{
       this.page.curPage = curPage
       this.fetchData()
     },
-    changeRefresh() {
-      this.page.curPage = 1
-      this.fetchData()
+    syncHandle() {
+      // 同步公众号数据
+      this.$store.dispatch('syncPaccount', {
+        wechatAccount: this.wechatAccount
+      }).then(() => {
+        this.$message({
+          type: 'success',
+          message: '同步成功'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '同步失败，请稍后重试'
+        })
+      })
     },
     updateArticle(index, data, id, s) {
       const status = s === 1 ? 2 : 1
