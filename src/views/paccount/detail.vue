@@ -206,10 +206,10 @@ export default{
   },
   methods: {
     fetchDict() {
-      // 获取公众号类型列表
+      // 获取文章类型列表
       this.$store.dispatch('getTypeDict', {
         cityId: this.cityId,
-        code: 1
+        code: 3
       })
       // 查询公众号基本信息
       this.$store.dispatch('getPaccountInfo', {
@@ -228,8 +228,8 @@ export default{
     },
     releaseTimeChange(value) {
       const date = value || ['', '']
-      this.filter.beginDate = date[0]
-      this.filter.endDate = date[1]
+      this.filter.beginDate = date[0].split(' ')[0] + ' 00:00:00'
+      this.filter.endDate = date[1].split(' ')[0] + ' 23:59:59'
     },
     fetchData() {
       // 公众号详情-分页
