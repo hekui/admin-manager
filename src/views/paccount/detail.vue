@@ -10,7 +10,7 @@
         </div>
         <div class="status-choice">
           <span class="text">状态：</span>
-          <el-radio-group v-model="status">
+          <el-radio-group v-model="infoData.status">
             <el-radio :label="1" @change="changState">启用</el-radio>
             <el-radio :label="2" @change="changState">停用</el-radio>
           </el-radio-group>
@@ -158,8 +158,6 @@ export default{
   data() {
     return {
       id: '',
-      status: '',
-      changeStatus: '',
       loading: false,
       page: {
         curPage: 1
@@ -217,8 +215,6 @@ export default{
       this.$store.dispatch('getPaccountInfo', {
         id: this.id
       }).then((res) => {
-        this.status = res.data.status
-        this.changeStatus = res.data.status
         this.wechatAccount = res.data.wechatAccount
         const typeid = res.data.typeDictList
         if (typeid) {
@@ -269,16 +265,16 @@ export default{
             type: 'success',
             message: '成功切换'
           })
-          this.changeStatus = type
+          this.fetchDict()
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '切换失败，请稍后重试'
           })
-          this.status = this.changeStatus
+          this.fetchDict()
         })
       }).catch(() => {
-        this.status = this.changeStatus
+        this.fetchDict()
       })
     },
     changePage(curPage) {

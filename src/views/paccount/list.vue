@@ -147,7 +147,7 @@
             <template slot-scope="scope">
               <el-button type="text" @click="showDetail(scope.row.id)">详情</el-button>
               <el-button type="text" @click="addHandle(scope.row.id)">编辑</el-button>
-              <el-button type="text" @click="syncHandle(scope.$index, listData.list, scope.row.wechatAccount)">同步数据</el-button>
+              <el-button type="text" @click="syncHandle(scope.$index, listData.list, scope.row)">同步数据</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -264,16 +264,22 @@ export default {
         })
       }
     },
-    syncHandle(index, data, wechatAccount) {
+    // 同步数据后需要刷新详情页的数据
+    refreshDetailData(id) {
+      this.fetchData()
+      // 查询公众号基本信息
+      this.$store.dispatch('getPaccountInfo', { id })
+    },
+    syncHandle(index, data, row) {
       // 同步公众号数据
       this.$store.dispatch('syncPaccount', {
-        wechatAccount
+        wechatAccount: row.wechatAccount
       }).then(() => {
         this.$message({
           type: 'success',
           message: '同步成功'
         })
-        this.fetchData()
+        this.refreshDetailData(row.id)
       }).catch(() => {
         this.$message({
           type: 'info',

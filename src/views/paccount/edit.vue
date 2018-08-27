@@ -202,6 +202,7 @@ export default{
               }).then(() => {
                 this.closeSelectedTag()
               })
+              this.fetchDict()
             }).catch(() => {
               this.loading = false
               this.$alert('<strong>编辑失败</strong><p>请稍后重试，或者联系技术解决</p>', {
