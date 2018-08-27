@@ -174,7 +174,7 @@ export default {
           onlineTime: [new Date(Number(res.data.effectTime)), new Date(Number(res.data.expireTime))],
           effectTime: this.releaseTimeFilter(res.data.effectTime),
           expireTime: this.releaseTimeFilter(res.data.expireTime),
-          linkType: res.data.linkType,
+          linkType: res.data.linkType || 1,
           destinationUrl: res.data.destinationUrl
         }
       })
