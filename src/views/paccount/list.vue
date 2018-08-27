@@ -59,7 +59,7 @@
           <el-table-column
             prop="date"
             label="公众号信息"
-            min-width="180">
+            min-width="200">
             <template slot-scope="scope">
               <div class="pavatar">
                 <img v-if="scope.row.headImg" :src="scope.row.headImg" width="50" alt="公众号头像" >
@@ -312,7 +312,7 @@ export default {
       margin: 0 auto;
     }
     .name{
-      font-size: 16px; font-weight: bold;
+      height: 23px; font-size: 16px; font-weight: bold;
     }
     .en-name{
       font-size: 12px;
