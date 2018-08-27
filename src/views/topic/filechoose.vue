@@ -72,7 +72,7 @@
         </el-table-column>
       </el-table>
     </div>
-    <div class="pages" v-if="listData.pageSize < listData.totalRecords">
+    <div class="pages">
       <el-pagination
         background
         layout="total, prev, pager, next, jumper"
