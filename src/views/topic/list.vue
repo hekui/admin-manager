@@ -247,21 +247,14 @@
         this.fetchData()
       },
       addNewTopic() {
-        this.$router.push({
-          path: '/topic/add'
-        })
+        this.$router.push({ path: '/topic/add' })
       },
       changePage(curPage) {
         this.page.curPage = curPage
         this.fetchData()
       },
-      showDetail(id) {
-        this.$router.push({
-          path: '/topic/edit/' + id,
-          params: {
-            topicId: id
-          }
-        })
+      showDetail(topicId) {
+        this.$router.push({ path: '/topic/edit', query: { topicId }})
       },
       changeStatus(row) {
         const before = row.topicStatus

@@ -5,7 +5,17 @@ const tagsView = {
   },
   mutations: {
     ADD_VISITED_VIEW: (state, view) => {
-      if (state.visitedViews.some(v => v.path === view.path)) return
+      if (state.visitedViews.some(v => v.fullPath === view.fullPath)) return
+      if (state.visitedViews.some(v => v.path === view.path)) {
+        for (let i = 0; i < state.visitedViews.length; i++) {
+          if (state.visitedViews[i].path === view.path) {
+            state.visitedViews[i] = Object.assign({}, view, {
+              title: view.meta.title || 'no-name'
+            })
+            return
+          }
+        }
+      }
       state.visitedViews.push(Object.assign({}, view, {
         title: view.meta.title || 'no-name'
       }))

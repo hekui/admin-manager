@@ -228,8 +228,10 @@ export default{
     },
     releaseTimeChange(value) {
       const date = value || ['', '']
-      this.filter.beginDate = date[0].split(' ')[0] + ' 00:00:00'
-      this.filter.endDate = date[1].split(' ')[0] + ' 23:59:59'
+      if (date[0]) this.filter.beginDate = date[0].split(' ')[0] + ' 00:00:00'
+      else this.filter.beginDate = date[0]
+      if (date[1]) this.filter.endDate = date[1].split(' ')[0] + ' 23:59:59'
+      else this.filter.endDate = date[1]
     },
     fetchData() {
       // 公众号详情-分页

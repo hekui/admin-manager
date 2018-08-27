@@ -105,65 +105,6 @@
         </el-pagination>
       </section>
     </div>
-    <el-dialog :title="dialogTitle" :visible.sync="showDialog" :close-on-click-modal="false">
-      <el-form v-if="showDialog" ref="form" :model="form" :rules="rules">
-        <el-form-item label="广告名称：" prop="name">
-          <el-input v-model="form.name" placeholder="请输入名称" :clearable="true"></el-input>
-        </el-form-item>
-        <el-form-item label="广告头图：" prop="headUrl">
-          <el-input v-model="form.headUrl" style="display: none;"></el-input>
-          <el-upload
-            class="avatar-uploader"
-            ref="upload"
-            action=""
-            :http-request="handleUpload"
-            :show-file-list="false"
-            :before-upload="beforeAvatarUpload">
-            <img v-if="form.headUrl" :src="form.headUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            <div slot="tip" class="el-upload__tip">格式必须为png/jpg/jpeg，且文件大小不能超过2Mb</div>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="启用时间：" prop="onlineTime">
-          <el-date-picker
-            v-model="form.onlineTime"
-            type="datetimerange"
-            align="right"
-            unlink-panels
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :clearable="true"
-            value-format="yyyy-MM-dd HH:mm:ss"
-            :picker-options="pickerOptions"
-            @change="onlineTimeChange" >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="链接类型">
-          <el-radio v-model="form.linkType" :label="1">小程序文章详情</el-radio>
-          <el-radio v-model="form.linkType" :label="2">小程序Tab</el-radio>
-          <el-radio v-model="form.linkType" :label="3">H5链接</el-radio>
-          <div class="el-upload__tip" v-if="form.linkType === 1">
-            小程序文章详情，点击下方的“选择文章”按钮选择文章后可自动生成地址。
-          </div>
-          <div class="el-upload__tip" v-if="form.linkType === 2">
-            小程序Tab，仅支持首页(/pages/index/index)；榜单(/pages/rank/rank)；我的(/pages/user/user)。
-          </div>
-          <div class="el-upload__tip" v-if="form.linkType === 3">
-            H5链接，http开头的网页地址，需要确保链接对应的域名已经加入小程序业务域名。
-          </div>
-        </el-form-item>
-        <el-form-item class="link" label="链接：">
-          <el-input v-model="form.destinationUrl" placeholder="" :clearable="true"></el-input>
-          <!-- <el-button v-if="form.linkType === 1" class="btn" @click="choosearticle">选择文章</el-button> -->
-          <!-- <div class="el-upload__tip">链接示例：/pages/detail/detail?id=[文章id]</div> -->
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCancel">取 消</el-button>
-        <el-button type="primary" @click="handleConfirm('form')">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -176,8 +117,6 @@ export default {
   data() {
     return {
       loading: false,
-      showDialog: false,
-      dialogType: '',
       filter: {
         name: '', // 广告名称
         beginDate: '', // 时间段查询-起（精确到分）
@@ -188,44 +127,12 @@ export default {
         curPage: 1
       },
       pickerOptions,
-      uploadSuccess: false,
-      form: {
-        id: '',
-        name: '',
-        headUrl: '',
-        onlineTime: [],
-        effectTime: '',
-        expireTime: '',
-        linkType: 1,
-        destinationUrl: ''
-      },
-      rules: {
-        name: [
-          { required: true, message: '请输入广告名称', trigger: ['change', 'blur'] }
-        ],
-        headUrl: [
-          { required: true, message: '请上传广告头图', trigger: ['change', 'blur'] }
-        ],
-        onlineTime: [{
-          required: true,
-          validator: function(rule, value, callback) {
-            if (!value || value.length === 0) {
-              callback(new Error('请选择启用时间'))
-            }
-            callback()
-          },
-          trigger: ['change', 'blur']
-        }]
-      }
     }
   },
   computed: {
     ...mapState({
       listData: state => state.advert.listData
-    }),
-    dialogTitle() {
-      return this.dialogType === 'add' ? '新增广告' : '编辑广告'
-    }
+    })
   },
   created() {
     this.fetchData()
@@ -287,7 +194,6 @@ export default {
             type: 'success',
             message: '操作成功!'
           })
-          this.showDialog = false
           this.fetchData()
         }).catch(() => {
           this.loading = false
@@ -301,100 +207,12 @@ export default {
     },
     // 新增广告
     handleAdd() {
-      this.form = {
-        id: '',
-        name: '',
-        headUrl: '',
-        effectTime: '',
-        expireTime: '',
-        linkType: 1,
-        destinationUrl: ''
-      }
-      this.dialogType = 'add'
-      this.showDialog = true
+      this.$router.push({ path: '/setting/addAdvert' })
     },
     // 编辑广告
     handleEdit(data) {
-      this.$store.dispatch('getAdvertById', { id: data.id }).then((res) => {
-        this.form = {
-          id: data.id,
-          name: res.data.name,
-          headUrl: res.data.headUrl,
-          onlineTime: [new Date(Number(res.data.effectTime)), new Date(Number(res.data.expireTime))],
-          effectTime: this.releaseTimeFilter(res.data.effectTime),
-          expireTime: this.releaseTimeFilter(res.data.expireTime),
-          linkType: res.data.linkType,
-          destinationUrl: res.data.destinationUrl
-        }
-        this.dialogType = 'edit'
-        this.showDialog = true
-      })
-    },
-    // 上传文件之前的钩子
-    beforeAvatarUpload(file) {
-      const isType = ['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)
-      const isLt2M = file.size / 1024 / 1024 < 2
-
-      if (!isType) {
-        this.$message.error('上传头像图片只能是 PNG/JPG/JPEG 格式!')
-      }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
-      }
-      return isType && isLt2M
-    },
-    // 提交上传图片到服务器
-    submitUpload() {
-      this.$refs.upload.submit()
-    },
-    // 上传图片到服务器真实行为
-    handleUpload(node) {
-      const params = new FormData()
-      params.append('file', node.file)
-      this.$store.dispatch('uploadAdertImage', params).then((res) => {
-        this.form.headUrl = res.data.url
-        this.$message({
-          type: 'success',
-          message: '上传成功!'
-        })
-      })
-    },
-    // 取消
-    handleCancel() {
-      this.showDialog = false
-    },
-    // 提交新增/编辑
-    handleConfirm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.$confirm('是否要提交?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.loading = true
-            const params = Object.assign({}, this.form)
-            delete params.onlineTime
-            this.$store.dispatch(this.dialogType === 'add' ? 'addAdvert' : 'editAdvert', params).then(() => {
-              this.loading = false
-              this.$message({
-                type: 'success',
-                message: '操作成功!'
-              })
-              this.showDialog = false
-              this.fetchData()
-            }).catch(() => {
-              this.loading = false
-            })
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消操作!'
-            })
-          })
-        }
-      })
-    },
+      this.$router.push({ path: '/setting/editAdvert', query: { id: data.id }})
+    }
   }
 }
 </script>
@@ -424,64 +242,6 @@ export default {
   }
   .disabled {
     display: none;
-  }
-}
-
-</style>
-<style rel="stylesheet/scss" lang="scss">
-.advert-container {
-  .el-dialog {
-    width: 540px;
-    border-radius: 5px;
-    .el-dialog__title {
-      font-size: 14px;
-    }
-    .el-dialog__body {
-      border-top: 1px solid #eee;
-      border-bottom: 1px solid #eee;
-    }
-    .el-form-item {
-      position: relative;
-      .el-form-item__label {
-        position: absolute;
-        width: 90px;
-        font-size: 12px;
-      }
-      .el-form-item__content {
-        padding-left: 90px;
-        .el-input, .el-date-editor {
-          width: 100%;
-          font-size: 12px;
-        }
-        .avatar-uploader .el-upload {
-          width: 100%;
-          border: 1px dashed #d9d9d9;
-          border-radius: 6px;
-          cursor: pointer;
-          position: relative;
-          overflow: hidden;
-          &:hover {
-            border-color: #409EFF;
-          }
-          .avatar-uploader-icon {
-            font-size: 28px;
-            color: #8c939d;
-            width: 100%;
-            height: 120px;
-            line-height: 120px;
-            text-align: center;
-          }
-          .avatar {
-            width: 100%;
-            height: 120px;
-            display: block;
-          }
-        }
-      }
-    }
-    .el-form-item__error {
-      margin-left: 90px;
-    }
   }
 }
 </style>

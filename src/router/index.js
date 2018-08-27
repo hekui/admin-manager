@@ -150,7 +150,7 @@ export const asyncRouterMap = [
         // if do not set roles, means: this page does not require permission
       }
     }, {
-      path: 'edit/:topicId',
+      path: 'edit',
       component: () => import('@/views/topic/edit'),
       name: 'topicEdit',
       hidden: true,
@@ -208,6 +208,24 @@ export const asyncRouterMap = [
         title: 'advert'
         // roles: ['admin'] // or you can only set roles in sub nav
       }
+    }, {
+      path: 'addAdvert',
+      component: () => import('@/views/setting/editAdvert'),
+      name: 'addAdvert',
+      meta: {
+        title: 'addAdvert'
+        // roles: ['admin'] // or you can only set roles in sub nav
+      },
+      hidden: true
+    }, {
+      path: 'editAdvert',
+      component: () => import('@/views/setting/editAdvert'),
+      name: 'editAdvert',
+      meta: {
+        title: 'editAdvert'
+        // roles: ['admin'] // or you can only set roles in sub nav
+      },
+      hidden: true
     }, {
       path: 'city',
       component: () => import('@/views/setting/city'),

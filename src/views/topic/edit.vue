@@ -202,7 +202,7 @@
       }
     },
     created() {
-      this.id = this.$route.params.topicId || ''
+      this.id = this.$route.query.topicId || ''
 
       api.post('/label/list', { cityID: this.$store.state.cityId }).then(res => {
         this.allTags = res.data.list
