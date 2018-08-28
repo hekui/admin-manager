@@ -41,6 +41,7 @@ export default {
     },
     // 取消
     handleCancel() {
+      this.cityId = this.$store.state.cityId
       this.hideCityDialog()
     },
     // 确认切换城市

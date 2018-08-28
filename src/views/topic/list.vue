@@ -3,7 +3,7 @@
     <div class="form-filter">
       <el-form ref="form" :inline="true" :model="filter">
         <el-form-item label="专题名称">
-          <el-input v-model.trim="filter.name" placeholder="请输入名称orID" clearable></el-input>
+          <el-input v-model.trim="filter.name" placeholder="请输入名称" clearable></el-input>
         </el-form-item>
         <el-form-item label="添加时间">
           <el-date-picker
@@ -104,7 +104,7 @@
           </el-table-column>
         </el-table>
       </div>
-      <div class="pages" v-if="listData.pageSize < listData.totalRecords">
+      <div class="pages">
         <el-pagination
           background
           layout="total, prev, pager, next, jumper"
@@ -174,7 +174,7 @@
       serverFilter: function() {
         return {
           name: this.filter.name,
-          beginDate: this.filter.data ? this.filter.date[0] : '',
+          beginDate: this.filter.date ? this.filter.date[0] : '',
           endDate: this.filter.date ? this.filter.date[1] : ''
         }
       }
@@ -247,21 +247,14 @@
         this.fetchData()
       },
       addNewTopic() {
-        this.$router.push({
-          path: '/topic/add'
-        })
+        this.$router.push({ path: '/topic/add' })
       },
       changePage(curPage) {
         this.page.curPage = curPage
         this.fetchData()
       },
-      showDetail(id) {
-        this.$router.push({
-          path: '/topic/edit/' + id,
-          params: {
-            topicId: id
-          }
-        })
+      showDetail(topicId) {
+        this.$router.push({ path: '/topic/edit', query: { topicId }})
       },
       changeStatus(row) {
         const before = row.topicStatus

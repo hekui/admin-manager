@@ -18,6 +18,8 @@ export default {
     userFeedback: '用户反馈',
     setting: '配置管理',
     advert: '广告管理',
+    addAdvert: '新增广告',
+    editAdvert: '编辑广告',
     city: '城市管理',
     category: '类型管理',
     tag: '标签管理'

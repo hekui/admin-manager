@@ -10,7 +10,7 @@
         </div>
         <div class="status-choice">
           <span class="text">状态：</span>
-          <el-radio-group v-model="status">
+          <el-radio-group v-model="infoData.status">
             <el-radio :label="1" @change="changState">启用</el-radio>
             <el-radio :label="2" @change="changState">停用</el-radio>
           </el-radio-group>
@@ -158,8 +158,6 @@ export default{
   data() {
     return {
       id: '',
-      status: '',
-      changeStatus: '',
       loading: false,
       page: {
         curPage: 1
@@ -208,17 +206,15 @@ export default{
   },
   methods: {
     fetchDict() {
-      // 获取公众号类型列表
+      // 获取文章类型列表
       this.$store.dispatch('getTypeDict', {
         cityId: this.cityId,
-        code: 1
+        code: 3
       })
       // 查询公众号基本信息
       this.$store.dispatch('getPaccountInfo', {
         id: this.id
       }).then((res) => {
-        this.status = res.data.status
-        this.changeStatus = res.data.status
         this.wechatAccount = res.data.wechatAccount
         const typeid = res.data.typeDictList
         if (typeid) {
@@ -232,8 +228,10 @@ export default{
     },
     releaseTimeChange(value) {
       const date = value || ['', '']
-      this.filter.beginDate = date[0]
-      this.filter.endDate = date[1]
+      if (date[0]) this.filter.beginDate = date[0].split(' ')[0] + ' 00:00:00'
+      else this.filter.beginDate = date[0]
+      if (date[1]) this.filter.endDate = date[1].split(' ')[0] + ' 23:59:59'
+      else this.filter.endDate = date[1]
     },
     fetchData() {
       // 公众号详情-分页
@@ -269,16 +267,16 @@ export default{
             type: 'success',
             message: '成功切换'
           })
-          this.changeStatus = type
+          this.fetchDict()
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '切换失败，请稍后重试'
           })
-          this.status = this.changeStatus
+          this.fetchDict()
         })
       }).catch(() => {
-        this.status = this.changeStatus
+        this.fetchDict()
       })
     },
     changePage(curPage) {
