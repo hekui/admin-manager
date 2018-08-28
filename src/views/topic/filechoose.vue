@@ -86,8 +86,6 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
-
   export default {
     name: 'fileChoose',
     data() {
@@ -99,6 +97,7 @@
           curPage: 1,
           pageSize: 10
         },
+        listData: [],
         filter: {
           title: '',
         }
@@ -119,8 +118,9 @@
       },
       fetchData() {
         this.loading = true
-        this.$store.dispatch('getTopicContentList', Object.assign({}, this.filter, this.page)).then(() => {
+        this.$store.dispatch('getTopicContentList', Object.assign({}, this.filter, this.page)).then(res => {
           this.loading = false
+          this.listData = res.data
         }).catch(() => {
           this.loading = false
         })
@@ -129,11 +129,6 @@
         this.page.curPage = curPage
         this.fetchData()
       }
-    },
-    computed: {
-      ...mapState({
-        listData: state => state.content.listData
-      })
     }
   }
 </script>

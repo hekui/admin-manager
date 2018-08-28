@@ -11,8 +11,8 @@
         <div class="status-choice">
           <span class="text">状态：</span>
           <el-radio-group v-model="infoData.status">
-            <el-radio :label="1" @change="changState">启用</el-radio>
-            <el-radio :label="2" @change="changState">停用</el-radio>
+            <el-radio :label="1" @change="changState(1)">启用</el-radio>
+            <el-radio :label="2" @change="changState(2)">停用</el-radio>
           </el-radio-group>
         </div>
       </div>
@@ -24,7 +24,7 @@
           <el-form-item label="文章类型">
             <el-cascader
               v-model="filter.typeId"
-              :options="paccountTypeDict"
+              :options="articleTypeDict"
               :clearable="true"
               change-on-select
             ></el-cascader>
@@ -175,12 +175,11 @@ export default{
     }
   },
   computed: {
-    ...mapGetters(['paccountTypeDict', 'pclassifyTypeDict']),
+    ...mapGetters(['articleTypeDict', 'pclassifyTypeDict']),
     ...mapState({
       detailId: state => state.paccount.detailId,
       cityId: state => state.cityId,
       pclassify: state => state.pclassify,
-      options: state => state.paccountTypeDict,
       pickerOptions: state => state.pickerOptions,
       infoData: state => state.paccount.infoData,
       detailsStatus: state => state.paccount.detailsStatus,
@@ -251,11 +250,10 @@ export default{
       this.page.curPage = 1
       this.fetchData()
     },
-    changState() {
-      const type = this.status
+    changState(status) {
       const params = {
         id: this.id,
-        status: type
+        status
       }
       this.$confirm('你确定切换状态吗？', '提示', {
         type: 'warning',
@@ -269,10 +267,6 @@ export default{
           })
           this.fetchDict()
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '切换失败，请稍后重试'
-          })
           this.fetchDict()
         })
       }).catch(() => {

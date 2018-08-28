@@ -172,13 +172,13 @@ import SvgIcon from '@/components/SvgIcon'
 const getActivatedListByLevel = (list, targetList = [], level = 1) => {
   for (let i = 0; i < list.length; i++) {
     targetList[i] = {
-      value: list[i].id,
-      label: list[i].name
+      value: list[i].value,
+      label: list[i].label
     }
     if (level < 4) {
-      if (Array.isArray(list[i].childList) && list[i].childList.length > 0) {
+      if (Array.isArray(list[i].children) && list[i].children.length > 0) {
         targetList[i].children = []
-        getActivatedListByLevel(list[i].childList, targetList[i].children, ++level)
+        getActivatedListByLevel(list[i].children, targetList[i].children, ++level)
       }
     }
   }
@@ -215,18 +215,18 @@ export default {
   computed: {
     ...mapState({
       paccountTypeDict: state => state.category.paccountTypeDict,
-      paccountTypeDictActivated: state => {
-        return getActivatedListByLevel(state.category.paccountTypeDict)
-      },
       tagTypeDict: state => state.category.tagTypeDict,
-      tagTypeDictActivated: state => {
-        return getActivatedListByLevel(state.category.tagTypeDict)
-      },
       articleTypeDict: state => state.category.articleTypeDict,
-      articleTypeDictActivated: state => {
-        return getActivatedListByLevel(state.category.articleTypeDict)
-      }
     }),
+    paccountTypeDictActivated() {
+      return getActivatedListByLevel(this.$store.getters.paccountTypeDict)
+    },
+    tagTypeDictActivated() {
+      return getActivatedListByLevel(this.$store.getters.tagTypeDict)
+    },
+    articleTypeDictActivated() {
+      return getActivatedListByLevel(this.$store.getters.articleTypeDict)
+    },
     dialogTitle() {
       return this.dialogType === 'edit' ? '编辑类型' : '新增类型'
     }
