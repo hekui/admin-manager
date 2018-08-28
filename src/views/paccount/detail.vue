@@ -24,7 +24,7 @@
           <el-form-item label="文章类型">
             <el-cascader
               v-model="filter.typeId"
-              :options="paccountTypeDict"
+              :options="articleTypeDict"
               :clearable="true"
               change-on-select
             ></el-cascader>
@@ -175,12 +175,11 @@ export default{
     }
   },
   computed: {
-    ...mapGetters(['paccountTypeDict', 'pclassifyTypeDict']),
+    ...mapGetters(['articleTypeDict', 'pclassifyTypeDict']),
     ...mapState({
       detailId: state => state.paccount.detailId,
       cityId: state => state.cityId,
       pclassify: state => state.pclassify,
-      options: state => state.paccountTypeDict,
       pickerOptions: state => state.pickerOptions,
       infoData: state => state.paccount.infoData,
       detailsStatus: state => state.paccount.detailsStatus,
