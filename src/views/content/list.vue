@@ -97,19 +97,25 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="readNum"
           label="阅读量"
           width="90">
+          <template slot-scope="scope">
+            <span>{{scope.row.readNum || 0}}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="likeNum"
           label="点赞量"
           width="80">
+          <template slot-scope="scope">
+            <span>{{scope.row.likeNum || 0}}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="wordsNum"
           label="字数"
           width="90">
+          <template slot-scope="scope">
+            <span>{{scope.row.wordsNum || 0}}</span>
+          </template>
         </el-table-column>
         <el-table-column
           fixed="right"
