@@ -5,14 +5,14 @@
             <el-form-item label="反馈时间">
               <el-date-picker
                 v-model="form.dateTime"
-                type="datetimerange"
+                type="daterange"
                 unlink-panels
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 align="left"
                 :clearable="true"
-                value-format="yyyy-MM-dd HH:mm"
+                value-format="yyyy-MM-dd"
                 :picker-options="dateoptions">
               </el-date-picker>
             </el-form-item>
