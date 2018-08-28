@@ -60,7 +60,7 @@ export default {
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     getPaccountInfo({ commit }, params) {
@@ -72,7 +72,7 @@ export default {
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     updatestatusStateInfo({ commit }, params) {
@@ -80,7 +80,7 @@ export default {
       return api.post('/subscription/updatestatus', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     editPaccountInfo({ commit }, params) {
@@ -88,7 +88,7 @@ export default {
       return api.post('/subscription/edit', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     getArticleList({ commit }, params) {
@@ -100,7 +100,7 @@ export default {
         })
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     addPaccountInfo({ commit }, params) {
@@ -108,7 +108,7 @@ export default {
       return api.post('/subscription/add', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     updateArticleStatus({ commit }, params) {
@@ -116,7 +116,7 @@ export default {
       return api.post('/content/updatestatus', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
     syncPaccount({ commit }, params) {
@@ -124,7 +124,7 @@ export default {
       return api.post('/subscription/sync', params).then(res => {
         return res
       }, res => {
-        return Promise.resolve(res)
+        return Promise.reject(res)
       })
     },
   }
