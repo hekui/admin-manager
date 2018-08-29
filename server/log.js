@@ -25,7 +25,7 @@ log4js.configure({
   categories: {
     default: { 
       appenders: ['console', 'dateFile'], 
-      level: 'trace' 
+      level: 'error' 
     }
   }
 });

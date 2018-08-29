@@ -64,7 +64,9 @@ if(isProd){
 }else{
   port = config.dev.port
   // router history
-  app.use(require('connect-history-api-fallback')())
+  app.use(require('connect-history-api-fallback')({
+    verbose: true
+  }))
   app.use(require('webpack-dev-middleware')(compiler, {
     noInfo: true,
     publicPath: config.dev.assetsPublicPath,
@@ -90,5 +92,5 @@ app.use(function(err, req, res, next){
 })
 
 app.listen(port, () => {
-  console.log(`server started at localhost:${port}`)
+  console.log(`server started at http://localhost:${port}`)
 })
