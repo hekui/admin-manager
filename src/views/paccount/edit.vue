@@ -3,7 +3,7 @@
     <div class="add-paccount">
       <el-form ref="editInfo" :model="editInfo" :rules="rules" label-width="80px" v-if="id" >
         <el-form-item label="微信号" prop="wechatAccount">
-          <el-input v-model="editInfo.wechatAccount" :disabled="true"></el-input>
+          <el-input v-model.trim="editInfo.wechatAccount" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="editInfo.status">
@@ -41,7 +41,7 @@
       </el-form>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-else>
         <el-form-item label="微信号" prop="wechatAccount">
-          <el-input v-model="form.wechatAccount" placeholder="请输入微信号，注意大小写" :clearable="true" ></el-input>
+          <el-input v-model.trim="form.wechatAccount" placeholder="请输入微信号，注意大小写" :clearable="true" ></el-input>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
