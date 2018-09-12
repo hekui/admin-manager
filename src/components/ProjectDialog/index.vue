@@ -1,11 +1,11 @@
 <template>
-  <div class="content">
-    <div class="dialog-filter">
-      <el-form :inline="true" :model="projectFilter">
-        <el-form-item label="">
+  <div class="project-choose">
+    <div class="filter">
+      <el-form :inline="true" :model="filter">
+        <el-form-item label="楼盘名称">
           <el-input
             v-model="projectFilter.title"
-            placeholder="请输入项目名称搜索"
+            placeholder="请输入楼盘名称"
             clearable></el-input>
         </el-form-item>
         <el-form-item>
@@ -13,10 +13,10 @@
         </el-form-item>
       </el-form>
     </div>
-    <div>
-      <!-- <el-table
+    <div class="table">
+      <el-table
         ref="sigletable"
-        :data="data.list"
+        :data="listData.list"
         highlight-current-row
         @current-change="tableCurrentChange"
         v-loading="loading"
@@ -64,33 +64,29 @@
           layout="total, prev, pager, next, jumper"
           @current-change="changePage"
           :current-page="page.pageNo"
-          :page-size="data.pageSize"
-          :total="data.totalRecords">
+          :page-size="listData.pageSize"
+          :total="listData.totalRecords">
         </el-pagination>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
 <script>
 export default {
+  name: 'projectChooseList',
   data() {
     return {
-      data: { // 预计后端返回数据格式 - 未定
-        curPage: 1,
-        hasNext: true,
-        hasPrevious: false,
-        nextPage: 2,
-        pageSize: 20,
-        qualification: '',
-        sortType: '',
-        totalPage: 0,
-        totalRecords: 0,
-        list: []
-      },
-      projectFilter: {
+      currentRow: '',
+      currentProject: {},
+      loading: false,
+      filter: {
         title: ''
       },
-      loading: false,
+      listData: [],
+      page: {
+        curPage: 1,
+        pageSize: 10
+      }
     }
   },
   created() {
@@ -98,33 +94,43 @@ export default {
   },
   methods: {
     fetchData() {
-      const param = {
-        curPage: this.curPage += 1,
-        keywords: this.projectFilter.title
-      }
       this.loading = true
-      this.$store.dispatch('getProjectDialogData', param).then(res => {
-        this.data = res.data
+      this.$store.dispatch('getProjectDialogData', Object.assign({}, this.filter, this.page)).then(res => {
         this.loading = false
-      }, res => {
-        this.$message({
-          message: '数据查询失败，' + res.msg,
-          type: 'error'
-        })
+        this.listData = res.data
+      }).catch(() => {
         this.loading = false
       })
     },
+    tableCurrentChange(row) {
+      console.log(row)
+      this.currentRow = row.id
+      this.currentProject = row
+    },
     projectFilterSubmit() {
-      this.data.curPage === 0
+      this.page.curPage = 1
       this.fetchData()
     },
     changePage(value) {
-      this.data.curPage = value - 1
+      this.page.curPage = value
       this.fetchData()
     }
   }
 }
 </script>
-<style lang="scss">
-
+<style lang="sass">
+  .project-choose
+    display: flex
+    flex-direction: column
+    height: 100%
+    width: 100%
+    background: white
+    .filter
+      flex: 0 0
+    .table
+      flex: 1 1
+      border: solid #ebeef5
+      overflow-y: scroll
+    .pages
+      margin-top: 15px
 </style>

@@ -115,7 +115,7 @@
       width="80%"
       :visible.sync="showHouseDialog">
       <div class="dialog-content">
-        <project-dialog></project-dialog>
+        <project-dialog ref="projectDialog"></project-dialog>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel = false">取 消</el-button>
@@ -146,8 +146,7 @@ export default {
       binding: {
         lonlat: '',
         articleType: [],
-        tags: [],
-        houseId: ''
+        tags: []
       }
     }
   },
@@ -230,7 +229,6 @@ export default {
       this.binding.lonlat = this.detailData.lonlat
       this.binding.articleType = handleInvalidType(this.articleTypeDict, this.articleType.id)
       this.binding.tags = [...this.detailData.labels]
-      this.binding.houseId = ''
     },
     // 删除项目关联
     handleDelete(houseId) {
@@ -254,7 +252,7 @@ export default {
     },
     // 新增项目关联
     addHouse() {
-      this.$store.dispatch('addHouse', { id: this.detailData.id, houseId: this.binding.houseId }).then(() => {
+      this.$store.dispatch('addHouse', { id: this.detailData.id, houseId: this.$refs.projectDialog.currentProject.id }).then(() => {
         this.$message({
           message: '新增成功！',
           type: 'success'
