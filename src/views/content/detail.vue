@@ -74,7 +74,7 @@
       </template>
       <template v-if="dialogType==='articleType'">
         <div class="type">
-          <el-form :inline="true">
+          <el-form>
             <el-form-item label="类型：">
               <el-cascader
                 :options="articleTypeDict"
@@ -107,7 +107,7 @@
       </template>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel">取 消</el-button>
-          <el-button type="primary" @click="handleConfirm">确 定</el-button>
+        <el-button type="primary" @click="handleConfirm">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog
@@ -115,7 +115,7 @@
       width="80%"
       :visible.sync="showHouseDialog">
       <div class="dialog-content">
-        <house-list></house-list>
+        <project-dialog></project-dialog>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel = false">取 消</el-button>
@@ -128,10 +128,12 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { parseTime, handleInvalidType } from '@/utils'
-import HouseList from '@/components/HouseList'
-
+import ProjectDialog from '@/components/ProjectDialog'
 export default {
   name: 'contentdetail',
+  components: {
+    ProjectDialog,
+  },
   data() {
     return {
       loading: false,
@@ -148,9 +150,6 @@ export default {
         houseId: ''
       }
     }
-  },
-  components: {
-    HouseList
   },
   computed: {
     ...mapState({
@@ -332,6 +331,10 @@ export default {
           message: '已取消操作!'
         })
       })
+    },
+    // 保存关联项目
+    projectSubmit() {
+
     }
   }
 }
@@ -479,7 +482,7 @@ export default {
           }
         }
       }
-      .el-form-item {
+      .type .el-form-item {
         width: 100%;
         position: relative;
         .el-form-item__label {

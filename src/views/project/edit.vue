@@ -16,15 +16,6 @@
             <el-radio :label="1">是</el-radio>
             <el-radio :label="2">否</el-radio>
           </el-radio-group>
-          <el-alert
-            title="授权是指该公众号是否关联房观察小程序，请一定确保关联后再选择是，否则会导致小程序中该公众号的文章无法打开。"
-            show-icon
-            type="warning"
-            :closable="false">
-          </el-alert>
-          <!-- <div class="el-upload__tip">
-            注意：授权是指该公众号是否关联房观察小程序，请一定确保关联后再选择是，否则会导致小程序中该公众号的文章无法打开。
-          </div> -->
         </el-form-item>
         <el-form-item label="所属分类" prop="classify">
           <el-select v-model="editInfo.classify" placeholder="请选择">
@@ -49,7 +40,7 @@
         </el-form-item>
       </el-form>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px" v-else>
-        <el-form-item label="微信号" prop="wechatAccount" style="width:280px">
+        <el-form-item label="微信号" prop="wechatAccount">
           <el-input v-model.trim="form.wechatAccount" placeholder="请输入微信号，注意大小写" :clearable="true" ></el-input>
         </el-form-item>
         <el-form-item label="状态" prop="status">
@@ -63,17 +54,7 @@
             <el-radio :label="1">是</el-radio>
             <el-radio :label="2">否</el-radio>
           </el-radio-group>
-          <el-alert
-            title="授权是指该公众号是否关联房观察小程序，请一定确保关联后再选择是，否则会导致小程序中该公众号的文章无法打开。"
-            show-icon
-            type="warning"
-            :closable="false">
-          </el-alert>
-          <!-- <div class="el-upload__tip red">
-            注意：授权是指该公众号是否关联房观察小程序，请一定确保关联后再选择是，否则会导致小程序中该公众号的文章无法打开。
-          </div> -->
         </el-form-item>
-        
         <el-form-item label="所属分类" prop="classify">
           <el-cascader placeholder="请选择所属分类"
             v-model="form.classify"
@@ -344,7 +325,7 @@ export default{
     }
   }
   .add-paccount{
-    // width: 480px;
+    width: 480px;
     // margin-left: 200px;
     .el-form{
       padding-top: 20px;

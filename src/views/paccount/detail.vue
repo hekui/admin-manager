@@ -4,7 +4,7 @@
       <div class="gzh-top clearfix">
         <div class="pavatar">
           <img v-if="infoData.headImg" :src="infoData.headImg" width="50" alt="公众号头像" >
-          <img v-else src="./../../../public/images/wchat-ddefault.jpg" width="50" alt="公众号头像">
+          <img v-else src="./../../../public/images/wchat-default.jpg" width="50" alt="公众号头像">
           <p class="name">{{ infoData.name }}</p>
           <p class="en-name">{{ infoData.wechatAccount }}</p>
         </div>
@@ -19,7 +19,7 @@
       <div class="form-filter">
         <el-form ref="filter" :inline="true" :model="filter">
           <el-form-item label="文章标题">
-            <el-input v-model.trim="filter.title" :clearable="true" placeholder="请输入名称"></el-input>
+            <el-input v-model.trim="filter.title" :clearable="true" placeholder="请输入文章标题"></el-input>
           </el-form-item>
           <el-form-item label="文章类型">
             <el-cascader
@@ -28,6 +28,9 @@
               :clearable="true"
               change-on-select
             ></el-cascader>
+          </el-form-item>
+          <el-form-item label="项目名称">
+            <el-input v-model.trim="filter.caseTile" :clearable="true" placeholder="请输入项目名称"></el-input>
           </el-form-item>
           <el-form-item label="发布时间">
             <el-date-picker
@@ -124,6 +127,11 @@
               width="80">
             </el-table-column>
             <el-table-column
+              prop="wordsNum"
+              label="项目名称"
+              min-width="80">
+            </el-table-column>
+            <el-table-column
               fixed="right"
               label="操作"
               width="120">
@@ -153,7 +161,7 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-export default{
+export default {
   name: 'paccountDetail',
   data() {
     return {
@@ -165,13 +173,14 @@ export default{
       filter: {
         typeId: [],
         title: '',
+        caseTile: '',
         endDate: '',
         beginDate: '',
         id: ''
       },
       defaultDate: '',
       typeDictList: [], // 编辑的时候获取状态 this.formatTypeId
-      wechatAccount: '', // 公从号
+      wechatAccount: '' // 公从号
     }
   },
   computed: {
@@ -201,7 +210,7 @@ export default{
       this.id = newVal
       this.fetchDict()
       this.fetchData()
-    },
+    }
   },
   methods: {
     fetchDict() {
@@ -211,15 +220,17 @@ export default{
         code: 3
       })
       // 查询公众号基本信息
-      this.$store.dispatch('getPaccountInfo', {
-        id: this.id
-      }).then((res) => {
-        this.wechatAccount = res.data.wechatAccount
-        const typeid = res.data.typeDictList
-        if (typeid) {
-          this.formatTypeId(typeid)
-        }
-      })
+      this.$store
+        .dispatch('getPaccountInfo', {
+          id: this.id
+        })
+        .then(res => {
+          this.wechatAccount = res.data.wechatAccount
+          const typeid = res.data.typeDictList
+          if (typeid) {
+            this.formatTypeId(typeid)
+          }
+        })
     },
     // 获取序号
     getIndex(index) {
@@ -236,15 +247,23 @@ export default{
       // 公众号详情-分页
       const params = {
         id: this.id,
-        typeId: Array.isArray(this.filter.typeId) ? [...this.filter.typeId].pop() : ''
+        typeId: Array.isArray(this.filter.typeId)
+          ? [...this.filter.typeId].pop()
+          : ''
       }
       console.log('this.filter', this.filter)
       this.loading = true
-      this.$store.dispatch('getArticleList', Object.assign({}, this.filter, params, this.page)).then(() => {
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
-      })
+      this.$store
+        .dispatch(
+          'getArticleList',
+          Object.assign({}, this.filter, params, this.page)
+        )
+        .then(() => {
+          this.loading = false
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     submitFilter() {
       this.page.curPage = 1
@@ -259,19 +278,24 @@ export default{
         type: 'warning',
         confirmButtonText: '确定',
         cancelButtonText: '取消'
-      }).then(() => {
-        this.$store.dispatch('updatestatusStateInfo', params).then(() => {
-          this.$message({
-            type: 'success',
-            message: '成功切换'
-          })
-          this.fetchDict()
-        }).catch(() => {
+      })
+        .then(() => {
+          this.$store
+            .dispatch('updatestatusStateInfo', params)
+            .then(() => {
+              this.$message({
+                type: 'success',
+                message: '成功切换'
+              })
+              this.fetchDict()
+            })
+            .catch(() => {
+              this.fetchDict()
+            })
+        })
+        .catch(() => {
           this.fetchDict()
         })
-      }).catch(() => {
-        this.fetchDict()
-      })
     },
     changePage(curPage) {
       this.page.curPage = curPage
@@ -279,19 +303,22 @@ export default{
     },
     syncHandle() {
       // 同步公众号数据
-      this.$store.dispatch('syncPaccount', {
-        wechatAccount: this.wechatAccount
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '同步成功'
+      this.$store
+        .dispatch('syncPaccount', {
+          wechatAccount: this.wechatAccount
         })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '同步失败，请稍后重试'
+        .then(() => {
+          this.$message({
+            type: 'success',
+            message: '同步成功'
+          })
         })
-      })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '同步失败，请稍后重试'
+          })
+        })
     },
     updateArticle(index, data, id, s) {
       const status = s === 1 ? 2 : 1
@@ -304,18 +331,21 @@ export default{
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(() => {
-        this.$store.dispatch('updateArticleStatus', params).then(() => {
-          this.$message({
-            type: 'success',
-            message: '成功切换'
+        this.$store
+          .dispatch('updateArticleStatus', params)
+          .then(() => {
+            this.$message({
+              type: 'success',
+              message: '成功切换'
+            })
+            data[index].status = status
           })
-          data[index].status = status
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '切换失败，请稍后重试'
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '切换失败，请稍后重试'
+            })
           })
-        })
       })
     },
     showDetail(id) {
@@ -335,7 +365,7 @@ export default{
       })
     },
     formatTypeId(data) {
-      data.map((item) => {
+      data.map(item => {
         this.typeDictList.push(item.id)
         if (item.childList) {
           this.formatTypeId(item.childList)
@@ -347,66 +377,66 @@ export default{
 </script>
 
 <style lang="scss">
-.paccount-edit-page{
-  .edit-paccount{
-    .gzh-top{
+.paccount-edit-page {
+  .edit-paccount {
+    .gzh-top {
       background-color: #f2f2f2;
       padding: 10px 6px;
-      .pavatar{
+      .pavatar {
         width: 50%;
         float: left;
-        img{
-          float: left; margin-right: 10px;
+        img {
+          float: left;
+          margin-right: 10px;
         }
-        p{
+        p {
           margin: 0 auto;
         }
-        .name{
-          font-size: 16px; font-weight: bold;
+        .name {
+          font-size: 16px;
+          font-weight: bold;
           padding-top: 8px;
         }
-        .en-name{
+        .en-name {
           font-size: 12px;
           padding-top: 4px;
           color: #999;
         }
       }
-      .status-choice{
+      .status-choice {
         width: 50%;
         float: left;
         line-height: 50px;
-        .text{
+        .text {
           padding-right: 10px;
           color: #000;
         }
       }
     }
-    .form-filter{
+    .form-filter {
       padding-top: 18px;
     }
-    .table-top{
+    .table-top {
       // display: flex;
       // justify-content: space-between;
-      .refresh-button{
+      .refresh-button {
         margin-right: 10px;
       }
-      .tips{
-        display: inline-table
+      .tips {
+        display: inline-table;
       }
-      .date{
+      .date {
         color: #333;
       }
-      
     }
   }
-  .add-paccount{
+  .add-paccount {
     width: 480px;
     // margin-left: 200px;
-    .el-form{
+    .el-form {
       padding-top: 20px;
     }
   }
 }
-
 </style>
 

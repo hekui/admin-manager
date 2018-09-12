@@ -11,6 +11,9 @@ export default {
     contentrecommend: '推荐内容管理',
     contentdetail: '内容详情',
     contentedit: '内容二次编辑',
+    project: '项目管理',
+    projectList: '楼盘列表',
+    projectEdit: '编辑楼盘',
     topic: '专题管理',
     topicList: '专题列表',
     topicAdd: '新增专题',
@@ -23,7 +26,8 @@ export default {
     editAdvert: '编辑广告',
     city: '城市管理',
     category: '类型管理',
-    tag: '标签管理'
+    tag: '标签管理',
+    mini: '小程序配置'
   },
   navbar: {
     logOut: '退出登录',

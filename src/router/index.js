@@ -127,6 +127,37 @@ export const asyncRouterMap = [
       hidden: true
     }]
   },
+  // 项目管理
+  {
+    path: '/project',
+    name: 'project',
+    component: Layout,
+    redirect: '/project/list',
+    meta: {
+      title: 'project',
+      icon: 'building'
+      // roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [{
+      path: 'list',
+      component: () => import('@/views/project/list'),
+      name: 'projectList',
+      meta: {
+        title: 'projectList',
+        icon: 'building',
+        // roles: ['admin'] // or you can only set roles in sub nav
+      }
+    }, {
+      path: 'edit',
+      component: () => import('@/views/project/edit'),
+      name: 'projectEdit',
+      hidden: true,
+      meta: {
+        title: 'projectEdit'
+        // if do not set roles, means: this page does not require permission
+      }
+    }]
+  },
   // 专题管理
   {
     path: '/topic',
@@ -161,6 +192,15 @@ export const asyncRouterMap = [
       hidden: true,
       meta: {
         title: 'topicEdit'
+        // if do not set roles, means: this page does not require permission
+      }
+    },
+    {
+      path: 'doit',
+      component: () => import('@/views/property/detail'),
+      name: 'propertyDetail',
+      meta: {
+        title: 'propertyDetail'
         // if do not set roles, means: this page does not require permission
       }
     }]
@@ -253,6 +293,15 @@ export const asyncRouterMap = [
       name: 'tag',
       meta: {
         title: 'tag'
+        // if do not set roles, means: this page does not require permission
+      }
+    }, {
+      // 小程序配置
+      path: 'mini',
+      component: () => import('@/views/setting/mini'),
+      name: 'mini',
+      meta: {
+        title: 'mini'
         // if do not set roles, means: this page does not require permission
       }
     }]
