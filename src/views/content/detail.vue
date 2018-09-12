@@ -331,10 +331,6 @@ export default {
           message: '已取消操作!'
         })
       })
-    },
-    // 保存关联项目
-    projectSubmit() {
-
     }
   }
 }
