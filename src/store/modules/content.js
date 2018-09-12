@@ -1,7 +1,19 @@
 import api from './../../api'
 export default {
   state: {
-    listData: { // 预计后端返回数据格式 - 未定
+    listData: {
+      curPage: 1,
+      hasNext: true,
+      hasPrevious: false,
+      nextPage: 2,
+      pageSize: 10,
+      qualification: '',
+      sortType: '',
+      totalPage: 0,
+      totalRecords: 0,
+      list: []
+    },
+    recommendlistData: {
       curPage: 1,
       hasNext: true,
       hasPrevious: false,
@@ -25,6 +37,18 @@ export default {
     'SET_ARTICLE_TAGS': (state, data) => {
       state.detailData.labels = data
     },
+    'SET_ARTICLE_HOUSELIST': (state, data) => {
+      state.detailData.houseList = data
+    },
+    'SET_RECOMMEND_STATUS': (state, data) => {
+      state.listData.list[data.index].recommendStatus = data.recommendStatus
+    },
+    'SET_SORT': (state, data) => {
+      state.recommendlistData.list[data.index].sort = data.sort
+    },
+    'SET_RECOMMENDATION': (state, data) => {
+      state.recommendlistData.list[data.index].recommendation = data.recommendation
+    }
   },
   actions: {
     // 获取内容列表
@@ -39,9 +63,45 @@ export default {
         return Promise.reject(res)
       })
     },
+    // 获取推荐内容列表
+    getContentRecommendlist({ commit }, params) {
+      return api.post('/content/recommendlist', params).then(res => {
+        commit('contentSet', {
+          target: 'recommendlistData',
+          data: res.data
+        })
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
     // 改变内容启用/禁用状态
     changeContentStatus({ commit }, params) {
       return api.post('/content/updatestatus', params).then(res => {
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
+    // 更新文章推荐状态
+    updateRecommendStatus({ commit }, params) {
+      return api.post('/content/updateRecommendStatus', params).then(res => {
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
+    // 更新展示顺序
+    updateSort({ commit }, params) {
+      return api.post('/content/updatesort', params).then(res => {
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
+    // 更新文章推荐状态
+    updateRecommendation({ commit }, params) {
+      return api.post('/content/updaterecommendation', params).then(res => {
         return res
       }, res => {
         return Promise.reject(res)
@@ -72,6 +132,24 @@ export default {
     saveContentTags({ commit }, params) {
       return api.post('/content/updatelabel', params).then(res => {
         commit('SET_ARTICLE_TAGS', res.data.list)
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
+    // 删除项目
+    deleteHouse({ commit }, params) {
+      return api.post('/content/delhouse', params).then(res => {
+        commit('SET_ARTICLE_HOUSELIST', res.data.list)
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
+    // 新增项目
+    addHouse({ commit }, params) {
+      return api.post('/content/addhouse', params).then(res => {
+        commit('SET_ARTICLE_HOUSELIST', res.data.list)
         return res
       }, res => {
         return Promise.reject(res)

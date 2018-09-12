@@ -24,15 +24,42 @@
             <div class="reading">阅读：<span>{{detailData.readNum || 0}}</span></div>
           </div>
           <div class="edit">
-            <!-- <div @click="handleBinding('lonlat')">绑定坐标：<span>{{detailData.lonlat || '新增'}}</span></div> -->
-            <div>绑定坐标：<span>--</span></div>
-            <div class="active" @click="handleBinding('articleType')">对应类型：<span>{{articleType.name.join('-') || '新增'}}</span></div>
-            <div class="active" @click="handleBinding('tags')">对应标签：<span>{{articleTags.join(',') || '新增'}}</span></div>
+            <!-- <div class="box">
+              <div class="left">绑定坐标：</div>
+              <div class="right">
+                <span class="active" @click="handleBinding('lonlat')">{{detailData.lonlat || '新增'}}</span>
+              </div>
+            </div> -->
+            <div class="box">
+              <div class="left">绑定坐标：</div>
+              <div class="right">
+                <span>--</span>
+              </div>
+            </div>
+            <div class="box">
+              <div class="left">对应类型：</div>
+              <div class="right">
+                <span class="active" @click="handleBinding('articleType')">{{articleType.name.join('-') || '新增'}}</span>
+              </div>
+            </div>
+            <div class="box">
+              <div class="left">对应标签：</div>
+              <div class="right">
+                <span class="active" @click="handleBinding('tags')">{{articleTags.join(', ') || '新增'}}</span>
+              </div>
+            </div>
+            <div class="box">
+              <div class="left">关联项目：</div>
+              <div class="right">
+                <div class="house-item" v-for="(item, index) in detailData.houseList" :key="index" :title="item">
+                  <div class="name">{{item.houseName}}</div>
+                  <i class="el-icon-close icon-delete" @click="handleDelete(item.houseId)" title="删除"></i>
+                </div>
+                <div class="active" @click="handleBinding('house')">新增</div>
+              </div>
+              
+            </div>
           </div>
-          <!-- <div class="btn">
-            <el-button type="info" class="to-edit" @click="handleToEdit">二次编辑</el-button>
-            <el-button type="info" class="save" @click="handleSave">保存</el-button>
-          </div> -->
         </div>
       </section>
     </div>
@@ -64,9 +91,35 @@
           <el-button v-for="(item, index) in allTags" :key="item.id" :type="indexOfTag(item, index) > -1 ? 'primary': ''" @click="handleTags(item, index)">{{item.name}}</el-button>
         </div>
       </template>
+      <template v-if="dialogType==='houseName'">
+        <div class="house-name">
+          <el-form :inline="true">
+            <el-form-item label="项目名称：">
+              <el-cascader
+                :options="articleTypeDict"
+                v-model="binding.articleType"
+                :change-on-select="true"
+                :clearable="true">
+              </el-cascader>
+            </el-form-item>
+          </el-form>
+        </div>
+      </template>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel">取 消</el-button>
           <el-button type="primary" @click="handleConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog
+      :title="dialogTitle"
+      width="80%"
+      :visible.sync="showHouseDialog">
+      <div class="dialog-content">
+        <house-list></house-list>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleCancel = false">取 消</el-button>
+        <el-button type="primary" @click="handleConfirm">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -75,6 +128,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { parseTime, handleInvalidType } from '@/utils'
+import HouseList from '@/components/HouseList'
 
 export default {
   name: 'contentdetail',
@@ -85,13 +139,18 @@ export default {
       flag: 'edit',
       id: this.$route.query.id,
       showDialog: false,
+      showHouseDialog: false,
       dialogType: '',
       binding: {
         lonlat: '',
         articleType: [],
-        tags: []
+        tags: [],
+        houseId: ''
       }
     }
+  },
+  components: {
+    HouseList
   },
   computed: {
     ...mapState({
@@ -100,7 +159,7 @@ export default {
     }),
     ...mapGetters(['articleTypeDict']),
     dialogTitle() {
-      return this.dialogType === 'lonlat' ? '绑定坐标' : this.dialogType === 'articleType' ? '对应类型' : this.dialogType === 'tags' ? '对应标签' : ''
+      return this.dialogType === 'lonlat' ? '绑定坐标' : this.dialogType === 'articleType' ? '对应类型' : this.dialogType === 'tags' ? '对应标签' : this.dialogType === 'house' ? '关联项目' : ''
     },
     articleType() {
       const name = []
@@ -164,14 +223,46 @@ export default {
     handleBinding(type) {
       if (this.flag !== 'edit') return
       this.dialogType = type
-      this.showDialog = true
+      if (type === 'house') {
+        this.showHouseDialog = true
+      } else {
+        this.showDialog = true
+      }
       this.binding.lonlat = this.detailData.lonlat
       this.binding.articleType = handleInvalidType(this.articleTypeDict, this.articleType.id)
       this.binding.tags = [...this.detailData.labels]
+      this.binding.houseId = ''
     },
-    handleToEdit() {
-      this.$router.push({ path: '/content/edit', query: { id: this.id }})
+    // 删除项目关联
+    handleDelete(houseId) {
+      this.$confirm('确认要删除该项目关联么?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$store.dispatch('deleteHouse', { id: this.detailData.id, houseId }).then(() => {
+          this.$message({
+            message: '删除成功！',
+            type: 'success'
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作!'
+        })
+      })
     },
+    // 新增项目关联
+    addHouse() {
+      this.$store.dispatch('addHouse', { id: this.detailData.id, houseId: this.binding.houseId }).then(() => {
+        this.$message({
+          message: '新增成功！',
+          type: 'success'
+        })
+      })
+    },
+    // 编辑标签
     handleTags(item, index) {
       let flag = false
       for (let i = 0; i < this.binding.tags.length; i++) {
@@ -182,14 +273,19 @@ export default {
       }
       if (!flag) this.binding.tags.push(item)
     },
+    // 对话框取消按钮
     handleCancel() {
       this.showDialog = false
+      this.showHouseDialog = false
     },
+    // 对话框确认按钮
     handleConfirm() {
       if (this.dialogType === 'lonlat') this.handleSaveLonLat()
       if (this.dialogType === 'articleType') this.handleSaveArticleType()
       if (this.dialogType === 'tags') this.handleSaveTags()
+      if (this.dialogType === 'house') this.addHouse()
       this.showDialog = false
+      this.showHouseDialog = false
     },
     // 保存经纬度
     handleSaveLonLat() {
@@ -202,16 +298,12 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.loading = true
         const params = { id: this.id, labels: this.binding.tags.map(tag => tag.id) }
         this.$store.dispatch('saveContentTags', params).then(() => {
-          this.loading = false
           this.$message({
             message: '保存成功！',
             type: 'success'
           })
-        }).catch(() => {
-          this.loading = false
         })
       }).catch(() => {
         this.$message({
@@ -306,13 +398,35 @@ export default {
         }
         &.isEdit {
           .edit {
-            .active {
-              span {
-                cursor: pointer;
-                color: #409eff;
-                &:hover {
-                  text-decoration: underline;
+            .box {
+              position: relative;
+              padding-left: 70px;
+              .left {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 70px;
+              }
+              .right {
+                width: 100%;
+              }
+              .house-item {
+                position: relative;
+                width: 100%;
+                .name {
+                  display: inline-block;
+                  vertical-align: top;
+                  max-width: 85px;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
                 }
+              }
+            }
+            .active {
+              cursor: pointer;
+              color: #409eff;
+              &:hover {
+                text-decoration: underline;
               }
             }
           }
@@ -346,6 +460,9 @@ export default {
   .el-dialog {
     width: 500px;
     border-radius: 5px;
+    .dialog-content {
+      height: 500px;
+    }
     .el-dialog__title {
       font-size: 14px;
     }
@@ -390,7 +507,21 @@ export default {
           text-overflow: ellipsis;
         }
       }
+      .house-name {
+        .el-form-item__label {
+          text-align: left;
+          width: 75px;
+        }
+        .el-form-item__content {
+          padding-left: 70px;
+        }
+        
+      }
     }
+  }
+  .icon-delete {
+    cursor: pointer;
+    font-size: 12px;
   }
 }
 </style>
