@@ -130,7 +130,7 @@ export const asyncRouterMap = [
     redirect: '/project/list',
     meta: {
       title: 'project',
-      icon: 'article'
+      icon: 'building'
       // roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [{
@@ -138,16 +138,9 @@ export const asyncRouterMap = [
       component: () => import('@/views/project/list'),
       name: 'projectList',
       meta: {
-        title: 'projectList'
+        title: 'projectList',
+        icon: 'building',
         // roles: ['admin'] // or you can only set roles in sub nav
-      }
-    }, {
-      path: 'add',
-      component: () => import('@/views/project/edit'),
-      name: 'projectAdd',
-      meta: {
-        title: 'projectAdd'
-        // if do not set roles, means: this page does not require permission
       }
     }, {
       path: 'edit',
