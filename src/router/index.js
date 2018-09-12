@@ -122,6 +122,44 @@ export const asyncRouterMap = [
       hidden: true
     }]
   },
+  // 项目管理
+  {
+    path: '/project',
+    name: 'project',
+    component: Layout,
+    redirect: '/project/list',
+    meta: {
+      title: 'project',
+      icon: 'article'
+      // roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [{
+      path: 'list',
+      component: () => import('@/views/project/list'),
+      name: 'projectList',
+      meta: {
+        title: 'projectList'
+        // roles: ['admin'] // or you can only set roles in sub nav
+      }
+    }, {
+      path: 'add',
+      component: () => import('@/views/project/edit'),
+      name: 'projectAdd',
+      meta: {
+        title: 'projectAdd'
+        // if do not set roles, means: this page does not require permission
+      }
+    }, {
+      path: 'edit',
+      component: () => import('@/views/project/edit'),
+      name: 'projectEdit',
+      hidden: true,
+      meta: {
+        title: 'projectEdit'
+        // if do not set roles, means: this page does not require permission
+      }
+    }]
+  },
   // 专题管理
   {
     path: '/topic',
