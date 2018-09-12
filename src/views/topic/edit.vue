@@ -1,10 +1,10 @@
 <template>
   <div class="app-container topic-edit">
     <el-form ref="form" :rules="rules" :model="form" label-width="130px">
-      <el-form-item label="专题名称" prop="name">
+      <el-form-item label="专题名称">
         <el-input v-model.trim="form.name" clearable></el-input>
       </el-form-item>
-      <el-form-item label="专题副标题" prop="subtitle">
+      <el-form-item label="专题副标题">
         <el-input v-model.trim="form.subtitle" clearable></el-input>
       </el-form-item>
       <el-form-item label="专题模板" prop="template">
@@ -54,6 +54,7 @@
           :before-upload="beforeAvatarUpload">
           <img v-if="form.headUrl" :src="form.headUrl" class="avatar">
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          <div class="el-upload__tip" slot="tip">建议尺寸：600*300</div>
         </el-upload>
       </el-form-item>
       <el-form-item label="链接类型">
@@ -75,7 +76,7 @@
           <el-input v-model.trim="form.destinationUrl" clearable></el-input>
           <el-button v-if="form.linkType === 1" class="btn" @click="choosearticle">选择文章</el-button>
         </div>
-        
+
       </el-form-item>
       <el-form-item>
         <el-button

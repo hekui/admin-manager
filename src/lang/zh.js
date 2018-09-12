@@ -25,7 +25,8 @@ export default {
     editAdvert: '编辑广告',
     city: '城市管理',
     category: '类型管理',
-    tag: '标签管理'
+    tag: '标签管理',
+    mini: '小程序配置'
   },
   navbar: {
     logOut: '退出登录',

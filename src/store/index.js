@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import api from './../api'
 import app from './modules/app'
 import errorLog from './modules/errorLog'
 import permission from './modules/permission'
@@ -15,7 +16,7 @@ import advert from './modules/advert'
 import tag from './modules/tag'
 import category from './modules/category'
 import city from './modules/city'
-import api from './../api'
+import project from './modules/project'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -136,7 +137,8 @@ const store = new Vuex.Store({
     advert,
     tag,
     category,
-    city
+    city,
+    project,
   },
   getters
 })

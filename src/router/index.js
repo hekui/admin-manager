@@ -288,6 +288,15 @@ export const asyncRouterMap = [
         title: 'tag'
         // if do not set roles, means: this page does not require permission
       }
+    }, {
+      // 小程序配置
+      path: 'mini',
+      component: () => import('@/views/setting/mini'),
+      name: 'mini',
+      meta: {
+        title: 'mini'
+        // if do not set roles, means: this page does not require permission
+      }
     }]
   },
 

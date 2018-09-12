@@ -19,7 +19,7 @@
       <div class="form-filter">
         <el-form ref="filter" :inline="true" :model="filter">
           <el-form-item label="文章标题">
-            <el-input v-model.trim="filter.title" :clearable="true" placeholder="请输入名称"></el-input>
+            <el-input v-model.trim="filter.title" :clearable="true" placeholder="请输入文章标题"></el-input>
           </el-form-item>
           <el-form-item label="文章类型">
             <el-cascader
@@ -28,6 +28,9 @@
               :clearable="true"
               change-on-select
             ></el-cascader>
+          </el-form-item>
+          <el-form-item label="项目名称">
+            <el-input v-model.trim="filter.caseTile" :clearable="true" placeholder="请输入项目名称"></el-input>
           </el-form-item>
           <el-form-item label="发布时间">
             <el-date-picker
@@ -124,6 +127,11 @@
               width="80">
             </el-table-column>
             <el-table-column
+              prop="wordsNum"
+              label="项目名称"
+              min-width="80">
+            </el-table-column>
+            <el-table-column
               fixed="right"
               label="操作"
               width="120">
@@ -165,6 +173,7 @@ export default {
       filter: {
         typeId: [],
         title: '',
+        caseTile: '',
         endDate: '',
         beginDate: '',
         id: ''
