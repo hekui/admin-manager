@@ -196,6 +196,15 @@ export const asyncRouterMap = [
         title: 'topicEdit'
         // if do not set roles, means: this page does not require permission
       }
+    },
+    {
+      path: 'doit',
+      component: () => import('@/views/property/detail'),
+      name: 'propertyDetail',
+      meta: {
+        title: 'propertyDetail'
+        // if do not set roles, means: this page does not require permission
+      }
     }]
   },
   // 用户管理
