@@ -16,7 +16,7 @@
 export default {
   data() {
     return {
-      value: false
+      value: false,
     }
   },
   methods: {
