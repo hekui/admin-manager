@@ -28,6 +28,7 @@
             <div>绑定坐标：<span>--</span></div>
             <div class="active" @click="handleBinding('articleType')">对应类型：<span>{{articleType.name.join('-') || '新增'}}</span></div>
             <div class="active" @click="handleBinding('tags')">对应标签：<span>{{articleTags.join(',') || '新增'}}</span></div>
+            <div>关联项目：<span class="case-item">{{articleTags.join(',')}} <i class="el-icon-close"></i></span> <span class="add" @click="showProjectDialog=true;">新增</span></div>
           </div>
           <!-- <div class="btn">
             <el-button type="info" class="to-edit" @click="handleToEdit">二次编辑</el-button>
@@ -47,7 +48,7 @@
       </template>
       <template v-if="dialogType==='articleType'">
         <div class="type">
-          <el-form :inline="true">
+          <el-form>
             <el-form-item label="类型：">
               <el-cascader
                 :options="articleTypeDict"
@@ -66,7 +67,14 @@
       </template>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel">取 消</el-button>
-          <el-button type="primary" @click="handleConfirm">确 定</el-button>
+        <el-button type="primary" @click="handleConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="关联项目" width="80%" :visible.sync="showProjectDialog">
+      <project-dialog></project-dialog>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showProjectDialog=false">取 消</el-button>
+        <el-button type="primary" @click="projectSubmit">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -75,9 +83,12 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { parseTime, handleInvalidType } from '@/utils'
-
+import ProjectDialog from '@/components/ProjectDialog'
 export default {
   name: 'contentdetail',
+  components: {
+    ProjectDialog,
+  },
   data() {
     return {
       loading: false,
@@ -90,7 +101,8 @@ export default {
         lonlat: '',
         articleType: [],
         tags: []
-      }
+      },
+      showProjectDialog: false,
     }
   },
   computed: {
@@ -240,6 +252,10 @@ export default {
           message: '已取消操作!'
         })
       })
+    },
+    // 保存关联项目
+    projectSubmit() {
+
     }
   }
 }
@@ -315,6 +331,32 @@ export default {
                 }
               }
             }
+            .case-item{
+              .el-icon-close{
+                font-size: 12px; position: relative;
+                width: 16px;
+                height: 16px;
+                line-height: 16px;
+                cursor: pointer;
+                border-radius: 50%;
+                text-align: center;
+                transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+                &:before {
+                  display: inline-block;
+                  -webkit-transform: scale(0.9);
+                  transform: scale(0.9);
+                }
+              }
+              &:hover .el-icon-close{
+                background-color: #b4bccc;
+                color: #fff;
+              }
+            }
+            .add{
+              cursor: pointer;
+              color: #409eff;
+              margin-left: 10px;
+            }
           }
           .to-edit, .save {
             display: none;
@@ -362,7 +404,7 @@ export default {
           }
         }
       }
-      .el-form-item {
+      .type .el-form-item {
         width: 100%;
         position: relative;
         .el-form-item__label {

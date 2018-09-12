@@ -12,13 +12,13 @@
 
 <script>
 import { mapState, mapGetters, mapMutations } from 'vuex'
-import adminDashboard from './admin'
-import editorDashboard from './editor'
+// import adminDashboard from './admin'
+// import editorDashboard from './editor'
 // import { showLoading, hideLoading } from '@/utils'
 
 export default {
   name: 'dashboard',
-  components: { adminDashboard, editorDashboard },
+  // components: { adminDashboard, editorDashboard },
   data() {
     return {
       currentRole: 'adminDashboard'
