@@ -1,3 +1,7 @@
+/**
+ * @description:小程序配置
+ * @date: 2018-9-11
+ */
 <template>
   <div class="app-container">
     <label class="mini_des">显示 小程序首页“预售入口”模块</label>
