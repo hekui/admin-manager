@@ -153,7 +153,7 @@
         <el-table-column
           label="项目名称">
           <template slot-scope="scope">
-            <span>{{scope.row.houseList.length > 1 ? scope.row.houseList[0].houseName + ' 等' : scope.row.houseList[0].houseName || '' }}</span>
+            <span>{{ getHouseName(scope.row) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -178,7 +178,11 @@
       </el-pagination>
     </section>
     <el-dialog title="请输入推荐理由" :visible.sync="showDialog" :close-on-click-modal="false" :show-close="false">
-      <el-input v-model.trim="recommendation" placeholder="例如：小编推荐" :clearable="true"></el-input>
+      <el-form ref="recommendationForm" :model="recommendationForm" :inline="true" :rules="rules">
+        <el-form-item label="推荐理由:" prop="recommendation">
+          <el-input v-model.trim="recommendationForm.recommendation" placeholder="例如：小编推荐" :clearable="true"></el-input>
+        </el-form-item>
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel">取 消</el-button>
         <el-button type="primary" @click="handleConfirm">确 定</el-button>
@@ -212,7 +216,26 @@ export default {
       releaseTime: [],
       pickerOptions,
       recommendScope: null, // 推荐域
-      recommendation: localStorage.getItem('RECOMMENDATION') || '', // 推荐理由
+      recommendationForm: {
+        recommendation: localStorage.getItem('RECOMMENDATION') || '', // 推荐理由
+      },
+      rules: {
+        recommendation: [
+          {
+            required: true,
+            validator: function(rule, value, callback) {
+              if (!value || value.length === 0) {
+                callback(new Error('推荐理由不能为空'))
+              }
+              if (value.length > 4) {
+                callback(new Error('字数过长，请控制在4个字以内'))
+              }
+              callback()
+            },
+            trigger: ['change', 'blur']
+          }
+        ]
+      },
       page: {
         curPage: 1
       }
@@ -291,6 +314,19 @@ export default {
     statusFilter(status) {
       return status === 0 ? '删除' : status === 1 ? '启用' : status === 2 ? '锁定' : ''
     },
+    // 获取项目名称
+    getHouseName(data) {
+      if (Array.isArray(data.houseList)) {
+        if (data.houseList[0] && data.houseList[0].houseName) {
+          if (data.houseList.length > 1) {
+            return data.houseList[0].houseName + ' 等'
+          } else {
+            return data.houseList[0].houseName
+          }
+        }
+      }
+      return ''
+    },
     // 文章类型改变触发
     contentTypeChange(value) {
       const types = [...value]
@@ -360,29 +396,19 @@ export default {
     },
     // 确认推荐
     handleConfirm() {
-      if (this.recommendation === '') {
-        this.$message({
-          type: 'error',
-          message: '推荐理由不能为空'
-        })
-        return
-      }
-      if (this.recommendation.length > 4) {
-        this.$message({
-          type: 'error',
-          message: '字数过长，请控制在4个字以内'
-        })
-        return
-      }
-      // 更新文章推荐状态
-      this.$store.dispatch('updateRecommendStatus', { id: this.recommendScope.row.id, recommendStatus: 1 }).then((res) => {
-        this.fetchData()
-        localStorage.setItem('RECOMMENDATION', this.recommendation)
-        this.showDialog = false
-        this.$message({
-          type: 'success',
-          message: '操作成功!'
-        })
+      this.$refs['recommendationForm'].validate((valid) => {
+        if (valid) {
+        // 更新文章推荐状态
+          this.$store.dispatch('updateRecommendStatus', { id: this.recommendScope.row.id, recommendStatus: 1 }).then((res) => {
+            this.fetchData()
+            localStorage.setItem('RECOMMENDATION', this.recommendationForm.recommendation)
+            this.showDialog = false
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+          })
+        }
       })
     },
     // 取消推荐
@@ -450,9 +476,28 @@ export default {
 .content-container {
   .el-dialog {
     width: 400px;
-    .el-input {
-      width: 100%;
+    .el-dialog__body {
+      padding: 0 20px 20px;
     }
+    .el-form-item {
+      position: relative;
+      margin: 0;
+      width: 100%;
+      padding-left: 90px;
+      .el-form-item__label {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 90px
+      }
+      .el-form-item__content {
+        width: 100%;
+      }
+      .el-input {
+        width: 100%;
+      }
+    }
+    
   }
 }
 </style>
