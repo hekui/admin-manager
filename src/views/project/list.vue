@@ -1,23 +1,11 @@
 <template>
-  <div class="app-container paccount-page">
+  <div class="app-container project-page">
     <div class="form-filter">
       <el-form ref="form" :inline="true" :model="filter">
-        <el-form-item label="公众号名称">
-          <el-input v-model.trim="filter.name" :clearable="true" placeholder="请输入公众号名称"></el-input>
+        <el-form-item label="楼盘名称：">
+          <el-input v-model.trim="filter.name" :clearable="true" placeholder="请输入楼盘名称"></el-input>
         </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="filter.status" :clearable="true" placeholder="请选择">
-            <el-option label="启用" value="1"></el-option>
-            <el-option label="停用" value="2"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="是否授权">
-          <el-select v-model="filter.wechatStatus" :clearable="true" placeholder="请选择">
-            <el-option label="是" value="1"></el-option>
-            <el-option label="否" value="2"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="类型">
+        <el-form-item label="区域：">
           <el-cascader
             v-model="filter.typeId"
             :options="paccountTypeDict"
@@ -25,30 +13,34 @@
             change-on-select
           ></el-cascader>
         </el-form-item>
-        <el-form-item label="添加时间">
-          <el-date-picker
-            v-model="defalultDate"
-            type="daterange"
-            align="right"
-            unlink-panels
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :clearable="true"
-            value-format="yyyy-MM-dd"
-            :picker-options="pickerOptions"
-            @change="releaseTimeChange"
-            >
-          </el-date-picker>
+        <el-form-item label="楼盘状态：">
+          <el-select v-model="filter.housesStatus" :clearable="true" placeholder="请选择">
+            <el-option label="启用" value="1"></el-option>
+            <el-option label="停用" value="2"></el-option>
+          </el-select>
         </el-form-item>
+        <el-form-item label="销售状态：">
+          <el-select v-model="filter.salesStatus" :clearable="true" placeholder="请选择">
+            <el-option label="是" value="1"></el-option>
+            <el-option label="否" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="设置匹配词：">
+          <el-select v-model="filter.matchingWords" :clearable="true" placeholder="请选择">
+            <el-option label="是" value="1"></el-option>
+            <el-option label="否" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        
         <el-form-item>
-          <el-button type="primary" plain @click="submitFilter">查询</el-button>
+          <el-button type="primary" plain @click="submitFilter">搜索</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="form-wrapper">
       <div class="table-top">
-        <el-button type="primary" icon="el-icon-plus" @click="addHandle()">新增公众号监控</el-button>
+        <el-button type="primary" icon="el-icon-plus" @click="addHandle()">新增楼盘</el-button>
+        <div class="el-upload__tip">注意：楼盘新增和编辑，请前往买房吗后台进行操作。本处项目排序可以手动变更，数字越大越靠前</div>
       </div>
       <div class="table-main">
         <el-table
@@ -57,78 +49,85 @@
           border
           style="width: 100%">
           <el-table-column
+            type="index"
+            label="序号"
+            width="50"
+            :index="getIndex">
+          </el-table-column>
+          <el-table-column
             prop="date"
-            label="公众号信息"
-            min-width="200">
+            label="楼盘名称"
+            min-width="100">
             <template slot-scope="scope">
-              <div class="pavatar">
-                <img v-if="scope.row.headImg" :src="scope.row.headImg" width="50" alt="公众号头像" >
-                <img v-else src="./../../../public/images/wchat-default.jpg" width="50" alt="公众号头像">
-                <p class="name">{{scope.row.name}}</p>
-                <p class="en-name">{{scope.row.wechatAccount}}</p>
-              </div>
+              华润24城 七公关
             </template>
           </el-table-column>
           <el-table-column
-            label="所在城市"
+            label="排序"
             prop="city"
-            width="80">
+            width="120">
+            <template slot-scope="scope">
+              <el-input v-model="input"
+              type="number"
+              @blur="sequenceBlur($event, scope)"
+              @keyup.enter.native="sequenceConfirm($event, scope)"
+              @keyup.esc.native="sequenceCancel($event, scope)"></el-input>
+
+            </template>
           </el-table-column>
           <el-table-column
             prop="status"
-            label="状态"
-            width="60">
+            label="区域"
+            width="160">
             <template slot-scope="scope">
-              {{ status[scope.row.status]  }}
+             高新区
             </template>
           </el-table-column>
           <el-table-column
             prop="wechatStatus"
-            label="是否授权"
+            label="销售状态"
             width="120">
             <template slot-scope="scope">
-              {{ wechatStatus[scope.row.wechatStatus]  }}
+             在售
             </template>
           </el-table-column>
           
           <el-table-column
             prop="classify"
-            label="分类"
+            label="楼盘状态"
             width="100">
             <template slot-scope="scope">
-              {{ pclassify[scope.row.classify] || '-' }}
+              上架中
             </template>
           </el-table-column>
           <el-table-column
             prop="typeName"
-            label="类型"
+            label="热门楼盘"
+            width="120">
+            <template slot-scope="scope">
+              <!-- <el-switch
+                v-model="value2"
+                active-color="#13ce66"
+                inactive-color="#ff4949">
+              </el-switch> -->
+              <el-switch class="mini_switch" v-model="value" @change="onChange" active-value="true" inactive-value="false"></el-switch>
+
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="typeName"
+            label="预售信息数"
             width="120">
             <template slot-scope="scope">
               {{ scope.row.typeName || "-"}} 
             </template>
           </el-table-column>
           <el-table-column
-            prop="createTime"
-            label="添加时间"
-            width="140">
+            prop="typeName"
+            label="是否设置匹配词"
+            width="120">
             <template slot-scope="scope">
-              {{ scope.row.createTime | formatDate('YYYY-MM-DD') }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="lastRecordTime"
-            label="最后收录时间"
-            width="140">
-            <template slot-scope="scope">
-              {{ scope.row.lastRecordTime | formatDate('YYYY-MM-DD') }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="articleNum"
-            label="收录文章数量"
-            width="110">
-            <template slot-scope="scope">
-              {{ scope.row.articleNum || "-"}} 
+              {{ scope.row.typeName || "-"}} 
             </template>
           </el-table-column>
           <el-table-column
@@ -139,13 +138,19 @@
               {{ syncStatus[scope.row.dataStatus] || "-"}} 
             </template>
           </el-table-column>
-          
+          <el-table-column
+            prop="articleNum"
+            label="关联文章数"
+            >
+            <template slot-scope="scope">
+              {{ scope.row.articleNum || "-"}} 
+            </template>
+          </el-table-column>
           <el-table-column
             fixed="right"
             label="操作"
             width="170">
             <template slot-scope="scope">
-              <el-button type="text" @click="showDetail(scope.row.id)">详情</el-button>
               <el-button type="text" @click="addHandle(scope.row.id)">编辑</el-button>
               <el-button type="text" @click="syncHandle(scope.$index, listData.list, scope.row)">同步数据</el-button>
             </template>
@@ -153,7 +158,7 @@
         </el-table>
       </div>
       <div class="pages clearfix">
-        <span class="demonstration">合计统计公众号<b class="number"> {{listData.totalRecords || 0}}</b> 个。</span>
+        <span class="demonstration">合计统计楼盘<b class="number"> {{listData.totalRecords || 0}}</b> 个。</span>
         <el-pagination
             background
             layout="total, prev, pager, next, jumper"
@@ -181,13 +186,14 @@ export default {
       },
       filter: {
         name: '',
-        wechatStatus: '',
-        status: '',
-        typeId: [],
-        beginDate: '',
-        endDate: ''
+        region: '',
+        housesStatus: '',
+        salesStatus: '',
+        matchingWords: '',
       },
-      defalultDate: ''
+      input: 0,
+      value: true,
+      multipleSelection: []
     }
   },
   computed: {
@@ -247,10 +253,10 @@ export default {
       this.fetchData()
     },
     addHandle(id) {
-      this.$store.commit('paccountSet', {
-        target: 'editId',
-        data: id
-      })
+      // this.$store.commit('paccountSet', {
+      //   target: 'editId',
+      //   data: id
+      // })
       if (id) {
         this.$router.push({
           path: '/paccount/edit',
@@ -260,7 +266,7 @@ export default {
         })
       } else {
         this.$router.push({
-          path: '/paccount/add'
+          path: '/project/add'
         })
       }
     },
@@ -298,26 +304,59 @@ export default {
           id
         }
       })
+    }, // 获取序号
+    getIndex(index) {
+      return (this.page.curPage - 1) * this.listData.pageSize + index + 1
+    },
+    // 失去焦点
+    sequenceBlur(event, scope) {
+      // this.$store.commit('sequenceNum', { index: scope.$index, sequenceNum: this.originalSequence[scope.$index] })
+      this.$message({
+        type: 'info',
+        message: '已取消修改!'
+      })
+    },
+    // 回车确认修改排序
+    sequenceConfirm(event, scope) {
+      const sequenceNum = scope.row.sequenceNum
+      if (sequenceNum < 0) {
+        this.$message({
+          type: 'error',
+          message: '序号不能为负数'
+        })
+        return
+      }
+      // this.$store.dispatch('updateSequenceNum', { id: scope.row.id, sequenceNum: sequenceNum }).then((res) => {
+      //   event.target.blur()
+      //   this.fetchData()
+      //   this.$message({
+      //     type: 'success',
+      //     message: '修改成功!'
+      //   })
+      // })
+    },
+    // ESC取消修改
+    sequenceCancel(event, scope) {
+      event.target.blur()
+    },
+    onChange(value) {
+      this.$confirm('你确定切换开关么？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // 点击确定
+        this.value = value
+      }).catch(() => {
+        // 点击取消
+        this.value = !value
+      })
     }
   }
 }
 </script>
 <style lang="scss">
-.paccount-page{
-  .pavatar{
-    img{
-      float: left; margin-right: 10px;
-    }
-    p{
-      margin: 0 auto;
-    }
-    .name{
-      height: 23px; font-size: 16px; font-weight: bold;
-    }
-    .en-name{
-      font-size: 12px;
-    }
-  }
+.project-page{
   .table-top{
     display: flex;
     justify-content: space-between;
