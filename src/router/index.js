@@ -102,23 +102,28 @@ export const asyncRouterMap = [
   {
     path: '/content',
     component: Layout,
-    meta: { title: 'content', icon: 'article', noCache: true },
+    meta: { title: 'content', icon: 'article' },
     children: [{
       path: 'list',
       component: () => import('@/views/content/list'),
       name: 'contentlist',
-      meta: { title: 'content', icon: 'article', noCache: true }
+      meta: { title: 'contentlist' }
+    }, {
+      path: 'recommend',
+      component: () => import('@/views/content/recommend'),
+      name: 'contentrecommend',
+      meta: { title: 'contentrecommend' }
     }, {
       path: 'detail',
       component: () => import('@/views/content/detail'),
       name: 'contentdetail',
-      meta: { title: 'contentdetail', noCache: true },
+      meta: { title: 'contentdetail' },
       hidden: true
     }, {
       path: 'edit',
       component: () => import('@/views/content/detail'),
       name: 'contentedit',
-      meta: { title: 'contentedit', noCache: true },
+      meta: { title: 'contentedit' },
       hidden: true
     }]
   },

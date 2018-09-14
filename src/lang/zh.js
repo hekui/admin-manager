@@ -8,6 +8,7 @@ export default {
     paccountDetail: '公众号详情',
     content: '内容管理',
     contentlist: '内容列表',
+    contentrecommend: '推荐内容管理',
     contentdetail: '内容详情',
     contentedit: '内容二次编辑',
     project: '项目管理',

@@ -39,25 +39,13 @@
             label="排序"
             width="80">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.sequenceNum"
-              type="number"
-              @blur="sequenceBlur($event, scope)"
-              @keyup.enter.native="sequenceConfirm($event, scope)"
-              @keyup.esc.native="sequenceCancel($event, scope)"></el-input>
-              <!-- <div class="sequenceNum">
-                <div :id="'editable_value_' + scope.$index"
-                  class="editable_value visible"
-                  @click="sequenceNumFocus($event, scope)">
-                  {{scope.row.sequenceNum}}
-                </div>
-                <input type="number" :id="'editable_copy_' + scope.$index"
-                  class="editable_copy"
-                  v-model="beforeEditableValue"
-                  value="number"
-                  @blur="sequenceNumBlur($event, scope)"
-                  @keyup.enter="sequenceNumConfirm($event, scope)"
-                  @keyup.esc="sequenceNumCancel($event, scope)" />
-              </div> -->
+              <el-input 
+                v-model="scope.row.sequenceNum"
+                type="number"
+                @blur="sequenceBlur($event, scope)"
+                @keyup.enter.native="sequenceConfirm($event, scope)"
+                @keyup.esc.native="sequenceCancel($event, scope)">
+              </el-input>
             </template>
           </el-table-column>
           <el-table-column
@@ -257,38 +245,7 @@ export default {
     sequenceCancel(event, scope) {
       event.target.blur()
     },
-    // // 获取焦点
-    // sequenceNumFocus(event, scope) {
-    //   this.beforeEditableValue = scope.row.sequenceNum
-    //   const nextElement = document.getElementById('editable_copy_' + scope.$index)
-    //   event.target.className = 'editable_value'
-    //   nextElement.className = 'editable_copy visible'
-    //   nextElement.focus()
-    // },
-    // // 失去焦点
-    // sequenceNumBlur(event, scope) {
-    //   const prevElement = document.getElementById('editable_value_' + scope.$index)
-    //   event.target.className = 'editable_copy'
-    //   prevElement.className = 'editable_value visible'
-    // },
-    // // 回车确认修改排序
-    // sequenceNumConfirm(event, scope) {
-    //   this.$store.dispatch('updateSequenceNum', { id: scope.row.id, index: scope.$index, sequenceNum: this.beforeEditableValue }).then((res) => {
-    //     this.sequenceNumBlur(event, scope)
-    //     this.$message({
-    //       type: 'success',
-    //       message: '修改成功!'
-    //     })
-    //   })
-    // },
-    // // ESC取消修改
-    // sequenceNumCancel(event, scope) {
-    //   this.sequenceNumBlur(event, scope)
-    //   this.$message({
-    //     type: 'info',
-    //     message: '已取消修改!'
-    //   })
-    // },
+    // 修改状态
     handleStatus(data) {
       const tips = data.labelStatus === 0 ? '是否要锁定' : '是否要激活'
       this.$confirm(tips, '提示', {
@@ -372,6 +329,7 @@ export default {
               })
               this.showDialog = false
               this.fetchData()
+              this.$store.dispatch('getAllTags') // 新增标记标签需要刷新所有标签数据缓存
             }).catch(() => {
               this.dialogLoading = false
             })

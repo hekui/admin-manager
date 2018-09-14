@@ -13,6 +13,9 @@
         <el-form-item label="公众号名称：">
           <el-input v-model.trim="filter.wechatName" placeholder="请输入公众号名称" :clearable="true"></el-input>
         </el-form-item>
+        <el-form-item label="项目名称：">
+          <el-input v-model.trim="filter.houseName" placeholder="请输入楼盘项目名称" :clearable="true"></el-input>
+        </el-form-item>
         <el-form-item label="文章类型：" class="article-type-label">
           <el-cascader
             :options="articleTypeDict"
@@ -43,6 +46,29 @@
             :picker-options="pickerOptions"
             @change="releaseTimeChange" >
           </el-date-picker>
+        </el-form-item>
+        <el-form-item label="是否推荐：">
+          <el-select
+            v-model="filter.recommendStatus"
+            placeholder="不限"
+            :clearable="true">
+            <el-option label="是" :value="1"></el-option>
+            <el-option label="否" :value="0"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="标签名称：">
+          <el-autocomplete
+            class="inline-input"
+            v-model.trim="filter.labelName"
+            :fetch-suggestions="labelFilter"
+            placeholder="请输入标签名称"
+            @select="handleSelectTag"
+            @blur="handleBlur"
+            :clearable="true">
+            <template slot-scope="{ item }">
+              <div>{{ item.name }}</div>
+            </template>
+          </el-autocomplete>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" plain @click="submitFilter">搜索</el-button>
@@ -118,6 +144,19 @@
           </template>
         </el-table-column>
         <el-table-column
+          label="推荐"
+          width="60">
+          <template slot-scope="scope">
+            <el-switch v-model="scope.row.recommendStatus" :active-value="1" :inactive-value="0" @change="handleRecommend(scope)"></el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="项目名称">
+          <template slot-scope="scope">
+            <span>{{scope.row.houseList.length > 1 ? scope.row.houseList[0].houseName + ' 等' : scope.row.houseList[0].houseName || '' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           fixed="right"
           label="操作"
           width="100">
@@ -138,6 +177,13 @@
         :total="listData.totalRecords">
       </el-pagination>
     </section>
+    <el-dialog title="请输入推荐理由" :visible.sync="showDialog" :close-on-click-modal="false" :show-close="false">
+      <el-input v-model.trim="recommendation" placeholder="例如：小编推荐" :clearable="true"></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleCancel">取 消</el-button>
+        <el-button type="primary" @click="handleConfirm">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -150,16 +196,23 @@ export default {
   data() {
     return {
       loading: false,
+      showDialog: false,
       filter: {
         title: '', // 文章标题
         wechatName: '', // 公众号名称
+        houseName: '', // 项目名称
+        labelId: [''], // 标签Id
+        labelName: '', // 标签名称（点击选中）
         contentTypeId: '', // 文章类型
         wechatTypeId: '', // 公众号类型
         beginDate: '', // 时间段查询-起（精确到分）
-        endDate: '' // 时间段查询-止（精确到分）
+        endDate: '', // 时间段查询-止（精确到分）
+        recommendStatus: null // 是否推荐（默认不限）
       },
       releaseTime: [],
       pickerOptions,
+      recommendScope: null, // 推荐域
+      recommendation: localStorage.getItem('RECOMMENDATION') || '', // 推荐理由
       page: {
         curPage: 1
       }
@@ -167,23 +220,73 @@ export default {
   },
   computed: {
     ...mapState({
-      listData: state => state.content.listData
+      listData: state => state.content.listData,
+      allTags: state => state.tag.allTags
     }),
     ...mapGetters(['paccountTypeDict', 'articleTypeDict'])
   },
   created() {
     this.$store.dispatch('getTypeDict', { code: 1 }) // 查询公众号类型
     this.$store.dispatch('getTypeDict', { code: 3 }) // 查询文章类型
+    this.$store.dispatch('getAllTags') // 查询所有标签
     this.fetchData()
   },
   methods: {
     fetchData() {
       this.loading = true
-      this.$store.dispatch('getContentList', Object.assign({}, this.filter, this.page)).then(() => {
+      this.$store.dispatch('getContentList', Object.assign({}, this.filter, this.page, { labelId: this.filter.labelId[0] })).then(() => {
         this.loading = false
       }).catch(() => {
         this.loading = false
       })
+    },
+    // 过滤标签
+    labelFilter(queryString, cb) {
+      const labels = this.allTags.filter(tag => {
+        if (tag.name.indexOf(queryString) > -1) {
+          return true
+        }
+        return false
+      })
+      cb(labels)
+    },
+    // 标签输入框失去焦点
+    handleBlur() {
+      this.filter.labelId = []
+      if (this.filter.labelName) {
+        this.allTags.forEach(tag => {
+          if (tag.name.trim() === this.filter.labelName.trim()) {
+            this.filter.labelId.push(tag.id)
+          }
+        })
+      } else {
+        this.filter.labelId.push('')
+      }
+    },
+    // 验证标签是否匹配
+    validateLableId() {
+      const labelId = this.filter.labelId
+      if (labelId.length === 1) {
+        return true
+      } else {
+        let message = ''
+        if (labelId.length > 1) {
+          message = '请选择一个标签' // 匹配多项
+        }
+        if (labelId.length < 1) {
+          message = '标签名称不正确' // 无匹配项
+        }
+        this.$message({
+          type: 'error',
+          message
+        })
+        return false
+      }
+    },
+    // 选中标签
+    handleSelectTag(item) {
+      this.filter.labelName = item.name
+      this.filter.labelId = [item.id]
     },
     statusFilter(status) {
       return status === 0 ? '删除' : status === 1 ? '启用' : status === 2 ? '锁定' : ''
@@ -218,8 +321,78 @@ export default {
     },
     // 条件查询
     submitFilter() {
-      this.page.curPage = 1
-      this.fetchData()
+      if (this.validateLableId()) {
+        this.page.curPage = 1
+        this.fetchData()
+      }
+    },
+    // 切换推荐开关
+    handleRecommend(scope) {
+      this.recommendScope = scope
+      const recommendStatus = scope.row.recommendStatus
+      if (recommendStatus === 1) {
+        // 开启推荐
+        this.showDialog = true
+      } else {
+        // 关闭推荐
+        this.$confirm('你确认取消推荐么？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // 关闭推荐
+          this.$store.dispatch('updateRecommendStatus', { id: scope.row.id, recommendStatus: 0 }).then((res) => {
+            this.fetchData()
+            this.$message({
+              type: 'success',
+              message: '操作成功!'
+            })
+          })
+        }).catch(() => {
+          // 取消操作，回退数据
+          this.$store.commit('SET_RECOMMEND_STATUS', { index: scope.$index, recommendStatus: 1 })
+          this.$message({
+            type: 'info',
+            message: '操作已取消！'
+          })
+        })
+      }
+    },
+    // 确认推荐
+    handleConfirm() {
+      if (this.recommendation === '') {
+        this.$message({
+          type: 'error',
+          message: '推荐理由不能为空'
+        })
+        return
+      }
+      if (this.recommendation.length > 4) {
+        this.$message({
+          type: 'error',
+          message: '字数过长，请控制在4个字以内'
+        })
+        return
+      }
+      // 更新文章推荐状态
+      this.$store.dispatch('updateRecommendStatus', { id: this.recommendScope.row.id, recommendStatus: 1 }).then((res) => {
+        this.fetchData()
+        localStorage.setItem('RECOMMENDATION', this.recommendation)
+        this.showDialog = false
+        this.$message({
+          type: 'success',
+          message: '操作成功!'
+        })
+      })
+    },
+    // 取消推荐
+    handleCancel() {
+      this.$store.commit('SET_RECOMMEND_STATUS', { index: this.recommendScope.$index, recommendStatus: 0 })
+      this.showDialog = false
+      this.$message({
+        type: 'info',
+        message: '操作已取消'
+      })
     },
     // 查看详情
     handleDetail(data) {
@@ -272,7 +445,14 @@ export default {
 .el-form {
   padding-top: 20px;
 }
-.el-input {
-  width: 220px;
+</style>
+<style rel="stylesheet/scss" lang="scss">
+.content-container {
+  .el-dialog {
+    width: 400px;
+    .el-input {
+      width: 100%;
+    }
+  }
 }
 </style>
