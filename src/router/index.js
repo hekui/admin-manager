@@ -149,7 +149,7 @@ export const asyncRouterMap = [
       }
     }, {
       path: 'edit',
-      component: () => import('@/views/project/edit'),
+      component: () => import('@/views/project/detail'),
       name: 'projectEdit',
       hidden: true,
       meta: {
@@ -200,15 +200,6 @@ export const asyncRouterMap = [
       hidden: true,
       meta: {
         title: 'topicEdit'
-        // if do not set roles, means: this page does not require permission
-      }
-    },
-    {
-      path: 'doit',
-      component: () => import('@/views/property/detail'),
-      name: 'propertyDetail',
-      meta: {
-        title: 'propertyDetail'
         // if do not set roles, means: this page does not require permission
       }
     }]
