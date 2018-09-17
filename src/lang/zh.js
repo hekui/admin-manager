@@ -14,6 +14,7 @@ export default {
     project: '项目管理',
     projectList: '楼盘列表',
     projectEdit: '编辑楼盘',
+    projectAdd: '新增楼盘',
     topic: '专题管理',
     topicList: '专题列表',
     topicAdd: '新增专题',
