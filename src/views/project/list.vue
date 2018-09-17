@@ -259,7 +259,7 @@ export default {
       // })
       if (id) {
         this.$router.push({
-          path: '/paccount/edit',
+          path: '/project/edit',
           query: {
             id
           }
