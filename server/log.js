@@ -1,7 +1,7 @@
 const log4js = require('log4js')
 
 log4js.configure({
-  appenders: { 
+  appenders: {
     // file: {
     //   type: 'file',
     //   filename: __dirname +'/logs/important-things.log',
@@ -23,9 +23,9 @@ log4js.configure({
     }
   },
   categories: {
-    default: { 
-      appenders: ['console', 'dateFile'], 
-      level: 'error' 
+    default: {
+      appenders: ['console', 'dateFile'],
+      level: 'trace'
     }
   }
 });

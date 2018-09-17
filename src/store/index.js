@@ -17,6 +17,7 @@ import tag from './modules/tag'
 import category from './modules/category'
 import city from './modules/city'
 import project from './modules/project'
+import mini from './modules/mini'
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -139,6 +140,7 @@ const store = new Vuex.Store({
     category,
     city,
     project,
+    mini,
   },
   getters
 })

@@ -1,4 +1,5 @@
 /**
+import { mapMutations } from 'vuex';
  * @description:小程序配置
  * @date: 2018-9-11
  */
@@ -8,16 +9,44 @@
     <el-tooltip content="打开后，小程序首页“预售入口”显示" >
       <i class="el-icon-question"></i>
     </el-tooltip>
-    <el-switch class="mini_switch" v-model="value" @change="onChange" active-value="true" inactive-value="false"></el-switch>
+    <el-switch
+      class="mini_switch"
+      v-model="statusData.status"
+      @change="onChange"
+      active-value="1"
+      inactive-value="0"
+      v-show="cityName.search('成都')===-1"
+      disabled>
+    </el-switch>
+    <el-switch
+      class="mini_switch"
+      v-model="statusData.status"
+      @change="onChange"
+      active-value="1"
+      inactive-value="0"
+      v-show="cityName.search('成都')!=-1">
+    </el-switch>
   </div>
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex'
+
 export default {
   data() {
     return {
-      value: false,
     }
+  },
+  created() {
+    this.getStatus()
+  },
+  computed: {
+    ...mapState({
+      statusData: state => state.mini.statusData
+    }),
+    ...mapGetters([
+      'cityName'
+    ])
   },
   methods: {
     onChange(value) {
@@ -27,10 +56,28 @@ export default {
         type: 'warning'
       }).then(() => {
         // 点击确定
-        this.value = value
+        this.$store.dispatch('switchMini', Object.assign({}, { status: value })).then(() => {
+          // 切换成功
+        }).catch(() => {
+          // 切换失败 调整回原来的状态
+          this.changeLocalStatus(value === '1' ? '0' : '1')
+        })
       }).catch(() => {
         // 点击取消
-        this.value = !value
+        this.changeLocalStatus(value === '1' ? '0' : '1')
+      })
+    },
+    getStatus() {
+      this.$store.dispatch('getMiniStatus', Object.assign({})).then(() => {
+        // 切换成功
+      }).catch(() => {
+        // 切换失败 调整回原来的状态
+      })
+    },
+    changeLocalStatus(value) {
+      this.$store.commit('miniSet', {
+        target: 'statusData',
+        data: { status: value }
       })
     }
   }
