@@ -31,6 +31,7 @@ export default {
           target: 'listData',
           data: res.data
         })
+        console.log('getUserList:', res.data)
         return res
       }, res => {
         return Promise.reject(res)
