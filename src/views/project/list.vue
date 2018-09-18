@@ -14,24 +14,23 @@
           ></el-cascader>
         </el-form-item>
         <el-form-item label="楼盘状态：">
-          <el-select v-model="filter.housesStatus" :clearable="true" placeholder="请选择">
-            <el-option label="启用" value="1"></el-option>
-            <el-option label="停用" value="2"></el-option>
+          <el-select v-model="filter.houseStatus" :clearable="true" placeholder="请选择">
+            <el-option label="上线中" value="1"></el-option>
+            <el-option label="已下架" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="销售状态：">
-          <el-select v-model="filter.salesStatus" :clearable="true" placeholder="请选择">
+          <el-select v-model="filter.saleStatus" :clearable="true" placeholder="请选择">
             <el-option label="是" value="1"></el-option>
             <el-option label="否" value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="设置匹配词：">
-          <el-select v-model="filter.matchingWords" :clearable="true" placeholder="请选择">
-            <el-option label="是" value="1"></el-option>
-            <el-option label="否" value="2"></el-option>
+          <el-select v-model="filter.hasMatchWord" :clearable="true" placeholder="请选择">
+            <el-option label="没有" value="0"></el-option>
+            <el-option label="有" value="1"></el-option>
           </el-select>
         </el-form-item>
-        
         <el-form-item>
           <el-button type="primary" plain @click="submitFilter">搜索</el-button>
         </el-form-item>
@@ -55,24 +54,22 @@
             :index="getIndex">
           </el-table-column>
           <el-table-column
-            prop="date"
+            prop="name"
             label="楼盘名称"
             min-width="100">
-            <template slot-scope="scope">
-              华润24城 七公关
-            </template>
           </el-table-column>
           <el-table-column
             label="排序"
             prop="city"
             width="120">
             <template slot-scope="scope">
-              <el-input v-model="input"
-              type="number"
-              @blur="sequenceBlur($event, scope)"
-              @keyup.enter.native="sequenceConfirm($event, scope)"
-              @keyup.esc.native="sequenceCancel($event, scope)"></el-input>
-
+              <el-input 
+                v-model="scope.row.status"
+                type="number"
+                @blur="sequenceBlur($event, scope)"
+                @keyup.enter.native="sequenceConfirm($event, scope)"
+                @keyup.esc.native="sequenceCancel($event, scope)">
+              </el-input>
             </template>
           </el-table-column>
           <el-table-column
@@ -105,13 +102,7 @@
             label="热门楼盘"
             width="120">
             <template slot-scope="scope">
-              <!-- <el-switch
-                v-model="value2"
-                active-color="#13ce66"
-                inactive-color="#ff4949">
-              </el-switch> -->
-              <el-switch class="mini_switch" v-model="value" @change="onChange" active-value="true" inactive-value="false"></el-switch>
-
+              <el-switch class="mini_switch" v-model="scope.row.wechatStatus" @change="onChange(scope.$index,listData.list, scope.row.id, scope.row.isHotHouse)" active-value="true" inactive-value="false"></el-switch>
             </template>
           </el-table-column>
           <el-table-column
@@ -173,7 +164,6 @@
 </template>
 
 <script>
-
 import { mapState, mapGetters } from 'vuex'
 export default {
   name: 'paccountList',
@@ -187,13 +177,10 @@ export default {
       filter: {
         name: '',
         region: '',
-        housesStatus: '',
-        salesStatus: '',
-        matchingWords: '',
-      },
-      input: 0,
-      value: true,
-      multipleSelection: []
+        houseStatus: '',
+        saleStatus: '',
+        hasMatchWord: '',
+      }
     }
   },
   computed: {
@@ -206,7 +193,7 @@ export default {
       pclassify: state => state.pclassify,
       pickerOptions: state => state.pickerOptions,
       syncStatus: state => state.paccount.syncStatus,
-      listData: state => state.paccount.listData
+      listData: state => state.project.listData
     })
   },
   created() {
@@ -220,13 +207,14 @@ export default {
   },
   methods: {
     fetchData() {
-      console.log('this.filter,', this.filter)
+      console.log('this.filter', this.filter)
       const params = {
         typeId: Array.isArray(this.filter.typeId) ? [...this.filter.typeId].pop() : ''
       }
       console.log('-----', params)
+
       this.loading = true
-      this.$store.dispatch('getPaccountList', Object.assign({}, this.filter, params, this.page)).then(() => {
+      this.$store.dispatch('getProjectList', Object.assign({}, this.filter, params, this.page)).then(() => {
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -253,13 +241,9 @@ export default {
       this.fetchData()
     },
     addHandle(id) {
-      // this.$store.commit('paccountSet', {
-      //   target: 'editId',
-      //   data: id
-      // })
       if (id) {
         this.$router.push({
-          path: '/paccount/edit',
+          path: '/project/edit',
           query: {
             id
           }
@@ -326,6 +310,7 @@ export default {
         })
         return
       }
+      console.log('scope', scope)
       // this.$store.dispatch('updateSequenceNum', { id: scope.row.id, sequenceNum: sequenceNum }).then((res) => {
       //   event.target.blur()
       //   this.fetchData()
@@ -339,19 +324,35 @@ export default {
     sequenceCancel(event, scope) {
       event.target.blur()
     },
-    onChange(value) {
-      this.$confirm('你确定切换开关么？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        // 点击确定
-        this.value = value
-      }).catch(() => {
-        // 点击取消
-        this.value = !value
-      })
-    }
+    onChange(index, data, id, isHot) {
+      const isHotSale = isHot === 1 ? 1 : 0
+      // const params = {
+      //   id,
+      //   isHotSale
+      // }
+      console.log(data[index])
+      data[index].isHotHouse = isHotSale
+
+      // this.$confirm('你确定切换开关么？', '提示', {
+      //   type: 'warning',
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消'
+      // }).then(() => {
+      //   data[index].status = status
+      //   this.$store.dispatch('updateArticleStatus', params).then(() => {
+      //     this.$message({
+      //       type: 'success',
+      //       message: '成功切换'
+      //     })
+      //     data[index].status = status
+      //   }).catch(() => {
+      //     this.$message({
+      //       type: 'info',
+      //       message: '切换失败，请稍后重试'
+      //     })
+      //   })
+      // })
+    },
   }
 }
 </script>
