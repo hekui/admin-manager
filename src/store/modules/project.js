@@ -1,7 +1,30 @@
 import api from './../../api'
 export default {
   state: {
-
+    listData: { // 预计后端返回数据格式 - 未定
+      curPage: 1,
+      hasNext: true,
+      hasPrevious: false,
+      nextPage: 2,
+      pageSize: 10,
+      qualification: '',
+      sortType: '',
+      totalPage: 0,
+      totalRecords: 0,
+      list: []
+    },
+    mfmList: { // 预计后端返回数据格式 - 未定
+      curPage: 1,
+      hasNext: true,
+      hasPrevious: false,
+      nextPage: 2,
+      pageSize: 10,
+      qualification: '',
+      sortType: '',
+      totalPage: 0,
+      totalRecords: 0,
+      list: []
+    },
   },
   mutations: {
     projectSet(state, data) {
@@ -9,6 +32,18 @@ export default {
     }
   },
   actions: {
+    getProjectList({ commit }, params) {
+      // 公众号列表-分页  /house/list
+      return api.post('/subscription/list', params).then(res => {
+        commit('projectSet', {
+          target: 'listData',
+          data: res.data
+        })
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
     getProjectDetail({ commit }, params) {
       return api.post('/house/matchwordlist', params).then(res => {
         return res
@@ -16,8 +51,28 @@ export default {
         return Promise.reject(res)
       })
     },
+    getProjectMfm({ commit }, params) {
+      // 取买房吗楼盘列表数据
+      return api.post('/house/mfmlist', params).then(res => {
+        commit('projectSet', {
+          target: 'mfmList',
+          data: res.data
+        })
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
     saveMatchWords({ commit }, params) {
       return api.post('/house/savematchword', params).then(res => {
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
+    getProjectAdd({ commit }, params) {
+      // 项目(楼盘)管理 / 批量添加楼盘
+      return api.post('/house/add', params).then(res => {
         return res
       }, res => {
         return Promise.reject(res)

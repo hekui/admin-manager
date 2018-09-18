@@ -39,30 +39,34 @@
           @select-all="handleSelectionAll"
           @select="handleSelection">
           <el-table-column
-            :reserve-selection="true" 
+            :reserve-selection="true"
+            :selectable='checkSelectable' 
             align="center"
             type="selection"
             width="55">
           </el-table-column>
           <el-table-column
+            prop="name"
             label="楼盘名称"
-            width="120">
-            <template slot-scope="scope">{{ scope.row.name }}</template>
+            width="300">
+            <!-- <template slot-scope="scope">{{ scope.row.name }}</template> -->
           </el-table-column>
           <el-table-column
-            prop="region"
+            prop="regionName"
             label="区域"
-            width="120">
+            width="220">
           </el-table-column>
           <el-table-column
-            prop="housesStatus"
+            prop="saleStatusName"
             label="销售状态"
             show-overflow-tooltip>
           </el-table-column>
           <el-table-column
-            prop="salesStatus"
+            prop="houseStatus"
             label="楼盘状态"
             show-overflow-tooltip>
+            <template slot-scope="scope">
+              {{ scope.row.houseStatus === 1 ? '上线中' : '已下架'}}</template>
           </el-table-column>
         </el-table>
       </div>
@@ -94,10 +98,8 @@ export default {
       },
       filter: {
         name: '',
-        region: '',
         housesStatus: '',
         salesStatus: '',
-        matchingWords: '',
       },
       input: 0,
       value: true,
@@ -145,6 +147,15 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    checkSelectable(row, index) {
+      console.log(row, index)
+      if (row.id === '1037528614322569216') {
+        return false
+      } else {
+        return true
+      }
+      // return row.isInFgc !== 0
     },
     getTypeDict() {
       // 获取公众号类型列表
