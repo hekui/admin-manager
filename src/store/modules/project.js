@@ -44,6 +44,13 @@ export default {
         return Promise.reject(res)
       })
     },
+    getProjectDetail({ commit }, params) {
+      return api.post('/house/matchwordlist', params).then(res => {
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
     getProjectMfm({ commit }, params) {
       // 取买房吗楼盘列表数据
       return api.post('/house/mfmlist', params).then(res => {
@@ -56,9 +63,30 @@ export default {
         return Promise.reject(res)
       })
     },
+    saveMatchWords({ commit }, params) {
+      return api.post('/house/savematchword', params).then(res => {
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
     getProjectAdd({ commit }, params) {
       // 项目(楼盘)管理 / 批量添加楼盘
       return api.post('/house/add', params).then(res => {
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
+    getProjectArticleList({ commit }, params) {
+      return api.post('/house/contentlist?page=true', params).then(res => {
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
+    cancelBindArticle({ commit }, params) {
+      return api.post('/house/removecontent', params).then(res => {
         return res
       }, res => {
         return Promise.reject(res)
