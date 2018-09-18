@@ -13,6 +13,7 @@ export default {
       totalRecords: 0,
       list: []
     },
+    refreshList: false,
     recommendlistData: {
       curPage: 1,
       hasNext: true,
@@ -25,7 +26,9 @@ export default {
       totalRecords: 0,
       list: []
     },
-    detailData: {}
+    refreshRecommendList: false,
+    detailData: {},
+    houseList: []
   },
   mutations: {
     contentSet(state, data) {
@@ -48,6 +51,12 @@ export default {
     },
     'SET_RECOMMENDATION': (state, data) => {
       state.recommendlistData.list[data.index].recommendation = data.recommendation
+    },
+    'SET_REFRESH_LIST': (state, flag) => {
+      state.refreshList = flag
+    },
+    'SET_REFRESH_RECOMMEND_LIST': (state, flag) => {
+      state.refreshRecommendList = flag
     }
   },
   actions: {
@@ -85,7 +94,7 @@ export default {
     },
     // 更新文章推荐状态
     updateRecommendStatus({ commit }, params) {
-      return api.post('/content/updateRecommendStatus', params).then(res => {
+      return api.post('/content/updaterecommendstatus', params).then(res => {
         return res
       }, res => {
         return Promise.reject(res)
@@ -150,6 +159,17 @@ export default {
     addHouse({ commit }, params) {
       return api.post('/content/addhouse', params).then(res => {
         commit('SET_ARTICLE_HOUSELIST', res.data.list)
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
+    getHouseList({ commit }, params) {
+      return api.post('/house/list', params).then(res => {
+        commit('contentSet', {
+          target: 'houseList',
+          data: res.data
+        })
         return res
       }, res => {
         return Promise.reject(res)

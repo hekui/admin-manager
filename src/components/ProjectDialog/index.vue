@@ -4,7 +4,7 @@
       <el-form :inline="true" :model="filter">
         <el-form-item label="楼盘名称">
           <el-input
-            v-model="projectFilter.title"
+            v-model="filter.title"
             placeholder="请输入楼盘名称"
             clearable></el-input>
         </el-form-item>
@@ -72,6 +72,8 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'projectChooseList',
   data() {
@@ -82,12 +84,16 @@ export default {
       filter: {
         title: ''
       },
-      listData: [],
       page: {
         curPage: 1,
         pageSize: 10
       }
     }
+  },
+  computed: {
+    ...mapState({
+      listData: state => state.content.listData
+    })
   },
   created() {
     this.fetchData()
@@ -95,7 +101,7 @@ export default {
   methods: {
     fetchData() {
       this.loading = true
-      this.$store.dispatch('getProjectDialogData', Object.assign({}, this.filter, this.page)).then(res => {
+      this.$store.dispatch('getHouseList', Object.assign({}, this.filter, this.page)).then(res => {
         this.loading = false
         this.listData = res.data
       }).catch(() => {

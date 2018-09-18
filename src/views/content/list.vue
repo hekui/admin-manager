@@ -244,7 +244,8 @@ export default {
   computed: {
     ...mapState({
       listData: state => state.content.listData,
-      allTags: state => state.tag.allTags
+      allTags: state => state.tag.allTags,
+      refreshList: state => state.content.refreshList
     }),
     ...mapGetters(['paccountTypeDict', 'articleTypeDict'])
   },
@@ -325,7 +326,7 @@ export default {
           }
         }
       }
-      return ''
+      return '-'
     },
     // 文章类型改变触发
     contentTypeChange(value) {
@@ -379,6 +380,7 @@ export default {
           // 关闭推荐
           this.$store.dispatch('updateRecommendStatus', { id: scope.row.id, recommendStatus: 0 }).then((res) => {
             this.fetchData()
+            this.$store.commit('SET_REFRESH_RECOMMEND_LIST', true) // 更新推荐内容管理列表
             this.$message({
               type: 'success',
               message: '操作成功!'
@@ -399,8 +401,9 @@ export default {
       this.$refs['recommendationForm'].validate((valid) => {
         if (valid) {
         // 更新文章推荐状态
-          this.$store.dispatch('updateRecommendStatus', { id: this.recommendScope.row.id, recommendStatus: 1 }).then((res) => {
+          this.$store.dispatch('updateRecommendStatus', { id: this.recommendScope.row.id, recommendStatus: 1, recommendation: this.recommendationForm.recommendation }).then((res) => {
             this.fetchData()
+            this.$store.commit('SET_REFRESH_RECOMMEND_LIST', true) // 更新推荐内容管理列表
             localStorage.setItem('RECOMMENDATION', this.recommendationForm.recommendation)
             this.showDialog = false
             this.$message({
@@ -454,6 +457,15 @@ export default {
           message: '已取消操作!'
         })
       })
+    }
+  },
+  watch: {
+    // 监听是否要更新内容列表
+    refreshList: function(newValue, oldValue) {
+      if (newValue) {
+        this.fetchData()
+        this.$store.commit('SET_REFRESH_LIST', false)
+      }
     }
   }
 }

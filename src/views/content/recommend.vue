@@ -113,7 +113,7 @@
         </el-table-column>
         <el-table-column
           label="推荐理由"
-          width="80">
+          width="110">
           <template slot-scope="scope">
             <el-input 
               v-model="scope.row.recommendation"
@@ -129,8 +129,6 @@
           width="100">
           <template slot-scope="scope">
             <el-button @click="handleCancelRecommend(scope.row)" type="text" size="small">取消推荐</el-button>
-            <!-- <el-button @click="handleDetail(scope.row)" type="text" size="small">详情</el-button> -->
-            <!-- <el-button v-if="scope.row.status === 1 || scope.row.status === 2" style="color: red;" @click="handleStatus(scope.row)" type="text" size="small">{{scope.row.status === 1 ? '锁定' : scope.row.status === 2 ? '启用' : '' }}</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -177,7 +175,8 @@ export default {
   },
   computed: {
     ...mapState({
-      listData: state => state.content.recommendlistData
+      listData: state => state.content.recommendlistData,
+      refreshRecommendList: state => state.content.refreshRecommendList
     }),
     ...mapGetters(['paccountTypeDict', 'articleTypeDict'])
   },
@@ -243,6 +242,7 @@ export default {
         // 取消推荐
         this.$store.dispatch('updateRecommendStatus', { id: data.id, recommendStatus: 0 }).then((res) => {
           this.fetchData()
+          this.$store.commit('SET_REFRESH_LIST', true)
           this.$message({
             type: 'success',
             message: '操作成功!'
@@ -255,40 +255,9 @@ export default {
         })
       })
     },
-    // 查看详情
-    handleDetail(data) {
-      this.$router.push({ path: '/content/detail', query: { id: data.id }})
-    },
     // 二次编辑
     handleEdit(data) {
       this.$router.push({ path: '/content/edit', query: { id: data.id }})
-    },
-    // 禁用/启用
-    handleStatus(data) {
-      let tips = '是否启用?'
-      if (data.status === 1) tips = '是否禁用?'
-      this.$confirm(tips, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.loading = true
-        this.$store.dispatch('changeContentStatus', { id: data.id, status: data.status === 1 ? 2 : 1 }).then(() => {
-          this.loading = false
-          this.fetchData()
-          this.$message({
-            type: 'success',
-            message: '操作成功!'
-          })
-        }).catch(() => {
-          this.loading = false
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消操作!'
-        })
-      })
     },
     // 展示顺序失去焦点
     sortBlur(event, scope) {
@@ -301,6 +270,14 @@ export default {
     // 回车确认修改展示顺序
     sortConfirm(event, scope) {
       const sort = scope.row.sort
+      if (sort === '') {
+        event.target.blur()
+        this.$message({
+          type: 'error',
+          message: '展示顺序不能为空'
+        })
+        return
+      }
       if (sort < 0) {
         this.$message({
           type: 'error',
@@ -308,7 +285,7 @@ export default {
         })
         return
       }
-      this.$store.dispatch('updateSort', { id: scope.row.id, sort: sort }).then((res) => {
+      this.$store.dispatch('updateSort', { id: scope.row.id, sort: Number(sort) }).then((res) => {
         event.target.blur()
         this.fetchData()
         this.$message({
@@ -323,7 +300,7 @@ export default {
     },
     // 推荐理由失去焦点
     recommendationBlur(event, scope) {
-      this.$store.commit('SET_RECOMMENDATION', { index: scope.$index, recommendation: this.originalSort[scope.$index] })
+      this.$store.commit('SET_RECOMMENDATION', { index: scope.$index, recommendation: this.originalRecommendation[scope.$index] })
       this.$message({
         type: 'info',
         message: '已取消修改!'
@@ -360,6 +337,14 @@ export default {
     // ESC取消修改推荐理由
     recommendationCancel(event, scope) {
       event.target.blur()
+    }
+  },
+  watch: {
+    refreshRecommendList: function(newValue, oldValue) {
+      if (newValue) {
+        this.fetchData()
+        this.$store.commit('SET_REFRESH_RECOMMEND_LIST', false)
+      }
     }
   }
 }
