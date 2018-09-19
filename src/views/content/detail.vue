@@ -30,12 +30,12 @@
                 <span class="active" @click="handleBinding('lonlat')">{{detailData.lonlat || '新增'}}</span>
               </div>
             </div> -->
-            <div class="box">
+            <!-- <div class="box">
               <div class="left">绑定坐标：</div>
               <div class="right">
                 <span>--</span>
               </div>
-            </div>
+            </div> -->
             <div class="box">
               <div class="left">对应类型：</div>
               <div class="right">
@@ -115,7 +115,7 @@
       width="80%"
       :visible.sync="showHouseDialog">
       <div class="dialog-content">
-        <project-dialog ref="projectDialog"></project-dialog>
+        <project-dialog v-if="showHouseDialog" ref="projectDialog"></project-dialog>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel = false">取 消</el-button>
@@ -251,8 +251,8 @@ export default {
       })
     },
     // 新增项目关联
-    addHouse() {
-      this.$store.dispatch('addHouse', { id: this.detailData.id, houseId: this.$refs.projectDialog.currentProject.id }).then(() => {
+    addHouse(houseId) {
+      this.$store.dispatch('addHouse', { id: this.detailData.id, houseId }).then(() => {
         this.$message({
           message: '新增成功！',
           type: 'success'
@@ -280,7 +280,17 @@ export default {
       if (this.dialogType === 'lonlat') this.handleSaveLonLat()
       if (this.dialogType === 'articleType') this.handleSaveArticleType()
       if (this.dialogType === 'tags') this.handleSaveTags()
-      if (this.dialogType === 'house') this.addHouse()
+      if (this.dialogType === 'house') {
+        const houseId = this.$refs.projectDialog.currentProject.id
+        if (!houseId) {
+          this.$message({
+            message: '请选择楼盘！',
+            type: 'warning'
+          })
+          return
+        }
+        this.addHouse(houseId)
+      }
       this.showDialog = false
       this.showHouseDialog = false
     },

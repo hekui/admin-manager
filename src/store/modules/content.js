@@ -149,7 +149,7 @@ export default {
     // 删除项目
     deleteHouse({ commit }, params) {
       return api.post('/content/delhouse', params).then(res => {
-        commit('SET_ARTICLE_HOUSELIST', res.data.list)
+        commit('SET_ARTICLE_HOUSELIST', res.data.houseList)
         return res
       }, res => {
         return Promise.reject(res)
@@ -158,7 +158,7 @@ export default {
     // 新增项目
     addHouse({ commit }, params) {
       return api.post('/content/addhouse', params).then(res => {
-        commit('SET_ARTICLE_HOUSELIST', res.data.list)
+        commit('SET_ARTICLE_HOUSELIST', res.data.houseList)
         return res
       }, res => {
         return Promise.reject(res)

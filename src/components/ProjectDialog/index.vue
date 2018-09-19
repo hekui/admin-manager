@@ -4,7 +4,7 @@
       <el-form :inline="true" :model="filter">
         <el-form-item label="楼盘名称">
           <el-input
-            v-model="filter.title"
+            v-model="filter.name"
             placeholder="请输入楼盘名称"
             clearable></el-input>
         </el-form-item>
@@ -16,7 +16,7 @@
     <div class="table">
       <el-table
         ref="sigletable"
-        :data="listData.list"
+        :data="houseList.list"
         highlight-current-row
         @current-change="tableCurrentChange"
         v-loading="loading"
@@ -34,28 +34,30 @@
           label="序号"
           width="100">
           <template slot-scope="scope">
-            <span>{{scope.$index + (page.curPage - 1) * page.pageSize + 1 }}</span>
+            <span>{{scope.$index + (page.curPage - 1) * houseList.pageSize + 1 }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          prop="wechatName"
+          prop="name"
           label="楼盘名称"
           min-width="120">
         </el-table-column>
         <el-table-column
-          prop="city"
+          prop="region"
           label="区域"
           width="120">
         </el-table-column>
         <el-table-column
-          prop="title"
+          prop="saleStatus"
           label="销售状态"
           min-width="160">
         </el-table-column>
         <el-table-column
-          prop="title"
           label="楼盘状态"
           min-width="160">
+          <template slot-scope="scope">
+            <span>{{scope.row.houseStatus === 1 ? '上线中' : scope.row.houseStatus === 0 ? '已下架' : '-'}}</span>
+          </template>
         </el-table-column>
       </el-table>
       <div class="pages">
@@ -64,8 +66,8 @@
           layout="total, prev, pager, next, jumper"
           @current-change="changePage"
           :current-page="page.pageNo"
-          :page-size="listData.pageSize"
-          :total="listData.totalRecords">
+          :page-size="houseList.pageSize"
+          :total="houseList.totalRecords">
         </el-pagination>
       </div>
     </div>
@@ -82,17 +84,16 @@ export default {
       currentProject: {},
       loading: false,
       filter: {
-        title: ''
+        name: ''
       },
       page: {
-        curPage: 1,
-        pageSize: 10
+        curPage: 1
       }
     }
   },
   computed: {
     ...mapState({
-      listData: state => state.content.listData
+      houseList: state => state.content.houseList
     })
   },
   created() {
@@ -102,14 +103,13 @@ export default {
     fetchData() {
       this.loading = true
       this.$store.dispatch('getHouseList', Object.assign({}, this.filter, this.page)).then(res => {
+        this.currentRow = ''
         this.loading = false
-        this.listData = res.data
       }).catch(() => {
         this.loading = false
       })
     },
     tableCurrentChange(row) {
-      console.log(row)
       this.currentRow = row.id
       this.currentProject = row
     },

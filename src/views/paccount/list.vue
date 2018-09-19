@@ -282,7 +282,7 @@ export default {
         this.refreshDetailData(row.id)
       }).catch(() => {
         this.$message({
-          type: 'info',
+          type: 'error',
           message: '同步失败，请稍后重试'
         })
       })
