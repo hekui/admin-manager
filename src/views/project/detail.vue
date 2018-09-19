@@ -22,7 +22,7 @@
           ref="saveTagInput"
           size="small"
           @keyup.enter.native="handleInputConfirm"
-          @blur="handleInputConfirm">
+          @blur="cancelInput">
         </el-input>
         <el-button v-else size="small" @click="showInput"> + 添加 </el-button>
       </div>
@@ -107,25 +107,21 @@
     },
     methods: {
       fetchProjectDetail() {
-        this.loading = true
         this.$store.dispatch('getProjectDetail', { id: this.id }).then(res => {
-          this.loading = false
-          this.info = res.data
+          this.info = Object.assign({}, res.data)
+          console.log(this.info)
         }).catch(() => {
-          this.loading = false
+
         })
       },
       saveMatchWords() {
-        this.loading = true
-        this.$store.dispatch('saveMatchWords', Object.assign({ id: this.id }, this.info.matchWordList)).then(res => {
-          this.loading = false
+        this.$store.dispatch('saveMatchWords', Object.assign({ id: this.id, matchWordList: this.info.matchWordList })).then(res => {
           this.$message({
             type: 'success',
             message: '保存成功!'
           })
           this.getProjectArticleList()
         }, (res) => {
-          this.loading = false
           this.$message({
             type: 'error',
             message: res.data.msg || '保存失败，请稍后重试'
@@ -135,8 +131,8 @@
       getProjectArticleList() {
         this.loading = true
         this.$store.dispatch('getProjectArticleList', { id: this.id }).then(res => {
-          this.loading = false
           this.articleData = res.data
+          this.loading = false
         }).catch(() => {
           this.loading = false
         })
@@ -170,6 +166,10 @@
         this.inputVisible = false
         this.inputValue = ''
       },
+      cancelInput() {
+        this.inputVisible = false
+        this.inputValue = ''
+      },
       cancelBind(scope) {
         const article = scope.row
         this.loading = true
@@ -181,12 +181,12 @@
             message: '解除绑定成功!'
           })
         }, (res) => {
+          this.articleData.list.splice(scope.$index, 0, article)
           this.loading = false
           this.$message({
             type: 'error',
             message: res.data.msg || '解除绑定失败，请稍后重试'
           })
-          this.articleData.list.splice(scope.$index, 0, article)
         })
       }
     }
