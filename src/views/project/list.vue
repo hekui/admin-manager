@@ -112,14 +112,14 @@
             label="同步状态"
             width="80">
             <template slot-scope="scope">
-              {{ scope.row.syncStatus || "-"}} 
+              {{ scope.row.syncStatus === 1 ? '同步中' : scope.row.syncStatus === 2 ? "同步完成" : scope.row.syncStatus === 3 ? '同步失败' : '-'}} 
             </template>
           </el-table-column>
           <el-table-column
             label="关联文章数"
             width="100">
             <template slot-scope="scope">
-              {{ scope.row.contentCount || 0}} 
+              {{ scope.row.contentNum || 0}} 
             </template>
           </el-table-column>
           <el-table-column
