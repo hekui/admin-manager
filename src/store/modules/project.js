@@ -66,6 +66,14 @@ export default {
         return Promise.reject(res)
       })
     },
+    // 同步项目匹配的文章数据
+    matchHouseContent({ commit }, params) {
+      return api.post('/house/matchcontent', params).then(res => {
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
     getProjectDetail({ commit }, params) {
       return api.post('/house/matchwordlist', params).then(res => {
         return res
