@@ -11,7 +11,7 @@ const
   // passportHost = process.env.passportHost || 'http://passport.test1.maifangma.com', // 登陆
   // passportHost = process.env.passportHost || 'https://uiap.maifangma.com', // 登陆(正式环境)
   passportHost = process.env.passportHost || 'http://192.168.10.88:8090', // 登陆（何洋）
-  timeout = 3000; // 超时时间
+  timeout = 5000; // 超时时间
 
 module.exports = {
   javaHost,
