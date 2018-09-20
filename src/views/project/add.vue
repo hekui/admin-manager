@@ -7,15 +7,14 @@
         </el-form-item>
 
         <el-form-item label="楼盘状态：">
-          <el-select v-model="filter.housesStatus" :clearable="true" placeholder="请选择">
-            <el-option label="启用" value="1"></el-option>
-            <el-option label="停用" value="2"></el-option>
+          <el-select v-model="filter.houseStatus" :clearable="true" placeholder="请选择">
+            <el-option label="上线中" value="1"></el-option>
+            <el-option label="已下架" value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="销售状态：">
-          <el-select v-model="filter.salesStatus" :clearable="true" placeholder="请选择">
-            <el-option label="是" value="1"></el-option>
-            <el-option label="否" value="2"></el-option>
+          <el-select v-model="filter.saleStatusId" :clearable="true" placeholder="请选择">
+            <el-option v-for="item in salestatus" :label="item.name" :value="item.id" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -24,8 +23,8 @@
       </el-form>
     </div>
     <div class="form-wrapper">
-      <div class="table-top" v-if="multipleSelection.length" >
-        当前已选：<span v-for="(item, index) in multipleSelection" :key="index" :data-id="item.id">{{ item.name }}</span>
+      <div class="table-top">
+        当前已选：<span v-if="item.isInFgc !== 1" v-for="(item, index) in selection" :key="index" :data-id="item.id">{{ item.name }}</span>
       </div>
       <div class="table-main">
         <el-table
@@ -36,11 +35,13 @@
           v-loading="loading"
           border
           style="width: 100%"
+          :row-class-name="rowClassName"
+          @row-click="handleRowClick"
           @select-all="handleSelectionAll"
           @select="handleSelection">
           <el-table-column
             :reserve-selection="true"
-            :selectable='checkSelectable' 
+            :selectable='selectable' 
             align="center"
             type="selection"
             width="55">
@@ -49,15 +50,14 @@
             prop="name"
             label="楼盘名称"
             width="300">
-            <!-- <template slot-scope="scope">{{ scope.row.name }}</template> -->
           </el-table-column>
           <el-table-column
-            prop="regionName"
+            prop="region"
             label="区域"
             width="220">
           </el-table-column>
           <el-table-column
-            prop="saleStatusName"
+            prop="saleStatus"
             label="销售状态"
             show-overflow-tooltip>
           </el-table-column>
@@ -66,7 +66,7 @@
             label="楼盘状态"
             show-overflow-tooltip>
             <template slot-scope="scope">
-              {{ scope.row.houseStatus === 1 ? '上线中' : '已下架'}}</template>
+              {{ scope.row.houseStatus === 1 ? '上线中' : scope.row.houseStatus === 0 ? '已下架' : '-'}}</template>
           </el-table-column>
         </el-table>
       </div>
@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 export default {
   name: 'paccountList',
   data() {
@@ -98,12 +98,13 @@ export default {
       },
       filter: {
         name: '',
-        housesStatus: '',
-        salesStatus: '',
+        houseStatus: '',
+        saleStatusId: '',
       },
       input: 0,
       value: true,
       multipleSelection: [],
+      selection: [], // 选中的数据
       selectArr: [],
       getRowKeys(row) {
         return row.id
@@ -113,66 +114,53 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['paccountTypeDict']),
     ...mapState({
-      cityId: state => state.cityId,
-      options: state => state.paccountTypeDict,
-      status: state => state.status,
-      wechatStatus: state => state.wechatStatus,
-      pclassify: state => state.pclassify,
-      pickerOptions: state => state.pickerOptions,
-      syncStatus: state => state.paccount.syncStatus,
-      listData: state => state.paccount.listData
+      salestatus: state => state.salestatus,
+      listData: state => state.project.mfmList
     })
   },
   created() {
-    this.fetchData()
-    this.getTypeDict()
-    // console.log('this', this)
+    this.getSaleStatus() // 获取销售状态数据
   },
-  activated() {
+  mounted() {
     this.fetchData()
-    this.getTypeDict()
   },
   methods: {
+    getSaleStatus() {
+      this.$store.dispatch('getSaleStatus')
+    },
     fetchData() {
-      console.log('this.filter,', this.filter)
-      const params = {
-        typeId: Array.isArray(this.filter.typeId) ? [...this.filter.typeId].pop() : ''
-      }
-      console.log('-----', params)
       this.loading = true
-      this.$store.dispatch('getPaccountList', Object.assign({}, this.filter, params, this.page)).then(() => {
+      this.$store.dispatch('getProjectMfm', Object.assign({}, this.filter, this.page)).then((res) => {
         this.loading = false
+        this.toggleRowSelection(res.data.list) // 勾选上已经添加的楼盘
       }).catch(() => {
         this.loading = false
       })
     },
-    checkSelectable(row, index) {
-      console.log(row, index)
-      if (row.id === '1037528614322569216') {
-        return false
-      } else {
-        return true
-      }
-      // return row.isInFgc !== 0
-    },
-    getTypeDict() {
-      // 获取公众号类型列表
-      this.$store.dispatch('getTypeDict', {
-        cityId: this.cityId,
-        code: 1
+    // 勾选上已经添加的楼盘
+    toggleRowSelection(list) {
+      const toggleRowSelection = this.$refs.multipleTable.toggleRowSelection
+      list.forEach(item => {
+        if (item.isInFgc === 1) {
+          toggleRowSelection(item, true)
+        }
       })
     },
-    releaseTimeChange(value) {
-      const date = value || ['', '']
-      this.filter.beginDate = date[0]
-      this.filter.endDate = date[1]
+    // 行类名
+    rowClassName({ row, rowIndex }) {
+      return row.isInFgc === 1 ? 'disabled' : ''
     },
+    // checkbox是否可以勾选
+    selectable(row, index) {
+      return row.isInFgc !== 1
+    },
+    // 搜索
     submitFilter() {
       this.page.curPage = 1
       this.fetchData()
     },
+    // 翻页
     changePage(curPage) {
       this.page.curPage = curPage
       this.fetchData()
@@ -180,22 +168,17 @@ export default {
     checkScore(row) {
       return row.id
     },
+    // 当某一行被点击时会触发该事件
+    handleRowClick(row, event, column) {
+
+    },
+    // 当用户手动勾选数据行的 Checkbox 时触发的事件
     handleSelection(selection, row) {
-      if (this.checkScore(row)) {
-        this.select(selection, row)
-      } else {
-        this.$refs.multipleTable.toggleRowSelection(row)
-      }
-      return false
+      this.selection = selection
     },
     // 当用户手动勾选全选 Checkbox 时触发的事件
     handleSelectionAll(selection) {
-      for (let i = selection.length - 1; i >= 0; i--) {
-        if (!this.checkScore(selection[i])) {
-          this.$refs.multipleTable.clearSelection()
-        }
-      }
-      this.select(selection)
+      this.selection = selection
     },
     select(selection, row) {
       let isSave = false
@@ -278,5 +261,11 @@ export default {
       color: #409eff;
     }
   }
+}
+.el-table__row.disabled {
+  background-color: #f5f7fa;
+  border-color: #e4e7ed;
+  color: #c0c4cc;
+  cursor: not-allowed;
 }
 </style>

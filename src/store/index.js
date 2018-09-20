@@ -35,6 +35,8 @@ const store = new Vuex.Store({
     tagTypeDict: [],
     articleTypeDict: [],
     pclassifyTypeDict: [],
+    region: [], // 区域字典数据列表
+    salestatus: [], // 销售状态字典数据
     // 公众号相关
     status: {
       1: '启用',
@@ -95,6 +97,12 @@ const store = new Vuex.Store({
     'SET_CITYID': (state, cityId) => {
       state.cityId = cityId
     },
+    'SET_REGION_OPTIONS': (state, data) => {
+      state.region = data
+    },
+    'SET_SALESTATUS_OPTIONS': (state, data) => {
+      state.salestatus = data
+    },
     stateSet(state, data) {
       state[data['target']] = data['data']
     }
@@ -118,6 +126,24 @@ const store = new Vuex.Store({
     getActivatedCitys({ commit }) {
       return api.post('/city/listall').then(res => {
         commit('SET_CITY_OPTIONS', res.data.list)
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
+    // 获取区域字典数据
+    getRegion({ commit }) {
+      return api.post('/dict/region').then(res => {
+        commit('SET_REGION_OPTIONS', res.data)
+        return res
+      }, res => {
+        return Promise.resolve(res)
+      })
+    },
+    // 获取销售状态字典数据
+    getSaleStatus({ commit }) {
+      return api.post('/dict/salestatus').then(res => {
+        commit('SET_SALESTATUS_OPTIONS', res.data)
         return res
       }, res => {
         return Promise.resolve(res)

@@ -48,11 +48,6 @@
           width="160">
         </el-table-column>
         <el-table-column
-          prop="city"
-          label="城市"
-          width="80">
-        </el-table-column>
-        <el-table-column
           prop="title"
           label="文章标题"
           min-width="180">
@@ -69,12 +64,6 @@
           width="160">
           <template slot-scope="scope">
             <span>{{releaseTimeFilter(scope.row.releaseTime)}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          label="类型">
-          <template slot-scope="scope">
-            <span>{{scope.row.typeName || "-"}}</span>
           </template>
         </el-table-column>
         <el-table-column

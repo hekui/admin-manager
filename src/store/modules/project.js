@@ -29,16 +29,38 @@ export default {
   mutations: {
     projectSet(state, data) {
       state[data['target']] = data['data']
+    },
+    houseSort(state, data) {
+      state.listData.list[data.index].sort = data.sort
+    },
+    'SET_HOT_HOUSE': (state, data) => {
+
     }
   },
   actions: {
+    // 查询房观察楼盘列表
     getProjectList({ commit }, params) {
-      // 公众号列表-分页  /house/list
-      return api.post('/subscription/list', params).then(res => {
+      return api.post('/house/list', params).then(res => {
         commit('projectSet', {
           target: 'listData',
           data: res.data
         })
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
+    // 修改序号
+    updateHouseSort({ commit }, params) {
+      return api.post('/house/updatesort', params).then(res => {
+        return res
+      }, res => {
+        return Promise.reject(res)
+      })
+    },
+    // 更新楼盘热门状态
+    updateHouseHotstatus({ commit }, params) {
+      return api.post('/house/updatehotstatus', params).then(res => {
         return res
       }, res => {
         return Promise.reject(res)
@@ -51,8 +73,8 @@ export default {
         return Promise.reject(res)
       })
     },
+    // 获取买房吗楼盘列表数据
     getProjectMfm({ commit }, params) {
-      // 取买房吗楼盘列表数据
       return api.post('/house/mfmlist', params).then(res => {
         commit('projectSet', {
           target: 'mfmList',

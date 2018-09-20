@@ -6,12 +6,9 @@
           <el-input v-model.trim="filter.name" :clearable="true" placeholder="请输入楼盘名称"></el-input>
         </el-form-item>
         <el-form-item label="区域：">
-          <el-cascader
-            v-model="filter.typeId"
-            :options="paccountTypeDict"
-            :clearable="true"
-            change-on-select
-          ></el-cascader>
+          <el-select v-model="filter.regionId" :clearable="true" placeholder="请选择">
+            <el-option v-for="item in region" :label="item.name" :value="item.id" :key="item.id"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="楼盘状态：">
           <el-select v-model="filter.houseStatus" :clearable="true" placeholder="请选择">
@@ -20,9 +17,8 @@
           </el-select>
         </el-form-item>
         <el-form-item label="销售状态：">
-          <el-select v-model="filter.saleStatus" :clearable="true" placeholder="请选择">
-            <el-option label="是" value="1"></el-option>
-            <el-option label="否" value="2"></el-option>
+          <el-select v-model="filter.saleStatusId" :clearable="true" placeholder="请选择">
+            <el-option v-for="item in salestatus" :label="item.name" :value="item.id" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="设置匹配词：">
@@ -60,11 +56,10 @@
           </el-table-column>
           <el-table-column
             label="排序"
-            prop="city"
-            width="120">
+            width="90">
             <template slot-scope="scope">
               <el-input 
-                v-model="scope.row.status"
+                v-model="scope.row.sort"
                 type="number"
                 @blur="sequenceBlur($event, scope)"
                 @keyup.enter.native="sequenceConfirm($event, scope)"
@@ -73,74 +68,64 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="status"
+            prop="region"
             label="区域"
             width="160">
-            <template slot-scope="scope">
-             高新区
-            </template>
           </el-table-column>
           <el-table-column
-            prop="wechatStatus"
             label="销售状态"
             width="120">
             <template slot-scope="scope">
-             在售
+              <span>{{scope.row.saleStatus || '-'}}</span>
             </template>
           </el-table-column>
-          
           <el-table-column
-            prop="classify"
             label="楼盘状态"
             width="100">
             <template slot-scope="scope">
-              上架中
+              <span>{{scope.row.houseStatus === 1 ? '上线中' : scope.row.houseStatus === 0 ? '已下架' : ''}}</span>
             </template>
           </el-table-column>
           <el-table-column
-            prop="typeName"
             label="热门楼盘"
-            width="120">
+            width="80">
             <template slot-scope="scope">
-              <el-switch class="mini_switch" v-model="scope.row.wechatStatus" @change="onChange(scope.$index,listData.list, scope.row.id, scope.row.isHotHouse)" active-value="true" inactive-value="false"></el-switch>
+              <el-switch v-model="scope.row.isHotSale" :active-value="1" :inactive-value="0" @change="handleHotHouse(scope)"></el-switch> 
             </template>
           </el-table-column>
           <el-table-column
-            prop="typeName"
             label="预售信息数"
-            width="120">
+            width="100">
             <template slot-scope="scope">
-              {{ scope.row.typeName || "-"}} 
+              {{ scope.row.presellCount || 0}} 
             </template>
           </el-table-column>
           <el-table-column
-            prop="typeName"
+            prop="hasMatchWord"
             label="是否设置匹配词"
             width="120">
             <template slot-scope="scope">
-              {{ scope.row.typeName || "-"}} 
+              {{ scope.row.hasMatchWord === 1 ? '有' : scope.row.hasMatchWord === 0 ? '没有' : "-"}} 
             </template>
           </el-table-column>
           <el-table-column
-            prop="dataStatus"
             label="同步状态"
-            width="110">
+            width="80">
             <template slot-scope="scope">
-              {{ syncStatus[scope.row.dataStatus] || "-"}} 
+              {{ scope.row.syncStatus || "-"}} 
             </template>
           </el-table-column>
           <el-table-column
-            prop="articleNum"
             label="关联文章数"
-            >
+            width="100">
             <template slot-scope="scope">
-              {{ scope.row.articleNum || "-"}} 
+              {{ scope.row.contentCount || 0}} 
             </template>
           </el-table-column>
           <el-table-column
             fixed="right"
             label="操作"
-            width="170">
+            width="140">
             <template slot-scope="scope">
               <el-button type="text" @click="addHandle(scope.row.id)">编辑</el-button>
               <el-button type="text" @click="syncHandle(scope.$index, listData.list, scope.row)">同步数据</el-button>
@@ -164,67 +149,51 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 export default {
   name: 'paccountList',
   data() {
     return {
       loading: false,
       page: {
-        curPage: 1,
-        pageSize: 20
+        curPage: 1
       },
       filter: {
         name: '',
-        region: '',
+        regionId: '',
         houseStatus: '',
-        saleStatus: '',
+        saleStatusId: '',
         hasMatchWord: '',
-      }
+      },
+      originalSort: []
     }
   },
   computed: {
-    ...mapGetters(['paccountTypeDict']),
     ...mapState({
-      cityId: state => state.cityId,
-      options: state => state.paccountTypeDict,
-      status: state => state.status,
-      wechatStatus: state => state.wechatStatus,
-      pclassify: state => state.pclassify,
-      pickerOptions: state => state.pickerOptions,
-      syncStatus: state => state.paccount.syncStatus,
+      region: state => state.region,
+      salestatus: state => state.salestatus,
       listData: state => state.project.listData
     })
   },
   created() {
+    this.getRegion() // 获取区域数据
+    this.getSaleStatus() // 获取销售状态数据
     this.fetchData()
-    this.getTypeDict()
-    // console.log('this', this)
-  },
-  activated() {
-    this.fetchData()
-    this.getTypeDict()
   },
   methods: {
+    getRegion() {
+      this.$store.dispatch('getRegion')
+    },
+    getSaleStatus() {
+      this.$store.dispatch('getSaleStatus')
+    },
     fetchData() {
-      console.log('this.filter', this.filter)
-      const params = {
-        typeId: Array.isArray(this.filter.typeId) ? [...this.filter.typeId].pop() : ''
-      }
-      console.log('-----', params)
-
       this.loading = true
-      this.$store.dispatch('getProjectList', Object.assign({}, this.filter, params, this.page)).then(() => {
+      this.$store.dispatch('getProjectList', Object.assign({}, this.filter, this.page)).then((res) => {
         this.loading = false
+        this.originalSort = res.data.list.map(item => item.sort)
       }).catch(() => {
         this.loading = false
-      })
-    },
-    getTypeDict() {
-      // 获取公众号类型列表
-      this.$store.dispatch('getTypeDict', {
-        cityId: this.cityId,
-        code: 1
       })
     },
     releaseTimeChange(value) {
@@ -294,7 +263,7 @@ export default {
     },
     // 失去焦点
     sequenceBlur(event, scope) {
-      // this.$store.commit('sequenceNum', { index: scope.$index, sequenceNum: this.originalSequence[scope.$index] })
+      this.$store.commit('houseSort', { index: scope.$index, sort: this.originalSort[scope.$index] })
       this.$message({
         type: 'info',
         message: '已取消修改!'
@@ -302,68 +271,67 @@ export default {
     },
     // 回车确认修改排序
     sequenceConfirm(event, scope) {
-      const sequenceNum = scope.row.sequenceNum
-      if (sequenceNum < 0) {
+      const sort = scope.row.sort
+      if (sort < 0) {
         this.$message({
           type: 'error',
           message: '序号不能为负数'
         })
         return
       }
-      console.log('scope', scope)
-      // this.$store.dispatch('updateSequenceNum', { id: scope.row.id, sequenceNum: sequenceNum }).then((res) => {
-      //   event.target.blur()
-      //   this.fetchData()
-      //   this.$message({
-      //     type: 'success',
-      //     message: '修改成功!'
-      //   })
-      // })
+      this.$store.dispatch('updateHouseSort', { id: scope.row.id, sort }).then((res) => {
+        event.target.blur()
+        this.fetchData()
+        this.$message({
+          type: 'success',
+          message: '修改成功!'
+        })
+      })
     },
     // ESC取消修改
     sequenceCancel(event, scope) {
       event.target.blur()
     },
-    onChange(index, data, id, isHot) {
-      const isHotSale = isHot === 1 ? 1 : 0
-      // const params = {
-      //   id,
-      //   isHotSale
-      // }
-      console.log(data[index])
-      data[index].isHotHouse = isHotSale
-
-      // this.$confirm('你确定切换开关么？', '提示', {
-      //   type: 'warning',
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消'
-      // }).then(() => {
-      //   data[index].status = status
-      //   this.$store.dispatch('updateArticleStatus', params).then(() => {
-      //     this.$message({
-      //       type: 'success',
-      //       message: '成功切换'
-      //     })
-      //     data[index].status = status
-      //   }).catch(() => {
-      //     this.$message({
-      //       type: 'info',
-      //       message: '切换失败，请稍后重试'
-      //     })
-      //   })
-      // })
+    // 更新楼盘热门状态
+    handleHotHouse(scope) {
+      const isHotSale = scope.row.isHotSale
+      this.$store.dispatch('updateHouseHotstatus', { id: scope.row.id, isHotSale })
+        .then((res) => {
+          this.fetchData()
+          this.$message({
+            type: 'success',
+            message: '操作成功!'
+          })
+        })
+        .catch(() => {
+        // 取消操作，回退数据
+          isHotSale === 1 ? 0 : 1
+          this.$store.commit('SET_HOT_HOUSE', { index: scope.$index, isHotSale })
+          this.$message({
+            type: 'info',
+            message: '操作已取消！'
+          })
+        })
     },
   }
 }
 </script>
 <style lang="scss">
 .project-page{
-  .table-top{
+  .table-top {
     display: flex;
-    justify-content: space-between;
-    .tips{
-      margin-top: 10px;
+    align-items: center;
+    .el-upload__tip {
+      margin-left: 10px;
+      color: red;
     }
   }
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+input[type='number']{
+    -moz-appearance: textfield;
 }
 </style>
