@@ -57,16 +57,19 @@
             width="220">
           </el-table-column>
           <el-table-column
-            prop="saleStatus"
             label="销售状态"
             show-overflow-tooltip>
+            <template slot-scope="scope">
+              {{ scope.row.saleStatus || '-' }}
+            </template>
           </el-table-column>
           <el-table-column
             prop="houseStatus"
             label="楼盘状态"
             show-overflow-tooltip>
             <template slot-scope="scope">
-              {{ scope.row.houseStatus === 1 ? '上线中' : scope.row.houseStatus === 0 ? '已下架' : '-'}}</template>
+              {{ scope.row.houseStatus === 1 ? '上线中' : scope.row.houseStatus === 0 ? '已下架' : '-' }}
+            </template>
           </el-table-column>
         </el-table>
         <el-button v-if="!loading" :disabled="selection.length===0" class="btn-submit" @click="handleSubmit">确定</el-button>

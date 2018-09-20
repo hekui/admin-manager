@@ -464,7 +464,6 @@ export default {
     refreshList: function(newValue, oldValue) {
       if (newValue) {
         this.fetchData()
-        this.$store.commit('SET_REFRESH_LIST', false)
       }
     }
   }

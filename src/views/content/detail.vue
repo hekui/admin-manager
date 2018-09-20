@@ -238,6 +238,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('deleteHouse', { id: this.detailData.id, houseId }).then(() => {
+          this.$store.commit('SET_REFRESH_LIST', true) // 更新内容管理列表
           this.$message({
             message: '删除成功！',
             type: 'success'
@@ -253,6 +254,7 @@ export default {
     // 新增项目关联
     addHouse(houseId) {
       this.$store.dispatch('addHouse', { id: this.detailData.id, houseId }).then(() => {
+        this.$store.commit('SET_REFRESH_LIST', true) // 更新内容管理列表
         this.$message({
           message: '新增成功！',
           type: 'success'

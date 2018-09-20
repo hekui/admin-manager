@@ -231,7 +231,7 @@ export default {
         // 取消推荐
         this.$store.dispatch('updateRecommendStatus', { id: data.id, recommendStatus: 0 }).then((res) => {
           this.fetchData()
-          this.$store.commit('SET_REFRESH_LIST', true)
+          this.$store.commit('SET_REFRESH_LIST', true) // 更新内容管理列表
           this.$message({
             type: 'success',
             message: '操作成功!'
@@ -332,7 +332,6 @@ export default {
     refreshRecommendList: function(newValue, oldValue) {
       if (newValue) {
         this.fetchData()
-        this.$store.commit('SET_REFRESH_RECOMMEND_LIST', false)
       }
     }
   }
