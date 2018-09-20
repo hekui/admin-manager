@@ -101,7 +101,7 @@ export default {
       })
     },
     getProjectArticleList({ commit }, params) {
-      return api.post('/house/contentlist?page=true', params).then(res => {
+      return api.post('/house/contentlist', params).then(res => {
         return res
       }, res => {
         return Promise.reject(res)
