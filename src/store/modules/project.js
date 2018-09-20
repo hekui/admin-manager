@@ -92,8 +92,8 @@ export default {
         return Promise.reject(res)
       })
     },
+    // 项目(楼盘)管理 / 批量添加楼盘
     getProjectAdd({ commit }, params) {
-      // 项目(楼盘)管理 / 批量添加楼盘
       return api.post('/house/add', params).then(res => {
         return res
       }, res => {

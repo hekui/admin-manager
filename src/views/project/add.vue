@@ -23,16 +23,16 @@
       </el-form>
     </div>
     <div class="form-wrapper">
-      <div class="table-top">
-        当前已选：<span v-if="item.isInFgc !== 1" v-for="(item, index) in selection" :key="index" :data-id="item.id">{{ item.name }}</span>
+      <div v-if="selection.length > 0" class="table-top">
+        <div>当前已选：</div>
+        <div v-for="item in selection" class="item" :key="item.id">{{ item.name }}</div>
       </div>
-      <div class="table-main">
+      <div class="table-main" v-loading="loading">
         <el-table
           ref="multipleTable"
           tooltip-effect="dark"
           :data="listData.list"
           :row-key="getRowKeys"
-          v-loading="loading"
           border
           style="width: 100%"
           :row-class-name="rowClassName"
@@ -69,9 +69,9 @@
               {{ scope.row.houseStatus === 1 ? '上线中' : scope.row.houseStatus === 0 ? '已下架' : '-'}}</template>
           </el-table-column>
         </el-table>
+        <el-button v-if="!loading" :disabled="selection.length===0" class="btn-submit" @click="handleSubmit">确定</el-button>
       </div>
       <div class="pages clearfix">
-        <el-button @click="selectAll">确定</el-button>
         <el-pagination
             background
             layout="total, prev, pager, next, jumper"
@@ -93,24 +93,17 @@ export default {
     return {
       loading: false,
       page: {
-        curPage: 1,
-        pageSize: 20
+        curPage: 1
       },
       filter: {
         name: '',
         houseStatus: '',
         saleStatusId: '',
       },
-      input: 0,
-      value: true,
-      multipleSelection: [],
       selection: [], // 选中的数据
-      selectArr: [],
       getRowKeys(row) {
         return row.id
-      },
-      questions: [], // 分页时从后台获取的本页面数据  // 当前页选中的项
-      allSelecteds: [],
+      }
     }
   },
   computed: {
@@ -165,87 +158,38 @@ export default {
       this.page.curPage = curPage
       this.fetchData()
     },
-    checkScore(row) {
-      return row.id
-    },
     // 当某一行被点击时会触发该事件
     handleRowClick(row, event, column) {
 
     },
     // 当用户手动勾选数据行的 Checkbox 时触发的事件
     handleSelection(selection, row) {
-      this.selection = selection
+      this.selection = this.selectionFilter(selection)
     },
     // 当用户手动勾选全选 Checkbox 时触发的事件
     handleSelectionAll(selection) {
-      this.selection = selection
+      this.selection = this.selectionFilter(selection)
     },
-    select(selection, row) {
-      let isSave = false
-      const selectionLength = selection.length
-      if (this.allSelecteds.length < 1) {
-        this.allSelecteds = this.allSelecteds.concat(selection)
-      } else { // select 事件
-        if (row) {
-          // 点击选中试题
-          if (JSON.stringify(selection).indexOf(JSON.stringify(row)) !== -1) {
-            this.delOrSaveSeleted(row, true)
-          } else {
-            // 从全部选中试题里把取消的这条数据删除
-            this.delOrSaveSeleted(row)
-          } // select-all 事件
-        } else {
-          // 点击全选全部选中本页
-          if (selectionLength > 0) {
-            isSave = true
-          } else {
-            // 点击全选取消选中本页的试题
-            isSave = false
-            selection = this.multipleSelection
-          }
-          for (let i = 0; i < selection.length; i++) {
-            this.delOrSaveSeleted(selection[i], isSave)
-          }
-        }
-      }
-      if (selectionLength > 0) {
-        this.multipleSelection = selection
-      } else {
-        this.multipleSelection = []
-      }
+    // 过滤选中的楼盘
+    selectionFilter(selection) {
+      return selection.filter(item => {
+        if (item.isInFgc !== 1) { return true }
+        return false
+      })
     },
-    // 删除或添加全部选中的试题
-    delOrSaveSeleted(row, isSave) {
-      const len = this.allSelecteds.length
-      for (let i = 0; i < len; i++) {
-        if (this.allSelecteds[i].id === row.id) {
-          if (!isSave) {
-            this.allSelecteds.splice(i, 1)
-          }
-          return
-        }
-      }
-      if (isSave) {
-        this.allSelecteds.push(row)
-      }
-    },
-    selectAll() {
-      const selection = this.multipleSelection
-      this.selectArr = []
-      if (selection) {
-        selection.forEach(row => {
-          if (row) {
-            this.selectArr.push({
-              id: row.id,
-              name: row.name
-            })
-          }
-        })
-      }
-      console.log('当前确定', this.selectArr)
-    },
-    getIndex(index) {
-      return (this.page.curPage - 1) * this.listData.pageSize + index + 1
+    // 提交新增楼盘
+    handleSubmit() {
+      const houseList = this.selection.map(item => {
+        return { id: item.id, name: item.name }
+      })
+      this.loading = true
+      this.$store.dispatch('getProjectAdd', { houseList }).then((res) => {
+        this.loading = false
+        this.selection = []
+        this.fetchData()
+      }).catch(() => {
+        this.loading = false
+      })
     },
   }
 }
@@ -256,9 +200,21 @@ export default {
     display: flex;
     flex-wrap: wrap;
     color: #606266;
-    span{
+    .item {
       margin-right: 10px;
+      margin-bottom: 5px;
+      padding: 0 5px;
       color: #409eff;
+      border: 1px solid #409eff;
+      border-radius: 2px;
+    }
+  }
+  .table-main {
+    position: relative;
+    .btn-submit {
+      position: absolute;
+      left: 0px;
+      bottom: -58px;
     }
   }
 }
