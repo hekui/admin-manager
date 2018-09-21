@@ -151,7 +151,7 @@
 <script>
 import { mapState } from 'vuex'
 export default {
-  name: 'paccountList',
+  name: 'projectList',
   data() {
     return {
       loading: false,
