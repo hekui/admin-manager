@@ -3,7 +3,7 @@ const
   // javaHost = process.env.javaHost || 'http://mock.maifangma.com/', // rap2模拟数据
   // javaHost = process.env.javaHost || 'http://???', // 测试环境
   // javaHost = process.env.javaHost || 'http://japi.fangguancha.com', // 生产环境
-  // javaHost = process.env.javaHost || 'http://192.168.10.196:8089', // 周波PC
+  // javaHost = process.env.javaHost || 'http://192.168.10.196:8092', // 周波PC
   javaHost = process.env.javaHost || 'http://192.168.10.190:8092', // 张浩亮PC
     // javaHost = process.env.javaHost || 'http://192.168.10.118:8081', // 杨翔PC
   // javaHost = process.env.javaHost || 'http://192.168.10.88:8092', // 何洋PC

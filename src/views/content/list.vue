@@ -153,7 +153,7 @@
         <el-table-column
           label="项目名称">
           <template slot-scope="scope">
-            <span>{{ getHouseName(scope.row) }}</span>
+            <span>{{ scope.row.houseNames || "-" }}</span>
           </template>
         </el-table-column>
         <el-table-column
