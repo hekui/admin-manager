@@ -172,7 +172,8 @@ export default {
     ...mapState({
       region: state => state.region,
       salestatus: state => state.salestatus,
-      listData: state => state.project.listData
+      listData: state => state.project.listData,
+      refreshList: state => state.project.refreshProjectList
     })
   },
   created() {
@@ -307,6 +308,14 @@ export default {
           })
         })
     },
+  },
+  watch: {
+    // 监听是否要更新内容列表
+    refreshList: function(newValue, oldValue) {
+      if (newValue) {
+        this.fetchData()
+      }
+    }
   }
 }
 </script>
