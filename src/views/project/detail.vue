@@ -153,7 +153,7 @@
         })
       },
       handleInputConfirm() {
-        const inputValue = this.inputValue
+        const inputValue = this.inputValue.trim()
         if (inputValue) {
           const index = this.info.matchWordList.map(val => val.name).findIndex(value => value === inputValue)
           if (index !== -1) {
