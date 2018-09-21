@@ -13,8 +13,8 @@ import { mapMutations } from 'vuex';
       class="mini_switch"
       v-model="statusData.status"
       @change="onChange"
-      active-value="1"
-      inactive-value="0"
+      :active-value="1"
+      :inactive-value="0"
       v-show="cityName.search('成都')===-1"
       disabled>
     </el-switch>
@@ -22,8 +22,8 @@ import { mapMutations } from 'vuex';
       class="mini_switch"
       v-model="statusData.status"
       @change="onChange"
-      active-value="1"
-      inactive-value="0"
+      :active-value="1"
+      :inactive-value="0"
       v-show="cityName.search('成都')!=-1">
     </el-switch>
   </div>

@@ -18,6 +18,7 @@
         ref="sigletable"
         :data="houseList.list"
         highlight-current-row
+        :row-class-name="rowClassName"
         @current-change="tableCurrentChange"
         v-loading="loading"
         fit
@@ -27,7 +28,7 @@
           label=""
           width="45">
           <template slot-scope="scope">
-            <el-radio v-model="currentRow" :label="scope.row.id">{{''}}</el-radio>
+            <el-radio v-if="!isDisabled(scope.row.id)" v-model="currentRow" :label="scope.row.id">{{''}}</el-radio>
           </template>
         </el-table-column>
         <el-table-column
@@ -51,6 +52,9 @@
           prop="saleStatus"
           label="销售状态"
           min-width="160">
+          <template slot-scope="scope">
+            <span>{{scope.row.saleStatus || '-'}}</span>
+          </template>
         </el-table-column>
         <el-table-column
           label="楼盘状态"
@@ -78,6 +82,12 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'projectChooseList',
+  props: {
+    selectedHouseList: {
+      type: Array,
+      required: true
+    }
+  },
   data() {
     return {
       currentRow: '',
@@ -109,6 +119,16 @@ export default {
         this.loading = false
       })
     },
+    // 行类名
+    rowClassName({ row, rowIndex }) {
+      return this.isDisabled(row.id) ? 'disabled' : ''
+    },
+    // checkbox是否可以勾选
+    isDisabled(id) {
+      return this.selectedHouseList.some(item => {
+        return item.houseId === id
+      })
+    },
     tableCurrentChange(row) {
       this.currentRow = row.id
       this.currentProject = row
@@ -124,19 +144,29 @@ export default {
   }
 }
 </script>
-<style lang="sass">
-  .project-choose
-    display: flex
-    flex-direction: column
-    height: 100%
-    width: 100%
-    background: white
-    .filter
-      flex: 0 0
-    .table
-      flex: 1 1
-      border: solid #ebeef5
-      overflow-y: scroll
-    .pages
-      margin-top: 15px
+<style lang="scss">
+.project-choose {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: white;
+  .filter {
+    flex: 0 0;
+  } 
+  .table {
+    flex: 1 1;
+    border: solid #ebeef5;
+    overflow-y: scroll;
+  }
+  .pages {
+    margin-top: 15px;
+  }
+  .el-table__row.disabled {
+    background-color: #f5f7fa;
+    border-color: #e4e7ed;
+    color: #c0c4cc;
+    cursor: not-allowed;
+  }
+}
 </style>
