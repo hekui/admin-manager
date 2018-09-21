@@ -425,6 +425,10 @@ export default {
     },
     // 查看详情
     handleDetail(data) {
+      this.$store.commit('contentSet', {
+        target: 'detailId',
+        data: data.id
+      })
       this.$router.push({ path: '/content/detail', query: { id: data.id }})
     },
     // 二次编辑

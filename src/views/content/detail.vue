@@ -153,6 +153,7 @@ export default {
   },
   computed: {
     ...mapState({
+      detailId: state => state.content.detailId,
       detailData: state => state.content.detailData,
       allTags: state => state.tag.allTags
     }),
@@ -346,6 +347,12 @@ export default {
           message: '已取消操作!'
         })
       })
+    }
+  },
+  watch: {
+    detailId: function(newVal) {
+      this.id = newVal
+      this.fetchData()
     }
   }
 }

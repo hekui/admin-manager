@@ -27,6 +27,7 @@ export default {
       list: []
     },
     refreshRecommendList: false,
+    detailId: '',
     detailData: {},
     houseList: []
   },
