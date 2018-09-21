@@ -117,7 +117,7 @@
               prop="likeNum"
               label="点赞量"
               width="80">
-                <template slot-scope="scope">
+              <template slot-scope="scope">
                 {{ scope.row.likeNum || 0}} 
               </template>
             </el-table-column>
@@ -127,9 +127,11 @@
               width="80">
             </el-table-column>
             <el-table-column
-              prop="wordsNum"
               label="项目名称"
               min-width="80">
+              <template slot-scope="scope">
+                {{ scope.row.houseNames || "-" }}
+              </template>
             </el-table-column>
             <el-table-column
               fixed="right"
