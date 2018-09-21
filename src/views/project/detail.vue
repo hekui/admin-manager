@@ -130,7 +130,7 @@
       },
       getProjectArticleList() {
         this.loading = true
-        this.$store.dispatch('getProjectArticleList', { id: this.id }).then(res => {
+        this.$store.dispatch('getProjectArticleList', Object.assign({ id: this.id }, this.page)).then(res => {
           this.articleData = res.data
           this.loading = false
         }).catch(() => {
@@ -153,7 +153,7 @@
         })
       },
       handleInputConfirm() {
-        const inputValue = this.inputValue
+        const inputValue = this.inputValue.trim()
         if (inputValue) {
           const index = this.info.matchWordList.map(val => val.name).findIndex(value => value === inputValue)
           if (index !== -1) {

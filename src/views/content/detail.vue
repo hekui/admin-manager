@@ -113,12 +113,13 @@
     <el-dialog
       :title="dialogTitle"
       width="80%"
-      :visible.sync="showHouseDialog">
+      :visible.sync="showHouseDialog"
+      :close-on-click-modal="false">
       <div class="dialog-content">
-        <project-dialog v-if="showHouseDialog" ref="projectDialog"></project-dialog>
+        <project-dialog v-if="showHouseDialog" ref="projectDialog" :selectedHouseList="detailData.houseList"></project-dialog>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="handleCancel = false">取 消</el-button>
+        <el-button @click="handleCancel">取 消</el-button>
         <el-button type="primary" @click="handleConfirm">确 定</el-button>
       </div>
     </el-dialog>
@@ -162,7 +163,7 @@ export default {
     articleType() {
       const name = []
       const id = []
-      if (!this.detailData.typeDictList || Object.prototype.toString.call(this.detailData.typeDictList) !== '[object Array]') return { id, name }
+      if (!this.detailData.typeDictList || !Array.isArray(this.detailData.typeDictList)) return { id, name }
       getType(this.detailData.typeDictList)
 
       function getType(list) {
@@ -226,10 +227,10 @@ export default {
         this.showHouseDialog = true
       } else {
         this.showDialog = true
+        if (type === 'lonlat') this.binding.lonlat = this.detailData.lonlat
+        if (type === 'articleType') this.binding.articleType = handleInvalidType(this.articleTypeDict, this.articleType.id)
+        if (type === 'tags') this.binding.tags = [...this.detailData.labels]
       }
-      this.binding.lonlat = this.detailData.lonlat
-      this.binding.articleType = handleInvalidType(this.articleTypeDict, this.articleType.id)
-      this.binding.tags = [...this.detailData.labels]
     },
     // 删除项目关联
     handleDelete(houseId) {
@@ -275,14 +276,11 @@ export default {
     },
     // 对话框取消按钮
     handleCancel() {
-      this.showDialog = false
-      this.showHouseDialog = false
+      if (this.dialogType === 'house') this.showHouseDialog = false
+      else this.showDialog = false
     },
     // 对话框确认按钮
     handleConfirm() {
-      if (this.dialogType === 'lonlat') this.handleSaveLonLat()
-      if (this.dialogType === 'articleType') this.handleSaveArticleType()
-      if (this.dialogType === 'tags') this.handleSaveTags()
       if (this.dialogType === 'house') {
         const houseId = this.$refs.projectDialog.currentProject.id
         if (!houseId) {
@@ -293,9 +291,13 @@ export default {
           return
         }
         this.addHouse(houseId)
+        this.showHouseDialog = false
+      } else {
+        if (this.dialogType === 'lonlat') this.handleSaveLonLat()
+        if (this.dialogType === 'articleType') this.handleSaveArticleType()
+        if (this.dialogType === 'tags') this.handleSaveTags()
+        this.showDialog = false
       }
-      this.showDialog = false
-      this.showHouseDialog = false
     },
     // 保存经纬度
     handleSaveLonLat() {
@@ -310,6 +312,7 @@ export default {
       }).then(() => {
         const params = { id: this.id, labels: this.binding.tags.map(tag => tag.id) }
         this.$store.dispatch('saveContentTags', params).then(() => {
+          this.$store.commit('SET_REFRESH_LIST', true) // 更新内容管理列表
           this.$message({
             message: '保存成功！',
             type: 'success'
@@ -331,6 +334,7 @@ export default {
       }).then(() => {
         const articleType = [...this.binding.articleType]
         this.$store.dispatch('saveContentType', { id: this.id, typeId: articleType.pop() }).then((res) => {
+          this.$store.commit('SET_REFRESH_LIST', true) // 更新内容管理列表
           this.$message({
             message: '保存成功！',
             type: 'success'
