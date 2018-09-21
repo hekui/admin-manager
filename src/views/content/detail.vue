@@ -184,6 +184,7 @@ export default {
     }
   },
   created() {
+    console.log('created')
     this.$store.dispatch('getTypeDict', { code: 3 }) // 查询文章类型
     this.fetchData()
     this.getAllTags()
