@@ -17,7 +17,7 @@
           <div class="sub origin">{{detailData.wechatName || ''}}</div>
           <div class="sub date">{{releaseTimeFilter(detailData.releaseTime) || ''}}</div>
         </div>
-        <iframe class="article-content" :src="detailData.contentUrl" frameborder="0"></iframe>
+        <iframe v-if="!!detailData.contentUrl" class="article-content" :src="detailData.contentUrl" frameborder="0"></iframe>
         <div :class="['right-suspension', {'isEdit': flag==='edit'}]">
           <div class="count">
             <div class="praising">点赞：<span>{{detailData.likeNum || 0}}</span></div>
