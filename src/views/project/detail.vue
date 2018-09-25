@@ -139,7 +139,7 @@
       },
       changePage(curPage) {
         this.page.curPage = curPage
-        this.fetchData()
+        this.getProjectArticleList()
       },
       tagClose(index) {
         this.$nextTick(_ => {
