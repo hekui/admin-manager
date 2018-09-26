@@ -242,17 +242,24 @@ export default {
     }
   },
   computed: {
+    contentTypeId() {
+      debugger
+      // this.filter.contentTypeId
+      // this.paccountTypeDict
+      return this.filter.contentTypeId
+    },
     ...mapState({
       listData: state => state.content.listData,
-      allTags: state => state.tag.allTags,
-      refreshList: state => state.content.refreshList
+      allTags: state => state.tag.allTags
     }),
-    ...mapGetters(['paccountTypeDict', 'articleTypeDict'])
+    ...mapGetters(['paccountTypeDict', 'articleTypeDict']),
+
+    // wechatTypeId() {
+    //   debugger
+    // }
   },
   activated() {
-    if (this.refreshList) {
-      this.fetchData()
-    }
+    this.fetchData()
   },
   created() {
     this.$store.dispatch('getTypeDict', { code: 1 }) // 查询公众号类型
@@ -385,7 +392,6 @@ export default {
           // 关闭推荐
           this.$store.dispatch('updateRecommendStatus', { id: scope.row.id, recommendStatus: 0 }).then((res) => {
             this.fetchData()
-            this.$store.commit('SET_REFRESH_RECOMMEND_LIST', true) // 更新推荐内容管理列表
             this.$message({
               type: 'success',
               message: '操作成功!'
@@ -408,7 +414,6 @@ export default {
         // 更新文章推荐状态
           this.$store.dispatch('updateRecommendStatus', { id: this.recommendScope.row.id, recommendStatus: 1, recommendation: this.recommendationForm.recommendation }).then((res) => {
             this.fetchData()
-            this.$store.commit('SET_REFRESH_RECOMMEND_LIST', true) // 更新推荐内容管理列表
             localStorage.setItem('RECOMMENDATION', this.recommendationForm.recommendation)
             this.showDialog = false
             this.$message({

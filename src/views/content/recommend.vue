@@ -163,14 +163,11 @@ export default {
     }
   },
   activated() {
-    if (this.refreshRecommendList) {
-      this.fetchData()
-    }
+    this.fetchData()
   },
   computed: {
     ...mapState({
-      listData: state => state.content.recommendlistData,
-      refreshRecommendList: state => state.content.refreshRecommendList
+      listData: state => state.content.recommendlistData
     }),
     ...mapGetters(['paccountTypeDict', 'articleTypeDict'])
   },
@@ -236,7 +233,6 @@ export default {
         // 取消推荐
         this.$store.dispatch('updateRecommendStatus', { id: data.id, recommendStatus: 0 }).then((res) => {
           this.fetchData()
-          this.$store.commit('SET_REFRESH_LIST', true) // 更新内容管理列表
           this.$message({
             type: 'success',
             message: '操作成功!'

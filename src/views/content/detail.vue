@@ -242,7 +242,6 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('deleteHouse', { id: this.detailData.id, houseId }).then(() => {
-          this.$store.commit('SET_REFRESH_LIST', true) // 更新内容管理列表
           this.$message({
             message: '删除成功！',
             type: 'success'
@@ -258,7 +257,6 @@ export default {
     // 新增项目关联
     addHouse(houseId) {
       this.$store.dispatch('addHouse', { id: this.detailData.id, houseId }).then(() => {
-        this.$store.commit('SET_REFRESH_LIST', true) // 更新内容管理列表
         this.$message({
           message: '新增成功！',
           type: 'success'
@@ -314,7 +312,6 @@ export default {
       }).then(() => {
         const params = { id: this.id, labels: this.binding.tags.map(tag => tag.id) }
         this.$store.dispatch('saveContentTags', params).then(() => {
-          this.$store.commit('SET_REFRESH_LIST', true) // 更新内容管理列表
           this.$message({
             message: '保存成功！',
             type: 'success'
@@ -336,7 +333,6 @@ export default {
       }).then(() => {
         const articleType = [...this.binding.articleType]
         this.$store.dispatch('saveContentType', { id: this.id, typeId: articleType.pop() }).then((res) => {
-          this.$store.commit('SET_REFRESH_LIST', true) // 更新内容管理列表
           this.$message({
             message: '保存成功！',
             type: 'success'

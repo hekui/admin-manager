@@ -13,7 +13,6 @@ export default {
       totalRecords: 0,
       list: []
     },
-    refreshProjectList: false,
     mfmList: { // 预计后端返回数据格式 - 未定
       curPage: 1,
       hasNext: true,
@@ -36,15 +35,11 @@ export default {
     },
     'SET_HOT_HOUSE': (state, data) => {
       state.listData.list[data.index].isHotSale = data.isHotSale
-    },
-    'SET_REFRESH_PROJECT_LIST': (state, flag) => {
-      state.refreshProjectList = flag
     }
   },
   actions: {
     // 查询房观察楼盘列表
     getProjectList({ commit }, params) {
-      commit('SET_REFRESH_PROJECT_LIST', false) // 将监听刷新数据的属性改成默认值
       return api.post('/house/list', params).then(res => {
         commit('projectSet', {
           target: 'listData',

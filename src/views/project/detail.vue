@@ -116,7 +116,6 @@
       },
       saveMatchWords() {
         this.$store.dispatch('saveMatchWords', Object.assign({ id: this.id, matchWordList: this.info.matchWordList })).then(res => {
-          this.$store.commit('SET_REFRESH_PROJECT_LIST', true) // 更新楼盘列表
           this.$message({
             type: 'success',
             message: '保存成功!'
@@ -177,7 +176,6 @@
         this.articleData.list.splice(scope.$index, 1)
         this.$store.dispatch('cancelBindArticle', { id: this.id, contentId: article.id }).then(res => {
           this.loading = false
-          this.$store.commit('SET_REFRESH_PROJECT_LIST', true) // 更新楼盘列表
           this.$message({
             type: 'success',
             message: '解除绑定成功!'
