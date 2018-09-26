@@ -30,7 +30,7 @@
             ></el-cascader>
           </el-form-item>
           <el-form-item label="项目名称">
-            <el-input v-model.trim="filter.caseTile" :clearable="true" placeholder="请输入项目名称"></el-input>
+            <el-input v-model.trim="filter.houseName" :clearable="true" placeholder="请输入项目名称"></el-input>
           </el-form-item>
           <el-form-item label="发布时间">
             <el-date-picker
@@ -175,7 +175,7 @@ export default {
       filter: {
         typeId: [],
         title: '',
-        caseTile: '',
+        houseName: '',
         endDate: '',
         beginDate: '',
         id: ''

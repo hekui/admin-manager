@@ -9,7 +9,7 @@
         <el-form-item label="楼盘状态：">
           <el-select v-model="filter.houseStatus" :clearable="true" placeholder="请选择">
             <el-option label="上线中" value="1"></el-option>
-            <el-option label="已下架" value="2"></el-option>
+            <el-option label="已下架" value="0"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="销售状态：">

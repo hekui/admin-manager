@@ -63,6 +63,10 @@ export default {
   actions: {
     // 获取内容列表
     getContentList({ commit }, params) {
+      commit('contentSet', {
+        target: 'listData',
+        data: {}
+      })
       commit('SET_REFRESH_LIST', false) // 将监听刷新数据的属性改成默认值
       return api.post('/content/list', params).then(res => {
         commit('contentSet', {

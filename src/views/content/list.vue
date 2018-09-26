@@ -84,7 +84,7 @@
         <el-table-column
           type="index"
           label="序号"
-          width="50"
+          width="80"
           :index="getIndex">
         </el-table-column>
         <el-table-column
