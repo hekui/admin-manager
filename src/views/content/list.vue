@@ -242,20 +242,21 @@ export default {
     }
   },
   computed: {
-    contentTypeId() {
-      debugger
-      // this.filter.contentTypeId
-      // this.paccountTypeDict
-      return this.filter.contentTypeId
-    },
     ...mapState({
       listData: state => state.content.listData,
       allTags: state => state.tag.allTags
     }),
     ...mapGetters(['paccountTypeDict', 'articleTypeDict']),
-
-    // wechatTypeId() {
-    //   debugger
+    // contentTypeId() {
+    //   let contentTypeId = this.filter.contentTypeId
+    //   if(contentTypeId) {
+    //     if(Array.isArray(this.articleTypeDict)) {
+    //       if(this.typeValidation(contentTypeId, this.articleTypeDict)) return contentTypeId
+    //     } else {
+    //       return ''
+    //     }
+    //   }
+    //   return ''
     // }
   },
   activated() {
@@ -274,6 +275,18 @@ export default {
         this.loading = false
       }).catch(() => {
         this.loading = false
+      })
+    },
+    // 验证类型正确性（处理文章类型或公众号类型被删除导致类型查询参数不正确）
+    typeValidation(value, tree) {
+      return tree.some(item => {
+        if (item.value === value) {
+          return true
+        }
+        if (item.children) {
+          return this.typeValidation(value, item.children)
+        }
+        return false
       })
     },
     // 过滤标签
