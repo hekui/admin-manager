@@ -116,6 +116,7 @@
       },
       saveMatchWords() {
         this.$store.dispatch('saveMatchWords', Object.assign({ id: this.id, matchWordList: this.info.matchWordList })).then(res => {
+          this.$store.commit('SET_REFRESH_PROJECT_LIST', true) // 更新楼盘列表
           this.$message({
             type: 'success',
             message: '保存成功!'
