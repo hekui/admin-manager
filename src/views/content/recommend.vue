@@ -162,6 +162,11 @@ export default {
       }
     }
   },
+  activated() {
+    if (this.refreshRecommendList) {
+      this.fetchData()
+    }
+  },
   computed: {
     ...mapState({
       listData: state => state.content.recommendlistData,
@@ -326,13 +331,6 @@ export default {
     // ESC取消修改推荐理由
     recommendationCancel(event, scope) {
       event.target.blur()
-    }
-  },
-  watch: {
-    refreshRecommendList: function(newValue, oldValue) {
-      if (newValue) {
-        this.fetchData()
-      }
     }
   }
 }

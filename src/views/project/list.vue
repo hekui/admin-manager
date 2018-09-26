@@ -168,6 +168,11 @@ export default {
       originalSort: []
     }
   },
+  activated() {
+    if (this.refreshList) {
+      this.fetchData()
+    }
+  },
   computed: {
     ...mapState({
       region: state => state.region,
@@ -308,14 +313,6 @@ export default {
           })
         })
     },
-  },
-  watch: {
-    // 监听是否要更新内容列表
-    refreshList: function(newValue, oldValue) {
-      if (newValue) {
-        this.fetchData()
-      }
-    }
   }
 }
 </script>
