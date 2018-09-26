@@ -49,7 +49,7 @@
           </el-table-column>
           <el-table-column
             label="公众号"
-            prop="wechatAccount"
+            prop="wechatName"
             min-width="80">
           </el-table-column>
           <el-table-column
