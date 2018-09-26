@@ -17,7 +17,7 @@
           <div class="sub origin">{{detailData.wechatName || ''}}</div>
           <div class="sub date">{{releaseTimeFilter(detailData.releaseTime) || ''}}</div>
         </div>
-        <iframe v-if="!!detailData.contentUrl" class="article-content" :src="detailData.contentUrl" frameborder="0"></iframe>
+        <iframe ref="articleIframe" class="article-content" frameborder="0"></iframe>
         <div :class="['right-suspension', {'isEdit': flag==='edit'}]">
           <div class="count">
             <div class="praising">点赞：<span>{{detailData.likeNum || 0}}</span></div>
@@ -194,7 +194,8 @@ export default {
   methods: {
     fetchData() {
       this.loading = true
-      this.$store.dispatch('getContentDetail', Object.assign({}, { id: this.id })).then(() => {
+      this.$store.dispatch('getContentDetail', Object.assign({}, { id: this.id })).then((res) => {
+        this.$refs.articleIframe.src = res.data.contentUrl
         this.loading = false
       }).catch(() => {
         this.loading = false

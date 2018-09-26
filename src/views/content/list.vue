@@ -249,6 +249,11 @@ export default {
     }),
     ...mapGetters(['paccountTypeDict', 'articleTypeDict'])
   },
+  activated() {
+    if (this.refreshList) {
+      this.fetchData()
+    }
+  },
   created() {
     this.$store.dispatch('getTypeDict', { code: 1 }) // 查询公众号类型
     this.$store.dispatch('getTypeDict', { code: 3 }) // 查询文章类型
@@ -462,14 +467,6 @@ export default {
         })
       })
     }
-  },
-  watch: {
-    // 监听是否要更新内容列表
-    refreshList: function(newValue, oldValue) {
-      if (newValue) {
-        this.fetchData()
-      }
-    }
   }
 }
 </script>
@@ -489,6 +486,14 @@ export default {
 </style>
 <style rel="stylesheet/scss" lang="scss">
 .content-container {
+  .el-table__fixed-right {
+    .el-table__fixed-header-wrapper {
+
+    }
+    .cell {
+      visibility: visible!important;
+    }
+  }
   .el-dialog {
     width: 400px;
     .el-dialog__body {
@@ -512,7 +517,6 @@ export default {
         width: 100%;
       }
     }
-    
   }
 }
 </style>

@@ -83,10 +83,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'projectChooseList',
   props: {
-    selectedHouseList: {
-      type: Array,
-      required: true
-    }
+    selectedHouseList: {}
   },
   data() {
     return {
@@ -125,9 +122,12 @@ export default {
     },
     // checkbox是否可以勾选
     isDisabled(id) {
-      return this.selectedHouseList.some(item => {
-        return item.houseId === id
-      })
+      if (Array.isArray(this.selectedHouseList)) {
+        return this.selectedHouseList.some(item => {
+          return item.houseId === id
+        })
+      }
+      return false
     },
     tableCurrentChange(row) {
       this.currentRow = row.id
