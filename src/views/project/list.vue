@@ -169,16 +169,13 @@ export default {
     }
   },
   activated() {
-    if (this.refreshList) {
-      this.fetchData()
-    }
+    this.fetchData()
   },
   computed: {
     ...mapState({
       region: state => state.region,
       salestatus: state => state.salestatus,
-      listData: state => state.project.listData,
-      refreshList: state => state.project.refreshProjectList
+      listData: state => state.project.listData
     })
   },
   created() {

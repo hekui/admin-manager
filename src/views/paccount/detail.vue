@@ -185,6 +185,9 @@ export default {
       wechatAccount: '' // 公从号
     }
   },
+  activated() {
+    this.fetchData()
+  },
   computed: {
     ...mapGetters(['articleTypeDict', 'pclassifyTypeDict']),
     ...mapState({

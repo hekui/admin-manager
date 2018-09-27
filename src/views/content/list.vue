@@ -244,15 +244,23 @@ export default {
   computed: {
     ...mapState({
       listData: state => state.content.listData,
-      allTags: state => state.tag.allTags,
-      refreshList: state => state.content.refreshList
+      allTags: state => state.tag.allTags
     }),
-    ...mapGetters(['paccountTypeDict', 'articleTypeDict'])
+    ...mapGetters(['paccountTypeDict', 'articleTypeDict']),
+    // contentTypeId() {
+    //   let contentTypeId = this.filter.contentTypeId
+    //   if(contentTypeId) {
+    //     if(Array.isArray(this.articleTypeDict)) {
+    //       if(this.typeValidation(contentTypeId, this.articleTypeDict)) return contentTypeId
+    //     } else {
+    //       return ''
+    //     }
+    //   }
+    //   return ''
+    // }
   },
   activated() {
-    if (this.refreshList) {
-      this.fetchData()
-    }
+    this.fetchData()
   },
   created() {
     this.$store.dispatch('getTypeDict', { code: 1 }) // 查询公众号类型
@@ -267,6 +275,18 @@ export default {
         this.loading = false
       }).catch(() => {
         this.loading = false
+      })
+    },
+    // 验证类型正确性（处理文章类型或公众号类型被删除导致类型查询参数不正确）
+    typeValidation(value, tree) {
+      return tree.some(item => {
+        if (item.value === value) {
+          return true
+        }
+        if (item.children) {
+          return this.typeValidation(value, item.children)
+        }
+        return false
       })
     },
     // 过滤标签
@@ -385,7 +405,6 @@ export default {
           // 关闭推荐
           this.$store.dispatch('updateRecommendStatus', { id: scope.row.id, recommendStatus: 0 }).then((res) => {
             this.fetchData()
-            this.$store.commit('SET_REFRESH_RECOMMEND_LIST', true) // 更新推荐内容管理列表
             this.$message({
               type: 'success',
               message: '操作成功!'
@@ -408,7 +427,6 @@ export default {
         // 更新文章推荐状态
           this.$store.dispatch('updateRecommendStatus', { id: this.recommendScope.row.id, recommendStatus: 1, recommendation: this.recommendationForm.recommendation }).then((res) => {
             this.fetchData()
-            this.$store.commit('SET_REFRESH_RECOMMEND_LIST', true) // 更新推荐内容管理列表
             localStorage.setItem('RECOMMENDATION', this.recommendationForm.recommendation)
             this.showDialog = false
             this.$message({

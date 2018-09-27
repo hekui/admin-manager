@@ -13,7 +13,6 @@ export default {
       totalRecords: 0,
       list: []
     },
-    refreshList: false,
     recommendlistData: {
       curPage: 1,
       hasNext: true,
@@ -26,7 +25,6 @@ export default {
       totalRecords: 0,
       list: []
     },
-    refreshRecommendList: false,
     detailId: '',
     detailData: {},
     houseList: []
@@ -52,12 +50,6 @@ export default {
     },
     'SET_RECOMMENDATION': (state, data) => {
       state.recommendlistData.list[data.index].recommendation = data.recommendation
-    },
-    'SET_REFRESH_LIST': (state, flag) => {
-      state.refreshList = flag
-    },
-    'SET_REFRESH_RECOMMEND_LIST': (state, flag) => {
-      state.refreshRecommendList = flag
     }
   },
   actions: {
@@ -67,7 +59,6 @@ export default {
         target: 'listData',
         data: {}
       })
-      commit('SET_REFRESH_LIST', false) // 将监听刷新数据的属性改成默认值
       return api.post('/content/list', params).then(res => {
         commit('contentSet', {
           target: 'listData',
@@ -80,7 +71,6 @@ export default {
     },
     // 获取推荐内容列表
     getContentRecommendlist({ commit }, params) {
-      commit('SET_REFRESH_RECOMMEND_LIST', false) // 将监听刷新数据的属性改成默认值
       return api.post('/content/recommendlist', params).then(res => {
         commit('contentSet', {
           target: 'recommendlistData',
