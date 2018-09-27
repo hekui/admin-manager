@@ -186,7 +186,6 @@ export default {
     }
   },
   activated() {
-    debugger
     this.fetchData()
   },
   created() {

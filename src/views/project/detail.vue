@@ -101,6 +101,10 @@
         return this.$route.query.id
       }
     },
+    activated() {
+      this.fetchProjectDetail()
+      this.getProjectArticleList()
+    },
     created() {
       this.fetchProjectDetail()
       this.getProjectArticleList()
