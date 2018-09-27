@@ -78,7 +78,7 @@
 
 <script>
   export default {
-    name: 'propertyDetail',
+    name: 'projectEdit',
     data() {
       return {
         loading: false,

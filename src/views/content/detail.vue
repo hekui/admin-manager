@@ -185,6 +185,10 @@ export default {
       return labels
     }
   },
+  activated() {
+    debugger
+    this.fetchData()
+  },
   created() {
     console.log('created')
     this.$store.dispatch('getTypeDict', { code: 3 }) // 查询文章类型
