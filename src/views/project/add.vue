@@ -72,7 +72,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-button v-if="!loading" :disabled="selection.length===0" class="btn-submit" @click="handleSubmit">确定</el-button>
+        <el-button v-if="!loading" :disabled="selection.length===0 || isAdding" class="btn-submit" @click="handleSubmit">确定</el-button>
       </div>
       <div class="pages clearfix">
         <el-pagination
@@ -95,6 +95,7 @@ export default {
   data() {
     return {
       loading: false,
+      isAdding: false,
       page: {
         curPage: 1
       },
@@ -182,6 +183,7 @@ export default {
     },
     // 提交新增楼盘
     handleSubmit() {
+      this.isAdding = true
       const houseList = this.selection.map(item => {
         return { id: item.id, name: item.name }
       })
@@ -191,6 +193,7 @@ export default {
           this.$router.replace({ path: '/project/list' })
         })
       }).catch(() => {
+        this.isAdding = false
       })
     },
   }
