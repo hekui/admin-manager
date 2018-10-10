@@ -48,5 +48,3 @@ npm run lint -- --fix
 
 - [使用文档](https://panjiachen.github.io/vue-element-admin-site/zh/)
 
-
-更多信息请参考 [使用文档](https://panjiachen.github.io/vue-element-admin-site/zh/)
